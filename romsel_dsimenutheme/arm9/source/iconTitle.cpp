@@ -43,6 +43,7 @@
 #include "ndsheaderbanner.h"
 #include "myDSiMode.h"
 #include <ctype.h>
+#include <string.h> // memcmp, for the staging compare in stageConverted()
 #include <nds.h>
 #include <nds/arm9/dldi.h>
 #include <stdio.h>
@@ -68,9 +69,36 @@ static const char16_t *blankTitle = u"";
 
 static u32 arm9StartSig[4];
 
-u8 tilesModified[(32 * 256) / 2] = {0};
+// One staging slot per icon bank, holding tiles already in texture order.
+//
+// The tile conversion below is roughly eight times the cost of the VRAM copy for
+// an animated DSi icon (4096 inner iterations against a 4 KB block move), and it
+// used to run inside the vblank handler -- which also runs the entire renderer.
+// Seven icons' worth of conversion does not fit in vblank, so the trailing
+// glTexImage2D calls landed during active display, where libnds unmaps VRAM A-D
+// to LCD mode for the duration of the copy. A and B/C/D are the 3D textures and
+// both backgrounds, so the screen loses them mid-scanout: horizontal stripes
+// through the icons while scrolling. Converting on the main thread leaves the
+// handler with just the block moves, which do fit.
+//
+// Keying by bank rather than queueing also means repeated updates of the same
+// bank within one frame collapse into a single upload, and that no pointer into
+// bnriconTile[] is held across the IRQ boundary -- the previous queue stored the
+// source pointer and the main thread could overwrite it before the handler ran.
+static u8 pendingTiles[NDS_ICON_BANK_COUNT][(32 * 256) / 2] = {0};
+static u16 pendingPalette[NDS_ICON_BANK_COUNT][16] = {0};
+static bool pendingTwl[NDS_ICON_BANK_COUNT] = {false};
+static volatile bool pendingValid[NDS_ICON_BANK_COUNT] = {false};
 
-std::vector<std::tuple<u8 *, u16 *, int, bool>> queuedIconUpdateCache;
+// Whether a bank's VRAM has been written from pendingTiles at least once. Until
+// it has, pendingTiles does not describe what is on screen (iconManagerInit fills
+// every bank with the unknown icon behind our back), so the skip below must not
+// trigger.
+static bool bankLoaded[NDS_ICON_BANK_COUNT] = {false};
+
+// Main-thread scratch for the tile conversion, so the result can be compared
+// against the bank's current contents before deciding to upload at all.
+static u8 convertScratch[(32 * 256) / 2] = {0};
 
 static void convertIconTilesToRaw(u8 *tilesSrc, u8 *tilesNew, bool twl) {
 	int PY = 32;
@@ -89,66 +117,109 @@ static void convertIconTilesToRaw(u8 *tilesSrc, u8 *tilesNew, bool twl) {
 }
 
 /**
- * Queue the icon update.
+ * This is called in graphics/vblank handler to process
+ * any deferred updates. Block moves only -- see pendingTiles above.
  */
-void deferLoadIcon(u8 *tilesSrc, u16 *palSrc, int num, bool twl) {
-	queuedIconUpdateCache.emplace_back(std::move(std::make_tuple(tilesSrc, palSrc, num, twl)));
+void execDeferredIconUpdates() {
+	for (int i = 0; i < NDS_ICON_BANK_COUNT; i++) {
+		if (!pendingValid[i])
+			continue;
+		// Out of blanking: leave the rest queued instead of unmapping VRAM under
+		// the beam. pendingValid keeps them, so they go out on the next vblank.
+		if (!vramSafeToUnmap())
+			return;
+		pendingValid[i] = false;
+		glLoadIcon(i, pendingPalette[i], pendingTiles[i], pendingTwl[i] ? TWL_TEX_HEIGHT : 32);
+		bankLoaded[i] = true;
+	}
 }
 
 /**
- * This is called in graphics/vblank handler to process
- * any deferred updates.
+ * Stages tiles that are already in texture order for upload on the next vblank.
+ * Everything that puts an icon into a bank goes through here: banner icons via
+ * loadIcon() below, the built-in per-system icons, and the blank used for folders.
+ * Those last two used to call glLoadIcon() straight from the main thread at
+ * whatever scanline iconUpdate() happened to reach them, which unmaps VRAM A-D
+ * under the beam, and they fire for every folder and every non-DS ROM.
  */
-void execDeferredIconUpdates() {
-	for (auto arg : queuedIconUpdateCache) {
-		u8 *tilesSrc;
-		u16 *palSrc;
-		int num;
-		bool twl;
-		std::tie(tilesSrc, palSrc, num, twl) = arg;
-		convertIconTilesToRaw(tilesSrc, tilesModified, twl);
-		glLoadIcon(num, (u16 *)palSrc, (u8 *)tilesModified, twl ? TWL_TEX_HEIGHT : 32);
+static void stageConverted(int num, const u16 *palette, const u8 *tiles, int texHeight = 32) {
+	if (BAD_ICON_IDX(num))
+		return;
+
+	const size_t tileBytes = (32 * texHeight) / 2;
+	const bool twl = (texHeight == TWL_TEX_HEIGHT);
+
+	// If the bank already holds exactly this, there is nothing to upload. Moving the
+	// cursor one step only changes the contents of a single bank, but every load site
+	// refreshes the whole window, so without this check six of every seven uploads --
+	// and six of every seven VRAM unmaps -- are redundant. The test is a byte
+	// comparison against what was last staged for this bank, not a guess from an
+	// index that could go stale, so it cannot leave a wrong icon on screen.
+	if (bankLoaded[num] && pendingTwl[num] == twl
+			&& memcmp(pendingTiles[num], tiles, tileBytes) == 0
+			&& memcmp(pendingPalette[num], palette, sizeof(pendingPalette[num])) == 0)
+		return;
+
+	// Drop the slot before touching the buffer, so a vblank arriving mid-copy skips
+	// this bank rather than uploading half of it. It gets picked up next frame.
+	pendingValid[num] = false;
+	tonccpy(pendingTiles[num], tiles, tileBytes);
+	tonccpy(pendingPalette[num], palette, sizeof(pendingPalette[num]));
+	pendingTwl[num] = twl;
+
+	if (currentBg == 1) {
+		pendingValid[num] = true;
+	} else {
+		// Hack to prevent glitched icons on startup.
+		// Still has to land in blanking; the callers of this path already spend a
+		// frame per icon in bgOperations(true), so yielding here costs nothing.
+		if (!vramSafeToUnmap())
+			swiWaitForVBlank();
+		glLoadIcon(num, pendingPalette[num], pendingTiles[num], texHeight);
+		bankLoaded[num] = true;
 	}
-	queuedIconUpdateCache.clear();
 }
 
 //(u8(*tilesSrc)[(32 * 32) / 2], u16(*palSrc)[16])
 void loadIcon(u8 *tilesSrc, u16 *palSrc, int num, bool twl) {
-	// Hack to prevent glitched icons on startup.
-	if (currentBg == 1) {
-		deferLoadIcon(tilesSrc, palSrc, num, twl);
-	} else {
-		convertIconTilesToRaw(tilesSrc, tilesModified, twl);
-		glLoadIcon(num, (u16 *)palSrc, (u8 *)tilesModified, twl ? TWL_TEX_HEIGHT : 32);
-	}
+	if (BAD_ICON_IDX(num))
+		return;
+	convertIconTilesToRaw(tilesSrc, convertScratch, twl);
+	stageConverted(num, palSrc, convertScratch, twl ? TWL_TEX_HEIGHT : 32);
 }
 
-static inline void loadUnkIcon(int num) { glLoadIcon(num, tex().iconUnknownTexture()->palette(), tex().iconUnknownTexture()->bytes()); }
-static inline void loadGBAIcon(int num) { glLoadIcon(num, tex().iconGBATexture()->palette(), tex().iconGBATexture()->bytes()); }
-static inline void loadGBIcon(int num) { glLoadIcon(num, tex().iconGBTexture()->palette(), tex().iconGBTexture()->bytes()); }
-static inline void loadGBCIcon(int num) { glLoadIcon(num, tex().iconGBTexture()->palette(), tex().iconGBTexture()->bytes()+(32*16)); }
-static inline void loadNESIcon(int num) { glLoadIcon(num, tex().iconNESTexture()->palette(), tex().iconNESTexture()->bytes()); }
-static inline void loadSGIcon(int num) { glLoadIcon(num, tex().iconSGTexture()->palette(), tex().iconSGTexture()->bytes()); }
-static inline void loadSMSIcon(int num) { glLoadIcon(num, tex().iconSMSTexture()->palette(), tex().iconSMSTexture()->bytes()); }
-static inline void loadGGIcon(int num) { glLoadIcon(num, tex().iconGGTexture()->palette(), tex().iconGGTexture()->bytes()); }
-static inline void loadMDIcon(int num) { glLoadIcon(num, tex().iconMDTexture()->palette(), tex().iconMDTexture()->bytes()); }
-static inline void loadSNESIcon(int num) { glLoadIcon(num, tex().iconSNESTexture()->palette(), tex().iconSNESTexture()->bytes()); }
-static inline void loadPLGIcon(int num) { glLoadIcon(num, tex().iconPLGTexture()->palette(), tex().iconPLGTexture()->bytes()); }
-static inline void loadA26Icon(int num) { glLoadIcon(num, tex().iconA26Texture()->palette(), tex().iconA26Texture()->bytes()); }
-static inline void loadCOLIcon(int num) { glLoadIcon(num, tex().iconCOLTexture()->palette(), tex().iconCOLTexture()->bytes()); }
-static inline void loadM5Icon(int num) { glLoadIcon(num, tex().iconM5Texture()->palette(), tex().iconM5Texture()->bytes()); }
-static inline void loadINTIcon(int num) { glLoadIcon(num, tex().iconINTTexture()->palette(), tex().iconINTTexture()->bytes()); }
-static inline void loadPCEIcon(int num) { glLoadIcon(num, tex().iconPCETexture()->palette(), tex().iconPCETexture()->bytes()); }
-static inline void loadWSIcon(int num) { glLoadIcon(num, tex().iconWSTexture()->palette(), tex().iconWSTexture()->bytes()); }
-static inline void loadNGPIcon(int num) { glLoadIcon(num, tex().iconNGPTexture()->palette(), tex().iconNGPTexture()->bytes()); }
-static inline void loadCPCIcon(int num) { glLoadIcon(num, tex().iconCPCTexture()->palette(), tex().iconCPCTexture()->bytes()); }
-static inline void loadVIDIcon(int num) { glLoadIcon(num, tex().iconVIDTexture()->palette(), tex().iconVIDTexture()->bytes()); }
-static inline void loadIMGIcon(int num) { glLoadIcon(num, tex().iconIMGTexture()->palette(), tex().iconIMGTexture()->bytes()); }
-static inline void loadMSXIcon(int num) { glLoadIcon(num, tex().iconMSXTexture()->palette(), tex().iconMSXTexture()->bytes()); }
-static inline void loadMINIcon(int num) { glLoadIcon(num, tex().iconMINITexture()->palette(), tex().iconMINITexture()->bytes()); }
-static inline void loadHBIcon(int num) { glLoadIcon(num, tex().iconHBTexture()->palette(), tex().iconHBTexture()->bytes()); }
+static inline void loadUnkIcon(int num) { stageConverted(num, tex().iconUnknownTexture()->palette(), tex().iconUnknownTexture()->bytes()); }
+static inline void loadGBAIcon(int num) { stageConverted(num, tex().iconGBATexture()->palette(), tex().iconGBATexture()->bytes()); }
+static inline void loadGBIcon(int num) { stageConverted(num, tex().iconGBTexture()->palette(), tex().iconGBTexture()->bytes()); }
+static inline void loadGBCIcon(int num) { stageConverted(num, tex().iconGBTexture()->palette(), tex().iconGBTexture()->bytes()+(32*16)); }
+static inline void loadNESIcon(int num) { stageConverted(num, tex().iconNESTexture()->palette(), tex().iconNESTexture()->bytes()); }
+static inline void loadSGIcon(int num) { stageConverted(num, tex().iconSGTexture()->palette(), tex().iconSGTexture()->bytes()); }
+static inline void loadSMSIcon(int num) { stageConverted(num, tex().iconSMSTexture()->palette(), tex().iconSMSTexture()->bytes()); }
+static inline void loadGGIcon(int num) { stageConverted(num, tex().iconGGTexture()->palette(), tex().iconGGTexture()->bytes()); }
+static inline void loadMDIcon(int num) { stageConverted(num, tex().iconMDTexture()->palette(), tex().iconMDTexture()->bytes()); }
+static inline void loadSNESIcon(int num) { stageConverted(num, tex().iconSNESTexture()->palette(), tex().iconSNESTexture()->bytes()); }
+static inline void loadPLGIcon(int num) { stageConverted(num, tex().iconPLGTexture()->palette(), tex().iconPLGTexture()->bytes()); }
+static inline void loadA26Icon(int num) { stageConverted(num, tex().iconA26Texture()->palette(), tex().iconA26Texture()->bytes()); }
+static inline void loadCOLIcon(int num) { stageConverted(num, tex().iconCOLTexture()->palette(), tex().iconCOLTexture()->bytes()); }
+static inline void loadM5Icon(int num) { stageConverted(num, tex().iconM5Texture()->palette(), tex().iconM5Texture()->bytes()); }
+static inline void loadINTIcon(int num) { stageConverted(num, tex().iconINTTexture()->palette(), tex().iconINTTexture()->bytes()); }
+static inline void loadPCEIcon(int num) { stageConverted(num, tex().iconPCETexture()->palette(), tex().iconPCETexture()->bytes()); }
+static inline void loadWSIcon(int num) { stageConverted(num, tex().iconWSTexture()->palette(), tex().iconWSTexture()->bytes()); }
+static inline void loadNGPIcon(int num) { stageConverted(num, tex().iconNGPTexture()->palette(), tex().iconNGPTexture()->bytes()); }
+static inline void loadCPCIcon(int num) { stageConverted(num, tex().iconCPCTexture()->palette(), tex().iconCPCTexture()->bytes()); }
+static inline void loadVIDIcon(int num) { stageConverted(num, tex().iconVIDTexture()->palette(), tex().iconVIDTexture()->bytes()); }
+static inline void loadIMGIcon(int num) { stageConverted(num, tex().iconIMGTexture()->palette(), tex().iconIMGTexture()->bytes()); }
+static inline void loadMSXIcon(int num) { stageConverted(num, tex().iconMSXTexture()->palette(), tex().iconMSXTexture()->bytes()); }
+static inline void loadMINIcon(int num) { stageConverted(num, tex().iconMINITexture()->palette(), tex().iconMINITexture()->bytes()); }
+static inline void loadHBIcon(int num) { stageConverted(num, tex().iconHBTexture()->palette(), tex().iconHBTexture()->bytes()); }
 
-static inline void clearIcon(int num) { glClearIcon(num); }
+static inline void clearIcon(int num) {
+	// Same path as everything else, with zeroes as the source; full height, as
+	// glClearIcon() used.
+	static const u16 blankPalette[16] = {0};
+	toncset(convertScratch, 0, sizeof(convertScratch));
+	stageConverted(num, blankPalette, convertScratch, TWL_TEX_HEIGHT);
+}
 
 void convertIconPalette(sNDSBannerExt* ndsBanner) {
 	effectColorModePalette(ndsBanner->palette, 16);
@@ -162,12 +233,12 @@ void convertIconPalette(sNDSBannerExt* ndsBanner) {
 
 void drawIcon(int Xpos, int Ypos, int num) {
 	if (num == -1) { // Moving app icon
-		glSprite(Xpos, Ypos, bannerFlip[40], &getIcon(6)[bnriconframenumY[40]]);
+		glSprite(Xpos, Ypos, bannerFlip[40], &getIcon(ICON_MOVING_BANK)[bnriconframenumY[40]]);
 		if (bnriconPalLine[40] != bnriconPalLoaded[40]) {
 			bnriconPalLoaded[40] = -1; // defer loading the palette
 		}
 	} else {
-		glSprite(Xpos, Ypos, bannerFlip[num], &getIcon(num % 6)[bnriconframenumY[num]]);
+		glSprite(Xpos, Ypos, bannerFlip[num], &getIcon(ICON_GRID_BANK(num))[bnriconframenumY[num]]);
 		if (bnriconPalLine[num] != bnriconPalLoaded[num]) {
 			bnriconPalLoaded[num] = -1; // defer loading the palette
 		}
@@ -177,7 +248,11 @@ void drawIcon(int Xpos, int Ypos, int num) {
 void loadDeferredIconPalettes() {
 	for (int i = 0; i < 41; i++) {
 		if (bnriconPalLoaded[i] == -1) {
-			glLoadPalette(i < 40 ? i % 6 : 6, bnriconTile[i].dsi_palette[bnriconPalLine[i]]);
+			// As in execDeferredIconUpdates: the flag stays -1, so whatever is left
+			// is retried on the next vblank rather than tearing this frame.
+			if (!vramSafeToUnmap())
+				return;
+			glLoadPalette(i < 40 ? ICON_GRID_BANK(i) : ICON_MOVING_BANK, bnriconTile[i].dsi_palette[bnriconPalLine[i]]);
 			bnriconPalLoaded[i] = bnriconPalLine[i];
 		}
 	}
@@ -748,7 +823,8 @@ void getGameInfo(bool isDir, const char *name, int num, bool fromArgv) {
 void iconUpdate(bool isDir, const char *name, int num) {
 	logPrint("iconUpdate: ");
 
-	int spriteIdx = num == -1 ? 6 : num % 6;
+	const int listIdx = num; // -1 for the moving app, else the 0..39 grid position
+	const int spriteIdx = (num == -1) ? ICON_MOVING_BANK : ICON_GRID_BANK(num);
 	if (num == -1)
 		num = 40;
 
@@ -821,7 +897,7 @@ void iconUpdate(bool isDir, const char *name, int num) {
 					logPrint("Folder found!");
 					clearIcon(spriteIdx);
 				} else {
-					iconUpdate(false, p, spriteIdx);
+					iconUpdate(false, p, listIdx);
 				}
 			} else {
 				// this is not an nds/app file!

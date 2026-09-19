@@ -1071,12 +1071,15 @@ void customSleep() {
 		powerOff(PM_BACKLIGHT_TOP);
 	}
 	powerOff(PM_BACKLIGHT_BOTTOM);
-	irqDisable(IRQ_VBLANK & IRQ_VCOUNT);
+	// No IRQ juggling here on purpose. This used to read
+	//   irqDisable(IRQ_VBLANK & IRQ_VCOUNT); ... irqEnable(IRQ_VBLANK & IRQ_VCOUNT);
+	// which was a no-op: IRQ_VBLANK is BIT(0) and IRQ_VCOUNT is BIT(2), so the AND is 0.
+	// Writing the intended IRQ_VBLANK | IRQ_VCOUNT would hang the console on lid close,
+	// because swiWaitForVBlank() below waits on exactly the vblank IRQ it would disable.
 	while (keysHeld() & KEY_LID) {
 		scanKeys();
 		swiWaitForVBlank();
 	}
-	irqEnable(IRQ_VBLANK & IRQ_VCOUNT);
 	if (ms().lidSound && tc().playLidSound()) {
 		snd().playLidOpen();
 	}

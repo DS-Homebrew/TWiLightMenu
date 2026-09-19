@@ -493,6 +493,42 @@ void displayNowLoading(void) {
 	showProgressIcon = true;
 }
 
+// Refreshes every icon bank the grid can sample this frame.
+//
+// The draw loop in graphics.cpp draws list entries
+// [CURPOS - ICON_GRID_MAX_OFFSET, CURPOS + ICON_GRID_MAX_OFFSET] clamped to
+// [0, 39], and maps each to bank ICON_GRID_BANK(pos). That window is exactly
+// ICON_GRID_BANKS wide, so the clamp below is deliberately the same expression
+// as the draw loop's: it loads the banks the draw loop reads and nothing else.
+// Do not widen it, do not re-anchor it to stay full width at the list ends, and
+// do not pass anything but the absolute grid position as iconUpdate()'s third
+// argument -- each of those silently decouples the load window from the draw
+// window again, which is what left the leftmost box rendering another entry's
+// icon.
+//
+// waitVBlank is for the "Now Loading" paths, which want a frame between reads so
+// the progress bar animates. The touch and drag paths must pass false, or they
+// stall the scroll by a vblank per icon.
+static void refreshGridIcons(const std::vector<DirEntry> &entries, int centre, bool waitVBlank) {
+	const int first = std::max(centre - ICON_GRID_MAX_OFFSET, 0);
+	const int last = std::min(centre + ICON_GRID_MAX_OFFSET, 39);
+
+	for (int pos = first; pos <= last; pos++) {
+		const int idx = pos + PAGENUM * 40;
+		// idx only increases, so nothing further can be in range.
+		if (idx >= file_count || idx >= (int)entries.size())
+			break;
+		if (waitVBlank)
+			bgOperations(true);
+		iconUpdate(entries[idx].isDirectory, entries[idx].name.c_str(), pos);
+	}
+}
+
+static inline void refreshGridIcons(SwitchState scrn, const std::vector<std::vector<DirEntry>> &dirContents,
+					int centre, bool waitVBlank) {
+	refreshGridIcons(dirContents[scrn], centre, waitVBlank);
+}
+
 void moveCursor(bool right, const std::vector<DirEntry> dirContents, int maxEntry = 0xFFFF) {
 	if ((right && CURPOS >= last_used_box) || (!right && CURPOS <= 0)) {
 		if (ms().theme != TWLSettings::EThemeSaturn && !edgeBumpSoundPlayed)
@@ -542,7 +578,11 @@ void moveCursor(bool right, const std::vector<DirEntry> dirContents, int maxEntr
 			updateText(false);
 		}
 
-		int pos = CURPOS + (right ? 2 : -2);
+		// Only one entry is newly uncovered by the cursor step; it evicts the
+		// bank of the entry that just fell off the far side. Keep this O(1)
+		// rather than calling refreshGridIcons, which would turn one SD read
+		// per keypress into ICON_GRID_BANKS of them.
+		int pos = CURPOS + (right ? ICON_GRID_MAX_OFFSET : -ICON_GRID_MAX_OFFSET);
 		if (pos >= 0 && pos + PAGENUM * 40 < (int)dirContents.size()) {
 			iconUpdate(dirContents[pos + PAGENUM * 40].isDirectory,
 						dirContents[pos + PAGENUM * 40].name.c_str(),
@@ -2838,33 +2878,7 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 		progressBarLength = 0;
 		if (ms().theme != TWLSettings::EThemeSaturn && ms().theme != TWLSettings::EThemeHBL) fadeType = false; // Fade to white
 	}
-	// Load correct icons depending on cursor position
-	if (CURPOS <= 1) {
-		for (int i = 0; i < 5; i++) {
-			if (i + PAGENUM * 40 < file_count) {
-				bgOperations(true);
-				iconUpdate(dirContents[scrn].at(i + PAGENUM * 40).isDirectory,
-					   dirContents[scrn].at(i + PAGENUM * 40).name.c_str(), i);
-			}
-		}
-	} else if (CURPOS >= 2 && CURPOS <= 36) {
-		for (int i = 0; i < 6; i++) {
-			if ((CURPOS - 2 + i) + PAGENUM * 40 < file_count) {
-				bgOperations(true);
-				iconUpdate(dirContents[scrn].at((CURPOS - 2 + i) + PAGENUM * 40).isDirectory,
-					   dirContents[scrn].at((CURPOS - 2 + i) + PAGENUM * 40).name.c_str(),
-					   CURPOS - 2 + i);
-			}
-		}
-	} else if (CURPOS >= 37 && CURPOS <= 39) {
-		for (int i = 0; i < 5; i++) {
-			if ((35 + i) + PAGENUM * 40 < file_count) {
-				bgOperations(true);
-				iconUpdate(dirContents[scrn].at((35 + i) + PAGENUM * 40).isDirectory,
-					   dirContents[scrn].at((35 + i) + PAGENUM * 40).name.c_str(), 35 + i);
-			}
-		}
-	}
+	refreshGridIcons(scrn, dirContents, CURPOS, true);
 }
 
 static bool previousPage(SwitchState scrn, vector<vector<DirEntry>> dirContents) {
@@ -2904,33 +2918,7 @@ static bool previousPage(SwitchState scrn, vector<vector<DirEntry>> dirContents)
 	if (showLshoulder) {
 		displayNowLoading();
 	} else {
-		// Load correct icons depending on cursor position
-		if (CURPOS <= 1) {
-			for (int i = 0; i < 5; i++) {
-				if (i + PAGENUM * 40 < file_count) {
-					bgOperations(true);
-					iconUpdate(dirContents[scrn].at(i + PAGENUM * 40).isDirectory,
-						   dirContents[scrn].at(i + PAGENUM * 40).name.c_str(), i);
-				}
-			}
-		} else if (CURPOS >= 2 && CURPOS <= 36) {
-			for (int i = 0; i < 6; i++) {
-				if ((CURPOS - 2 + i) + PAGENUM * 40 < file_count) {
-					bgOperations(true);
-					iconUpdate(dirContents[scrn].at((CURPOS - 2 + i) + PAGENUM * 40).isDirectory,
-						   dirContents[scrn].at((CURPOS - 2 + i) + PAGENUM * 40).name.c_str(),
-						   CURPOS - 2 + i);
-				}
-			}
-		} else if (CURPOS >= 37 && CURPOS <= 39) {
-			for (int i = 0; i < 5; i++) {
-				if ((35 + i) + PAGENUM * 40 < file_count) {
-					bgOperations(true);
-					iconUpdate(dirContents[scrn].at((35 + i) + PAGENUM * 40).isDirectory,
-						   dirContents[scrn].at((35 + i) + PAGENUM * 40).name.c_str(), 35 + i);
-				}
-			}
-		}
+		refreshGridIcons(scrn, dirContents, CURPOS, true);
 		whiteScreen = false;
 		fadeType = true; // Fade in from white
 	}
@@ -2981,33 +2969,7 @@ static bool nextPage(SwitchState scrn, vector<vector<DirEntry>> dirContents) {
 	if (showRshoulder) {
 		displayNowLoading();
 	} else {
-		// Load correct icons depending on cursor position
-		if (CURPOS <= 1) {
-			for (int i = 0; i < 5; i++) {
-				if (i + PAGENUM * 40 < file_count) {
-					bgOperations(true);
-					iconUpdate(dirContents[scrn].at(i + PAGENUM * 40).isDirectory,
-						   dirContents[scrn].at(i + PAGENUM * 40).name.c_str(), i);
-				}
-			}
-		} else if (CURPOS >= 2 && CURPOS <= 36) {
-			for (int i = 0; i < 6; i++) {
-				if ((CURPOS - 2 + i) + PAGENUM * 40 < file_count) {
-					bgOperations(true);
-					iconUpdate(dirContents[scrn].at((CURPOS - 2 + i) + PAGENUM * 40).isDirectory,
-						   dirContents[scrn].at((CURPOS - 2 + i) + PAGENUM * 40).name.c_str(),
-						   CURPOS - 2 + i);
-				}
-			}
-		} else if (CURPOS >= 37 && CURPOS <= 39) {
-			for (int i = 0; i < 5; i++) {
-				if ((35 + i) + PAGENUM * 40 < file_count) {
-					bgOperations(true);
-					iconUpdate(dirContents[scrn].at((35 + i) + PAGENUM * 40).isDirectory,
-						   dirContents[scrn].at((35 + i) + PAGENUM * 40).name.c_str(), 35 + i);
-				}
-			}
-		}
+		refreshGridIcons(scrn, dirContents, CURPOS, true);
 		whiteScreen = false;
 		fadeType = true; // Fade in from white
 	}
@@ -3170,7 +3132,8 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 	while (1) {
 		updateDirectoryContents(dirContents[scrn]);
 		getFileInfo(scrn, dirContents, true);
-		reloadIconPalettes();
+		if (!vramSafeToUnmap()) swiWaitForVBlank(); // unmaps VRAM E/F/G while it copies
+			reloadIconPalettes();
 		if (ms().theme != TWLSettings::EThemeSaturn && ms().theme != TWLSettings::EThemeHBL) {
 			while (!screenFadedOut()) { swiWaitForVBlank(); }
 		}
@@ -3449,7 +3412,8 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							for (int i = 0; i < 5; i++) {
 								bgOperations(true);
 							}
-							reloadIconPalettes();
+							if (!vramSafeToUnmap()) swiWaitForVBlank(); // unmaps VRAM E/F/G while it copies
+			reloadIconPalettes();
 							clearText();
 							updateText(false);
 						} else {
@@ -3484,7 +3448,8 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							for (int i = 0; i < 5; i++) {
 								bgOperations(true);
 							}
-							reloadIconPalettes();
+							if (!vramSafeToUnmap()) swiWaitForVBlank(); // unmaps VRAM E/F/G while it copies
+			reloadIconPalettes();
 							clearText();
 							updateText(false);
 						} else {
@@ -3560,14 +3525,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 
 					// Load icons
 					if (prevPos != CURPOS) {
-						for (int i = 0; i < 6; i++) {
-							const int pos = (CURPOS - 2 + i);
-							if (pos >= 0 && pos + PAGENUM * 40 < file_count) {
-								iconUpdate(dirContents[scrn][pos + PAGENUM * 40].isDirectory,
-										dirContents[scrn][pos + PAGENUM * 40].name.c_str(),
-										pos);
-							}
-						}
+						refreshGridIcons(scrn, dirContents, CURPOS, false);
 					}
 
 					if (CURPOS + PAGENUM * 40 < ((int)dirContents[scrn].size())) {
@@ -3665,15 +3623,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 								swiWaitForVBlank();
 							}
 
-							// Load icons
-							for (int i = 0; i < 6; i++) {
-								const int pos = (CURPOS1 - 2 + i);
-								if (pos >= 0 && pos + PAGENUM * 40 < file_count) {
-									iconUpdate(dirContents[scrn][pos + PAGENUM * 40].isDirectory,
-											dirContents[scrn][pos + PAGENUM * 40].name.c_str(),
-											pos);
-								}
-							}
+							refreshGridIcons(scrn, dirContents, CURPOS1, false);
 
 							for (int i = 0; i < 6; i++) {
 								swiWaitForVBlank();
@@ -3685,15 +3635,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 								swiWaitForVBlank();
 							}
 
-							// Load icons again
-							for (int i = 0; i < 6; i++) {
-								const int pos = (CURPOS - 2 + i);
-								if (pos >= 0 && pos + PAGENUM * 40 < file_count) {
-									iconUpdate(dirContents[scrn][pos + PAGENUM * 40].isDirectory,
-											dirContents[scrn][pos + PAGENUM * 40].name.c_str(),
-											pos);
-								}
-							}
+							refreshGridIcons(scrn, dirContents, CURPOS, false);
 
 							while (titleboxXpos[ms().secondaryDevice] != titleboxXdest[ms().secondaryDevice]) {
 								swiWaitForVBlank();
@@ -3705,15 +3647,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					} else if (ms().theme != TWLSettings::EThemeSaturn) {
 						CURPOS = std::clamp(CURPOS + moveBy, 0, last_used_box);
 
-						// Load icons
-						for (int i = 0; i < 6; i++) {
-							const int pos = (CURPOS - 2 + i);
-							if (pos >= 0 && pos + PAGENUM * 40 < file_count) {
-								iconUpdate(dirContents[scrn][pos + PAGENUM * 40].isDirectory,
-										dirContents[scrn][pos + PAGENUM * 40].name.c_str(),
-										pos);
-							}
-						}
+						refreshGridIcons(scrn, dirContents, CURPOS, false);
 					}
 				} else if (ms().theme != TWLSettings::EThemeSaturn) {
 					draggingIcons = true;
@@ -3750,15 +3684,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 								CURPOS = std::clamp((titleboxXpos[ms().secondaryDevice] + 28) / titleboxXspacing, 0, last_used_box);
 
 								if (CURPOS != prevPos) {
-									// Load icons
-									for (int i = 0; i < 6; i++) {
-										int pos = (CURPOS - 2 + i);
-										if (pos >= 0 && pos + PAGENUM * 40 < file_count) {
-											iconUpdate(dirContents[scrn][pos + PAGENUM * 40].isDirectory,
-													dirContents[scrn][pos + PAGENUM * 40].name.c_str(),
-													pos);
-										}
-									}
+									refreshGridIcons(scrn, dirContents, CURPOS, false);
 
 									clearText();
 									if (CURPOS + PAGENUM * 40 < ((int)dirContents[scrn].size()) && boxDest > -28 && boxDest < titleboxXspacing * 39 + 28) {
@@ -3802,15 +3728,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 						CURPOS = std::clamp((titleboxXpos[ms().secondaryDevice] + 28) / titleboxXspacing, 0, last_used_box);
 
 						if (prevPos != CURPOS) {
-							// Load icons
-							for (int i = 0; i < 6; i++) {
-								int pos = (CURPOS - 2 + i);
-								if (pos >= 0 && pos + PAGENUM * 40 < file_count) {
-									iconUpdate(dirContents[scrn][pos + PAGENUM * 40].isDirectory,
-											dirContents[scrn][pos + PAGENUM * 40].name.c_str(),
-											pos);
-								}
-							}
+							refreshGridIcons(scrn, dirContents, CURPOS, false);
 						}
 
 						clearText();
