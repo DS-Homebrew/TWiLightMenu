@@ -2222,17 +2222,22 @@ int titleMode(void)
 		*(u32*)0x02FF8000 = 0x53535A4C;
 	}
 
-	if (isDSiMode() && sdFound()) {
-		if ((access("sd:/_nds/bios9i.bin", F_OK) != 0) && (access("sd:/_nds/bios9i_part1.bin", F_OK) != 0)) {
+	if (isDSiMode()) {
+		const char* bios9iPath = sys().isRunFromSD() ? "sd:/_nds/bios9i.bin" : "fat:/_nds/bios9i.bin";
+		const char* bios9iPart1Path = sys().isRunFromSD() ? "sd:/_nds/bios9i_part1.bin" : "fat:/_nds/bios9i_part1.bin";
+		const char* bios7iPath = sys().isRunFromSD() ? "sd:/_nds/bios7i.bin" : "fat:/_nds/bios7i.bin";
+		const char* bios7iPart1Path = sys().isRunFromSD() ? "sd:/_nds/bios7i_part1.bin" : "fat:/_nds/bios7i_part1.bin";
+
+		if ((access(bios9iPath, F_OK) != 0) && (access(bios9iPart1Path, F_OK) != 0)) {
 			extern char copyBuf[0x8000];
 			tonccpy(copyBuf, (u8*)0xFFFF0000, 0x8000);
 
-			FILE* bios = fopen("sd:/_nds/bios9i_part1.bin", "wb");
+			FILE* bios = fopen(bios9iPart1Path, "wb");
 			fwrite(copyBuf, 1, 0x8000, bios);
 			fclose(bios);
 		}
-		if ((access("sd:/_nds/bios7i.bin", F_OK) != 0) && (access("sd:/_nds/bios7i_part1.bin", F_OK) != 0)) {
-			FILE* bios = fopen("sd:/_nds/bios7i_part1.bin", "wb");
+		if ((access(bios7iPath, F_OK) != 0) && (access(bios7iPart1Path, F_OK) != 0)) {
+			FILE* bios = fopen(bios7iPart1Path, "wb");
 			fwrite((char*)0x0C800000, 1, 0x8000, bios);
 			fclose(bios);
 		}
