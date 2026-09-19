@@ -18,6 +18,9 @@ glImage _ndsIcon[NDS_ICON_BANK_COUNT][TWL_ICON_FRAMES];
 static u8 clearTiles[(32 * 256) / 2] = {0};
 static u16 blackPalette[16 * 8] = {0};
 
+// Set if any bank's texture allocation ever failed; see glLoadTileSetIntoSlot.
+static bool iconBankAllocFailed = false;
+
 /**
  * Gets the current icon stored at the specified index.
  * If the index is out of bounds or the icon manager is not
@@ -54,7 +57,17 @@ void glLoadTileSetIntoSlot(int num, int tile_wid, int tile_hei, int bmp_wid, int
 	}
 
 	glBindTexture(0, textureID);
-	glTexImage2D(0, 0, type, sizeX, sizeY, 0, param, _texture);
+	// Icon banks are allocated after the theme's textures (main.cpp), so they are
+	// the first thing to fail if a heavy custom theme exhausts texture VRAM. On
+	// failure the UV coords below are still written against a stale textureID and
+	// the icon draws as garbage, so record it rather than fail silently.
+	// Only nocashMessage here, never logPrint: this runs inside the vblank IRQ via
+	// execDeferredIconUpdates(), and logPrint does fopen/fwrite on the SD card.
+	// iconManagerInit() reports the flag from the main thread instead.
+	if (!glTexImage2D(0, 0, type, sizeX, sizeY, 0, param, _texture)) {
+		iconBankAllocFailed = true;
+		nocashMessage("glTexImage2D failed for icon bank!");
+	}
 	glColorTableEXT(0, 0, pallette_width, 0, 0, _palette);
 
 	int i = 0;
@@ -97,9 +110,9 @@ static inline GL_TEXTURE_SIZE_ENUM tex_height(int texHeight) {
 }
 
 /**
- * Initializes an icon into one of 6 existing banks, overwritting
- * the previous data.
- * num must be in the range [0, 5], OR ONE OF
+ * Initializes an icon into one of the NDS_ICON_BANK_COUNT existing banks,
+ * overwritting the previous data.
+ * num must be in the range [0, NDS_ICON_BANK_COUNT - 1], OR ONE OF
  * GBA_ICON, GBC_ICON, or NES_ICON
  *
  * If init is true, then the palettes will be copied into
@@ -166,10 +179,10 @@ void reloadIconPalettes() {
 	}
 }
 /**
- * Loads an icon into one of 6 existing banks, overwritting
- * the previous data.
- * num must be in the range [0, 5], or else this function
- * does nothing.
+ * Loads an icon into one of the NDS_ICON_BANK_COUNT existing banks,
+ * overwritting the previous data.
+ * num must be in the range [0, NDS_ICON_BANK_COUNT - 1], or else this
+ * function does nothing.
  *
  * If init is true, then the palettes will be copied into
  * texture memory before being bound with
@@ -196,15 +209,19 @@ void iconManagerInit() {
 
 	tex().loadIconUnknownTexture();
 
-	// Allocate texture memory for 6 textures.
+	// Allocate texture memory for the icon banks.
 	glGenTextures(NDS_ICON_BANK_COUNT, _iconTexID);
 
-	// Initialize empty data for the 6 textures.
+	// Initialize empty data for each bank.
 	for (int i = 0; i < NDS_ICON_BANK_COUNT; i++) {
-		// Todo: Check if this is too much VRAM for NDS icons.
 		glLoadIcon(i, tex().iconUnknownTexture()->palette(), tex().iconUnknownTexture()->bytes(),
 			   TWL_TEX_HEIGHT, true);
 	}
+
+	// Safe to log here: main thread, and this is where VRAM exhaustion would first
+	// show, since every bank is allocated at full TWL_TEX_HEIGHT above.
+	if (iconBankAllocFailed)
+		logPrint("Out of texture VRAM for icon banks!\n");
 
 	// set initialized.
 	initialized = true;

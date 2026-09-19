@@ -79,6 +79,11 @@ static u16* _frameBufferBot[2] = {NULL};
 
 static bool topBorderBufferLoaded = false;
 
+// Width of the last shoulder labels drawn, so a shorter one can erase the longer
+// one it replaces instead of leaving its tail behind.
+static int _previousShoulderLWidth = 0;
+static int _previousShoulderRWidth = 0;
+
 // Top screen pixels drawn by GUI elements (username, date, time, battery...), which a video
 // on the top screen keeps in front of it, and the rows changed since flushTopGui() last ran.
 static u8 _topGuiMask[256 * 192] = {0};
@@ -1070,6 +1075,11 @@ void ThemeTextures::commitBgMainModify() {
 		bgLoc = _frameBufferBot[0];
 	}*/
 	DC_FlushRange(_bgMainBuffer, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
+	// Fix screen tearing. Unlike commitBgSubModify's "wait for line 191", this only
+	// waits while the beam is still scanning out, because drawBottomBg() reaches
+	// here from inside the vblank IRQ -- where REG_VCOUNT is already >= 192 and a
+	// wait-for-191 would spin for very nearly a whole frame with interrupts held.
+	while (REG_VCOUNT < 192);
 	if (videoOwnsBottomBand()) {
 		commitAroundBand(_bgMainBuffer, bgLoc, rocketVideo_videoYposBottom, false);
 		invalidateVideoAlphaRows(1, 0, SCREEN_HEIGHT);
@@ -1827,11 +1837,55 @@ ITCM_CODE void ThemeTextures::resetCachedBatteryLevel() {
 void ThemeTextures::drawShoulders(bool LShoulderActive, bool RShoulderActive) {
 	beginBgSubModify();
 
+	if (!topBorderBufferLoaded) {
+		_backgroundTextures[0].copy(_topBorderBuffer, false);
+		topBorderBufferLoaded = true;
+	}
+
+	// The labels below are alpha-blended, so they must land on the clean background
+	// (plus this frame's button art), not on whatever was composited here last time.
+	// Without this, every redraw blends the text over its own previous copy and the
+	// label darkens; a label that shrinks also leaves its old tail behind. The stock
+	// button art is opaque and hides both, but a label wider than its button does not.
+	const auto restoreRect = [](int x0, int y0, int w, int h) {
+		const int sx = std::max(x0, 0), ex = std::min(x0 + w, (int)SCREEN_WIDTH);
+		if (ex <= sx)
+			return;
+		for (int y = std::max(y0, 0); y < std::min(y0 + h, (int)SCREEN_HEIGHT); y++) {
+			tonccpy(&_bgSubBuffer[y * 256 + sx], &_topBorderBuffer[y * 256 + sx],
+				(ex - sx) * sizeof(u16));
+			if (boxArtColorDeband) {
+				tonccpy(&_bgSubBuffer2[y * 256 + sx], &_topBorderBuffer[y * 256 + sx],
+					(ex - sx) * sizeof(u16));
+			}
+			toncset(&_topGuiMask[y * 256 + sx], 0, ex - sx);
+		}
+		markTopGuiRows(y0, y0 + h);
+	};
+
 	const Texture *rightTex = RShoulderActive ? _rightShoulderTexture.get() : _rightShoulderGreyedTexture.get();
 	const u16 *rightSrc = rightTex->texture();
 
 	const Texture *leftTex = LShoulderActive ? _leftShoulderTexture.get() : _leftShoulderGreyedTexture.get();
 	const u16 *leftSrc = leftTex->texture();
+
+	restoreRect((int)tc().shoulderRRenderX(), (int)tc().shoulderRRenderY(),
+			(int)rightTex->texWidth(), (int)rightTex->texHeight());
+	restoreRect((int)tc().shoulderLRenderX(), (int)tc().shoulderLRenderY(),
+			(int)leftTex->texWidth(), (int)leftTex->texHeight());
+
+	// Labels too, widened to whatever was drawn last time so a shorter string cannot
+	// leave a tail. Must happen before the button art below, or it would erase it.
+	const auto restoreLabel = [&](int textX, int textY, int align, int width, int &previousWidth) {
+		const int eraseWidth = std::max(width, previousWidth);
+		previousWidth = width;
+		restoreRect(textX - (align < 0 ? eraseWidth : align == 0 ? eraseWidth / 2 : 0),
+				textY, eraseWidth, smallFont()->height());
+	};
+	restoreLabel(tc().shoulderRTextX(), tc().shoulderRTextY(), tc().shoulderRTextAlign(),
+			smallFont()->calcWidth(STR_NEXT), _previousShoulderRWidth);
+	restoreLabel(tc().shoulderLTextX(), tc().shoulderLTextY(), tc().shoulderLTextAlign(),
+			smallFont()->calcWidth(STR_PREV), _previousShoulderLWidth);
 
 	// Draw R Shoulder
 	for (uint y = tc().shoulderRRenderY(); y < tc().shoulderRRenderY() + rightTex->texHeight(); y++) {
@@ -1916,13 +1970,13 @@ ITCM_CODE void ThemeTextures::drawDateTime(const char *str, int posX, int posY, 
 	dateTimeFont()->print(0, 0, true, str, Alignment::left, FontPalette::dateTime);
 	int width = std::max(dateTimeFont()->calcWidth(str), isDate ? _previousDateWidth : _previousTimeWidth);
 
-	// Copy to background. The text also goes into _bgSubBuffer and the GUI mask; rows inside a
-	// playing video's band are left to the video, which copies the text back over its frame.
+	// Compose into _bgSubBuffer and the GUI mask; rows inside a playing video's band are left to
+	// the video, which copies the text back over its frame. Nothing touches VRAM yet -- blending
+	// straight into BG_GFX_SUB tears, since this runs on the main thread at an arbitrary scanline
+	// while every other writer of this screen goes through commitBgSubModify().
 	const bool videoPlaying = videoOwnsTopBand();
 	for (int y = 0; y < dateTimeFont()->height() && posY + y < SCREEN_HEIGHT; y++) {
 		if (posY + y < 0) continue;
-		const bool rowInVideoBand = videoPlaying && posY + y >= rocketVideo_videoYpos
-			&& posY + y < rocketVideo_videoYpos + rocketVideo_bandHeight;
 		for (int x = 0; x < width && posX + x < SCREEN_WIDTH; x++) {
 			if (posX + x < 0) continue;
 			int px = FontGraphic::textBuf[1][y * 256 + x];
@@ -1931,12 +1985,27 @@ ITCM_CODE void ThemeTextures::drawDateTime(const char *str, int posX, int posY, 
 
 			_topGuiMask[(posY + y) * 256 + (posX + x)] = (px != 0);
 			_bgSubBuffer[(posY + y) * 256 + (posX + x)] = val;
-			if (!rowInVideoBand) {
-				BG_GFX_SUB[(posY + y) * 256 + (posX + x)] = val;
-			}
+		}
+	}
+
+	// Now push just the finished rows to VRAM, outside active display.
+	const int firstY = std::max(posY, 0);
+	const int lastY = std::min(posY + dateTimeFont()->height(), (int)SCREEN_HEIGHT);
+	const int firstX = std::max(posX, 0);
+	const int lastX = std::min(posX + width, (int)SCREEN_WIDTH);
+	if (lastY > firstY && lastX > firstX) {
+		const size_t rowBytes = (lastX - firstX) * sizeof(u16);
+		while (REG_VCOUNT < 192); // Fix screen tearing; see commitBgMainModify on the bound
+		for (int y = firstY; y < lastY; y++) {
+			const u16 *src = &_bgSubBuffer[y * 256 + firstX];
+			const bool rowInVideoBand = videoPlaying && y >= rocketVideo_videoYpos
+				&& y < rocketVideo_videoYpos + rocketVideo_bandHeight;
+			if (!rowInVideoBand)
+				tonccpy(&BG_GFX_SUB[y * 256 + firstX], src, rowBytes);
+			// With deband on it is these, not BG_GFX_SUB, that are scanned out.
 			if (boxArtColorDeband) {
-				_frameBufferBot[0][(posY + y) * 256 + (posX + x)] = val;
-				_frameBufferBot[1][(posY + y) * 256 + (posX + x)] = val;
+				tonccpy(&_frameBufferBot[0][y * 256 + firstX], src, rowBytes);
+				tonccpy(&_frameBufferBot[1][y * 256 + firstX], src, rowBytes);
 			}
 		}
 	}
@@ -2613,9 +2682,9 @@ void ThemeTextures::videoSetup() {
 	// Clear the GL texture state
 	glResetTextures();
 
-	// Set up enough texture memory for our textures
-	// Bank A is just 128kb and we are using 194 kb of
-	// sprites
+	// Set up enough texture memory for our textures.
+	// Bank A is 128 KB of texture memory. Stock themes use roughly 53 KB (3DS) /
+	// 63 KB (DSi) of sprites, plus NDS_ICON_BANK_COUNT * 4 KB of icon banks.
 	vramSetBankA(VRAM_A_TEXTURE);
 	vramSetBankB(VRAM_B_MAIN_BG_0x06020000);
 	vramSetBankC(VRAM_C_SUB_BG_0x06200000);

@@ -730,6 +730,28 @@ void vBlankHandler() {
 	execDeferredIconUpdates(); // Update any icons queued during last vblank.
 	loadDeferredIconPalettes();
 
+	// Periodic palette repair. This has to sit up here with the other VRAM work:
+	// glColorTableEXT unmaps VRAM E/F/G (texture palettes and main sprite) while it
+	// copies, so running it further down -- after the video blit, the whole gl2d
+	// list and before bottomBgRefresh's DMAs -- puts it past the end of vblank and
+	// tears the screen once every REFRESH_EVERY_VBLANKS frames. Reading dbox_Ypos
+	// before this frame's slide updates it only shifts the repair by one frame.
+	// Skipped rather than clamped when out of blanking: the counter is left at the
+	// threshold so the repair simply happens on the next vblank instead.
+	if (vblankRefreshCounter >= REFRESH_EVERY_VBLANKS) {
+		if (vramSafeToUnmap()) {
+			if (showdialogbox && dbox_Ypos == -192) {
+				// Reload the dialog box palettes here...
+				reloadDboxPalette();
+			} else if (!showdialogbox) {
+				reloadIconPalettes();
+			}
+			vblankRefreshCounter = 0;
+		}
+	} else {
+		vblankRefreshCounter++;
+	}
+
 	if (waitForNeedToPlayStopSound > 0) {
 		waitForNeedToPlayStopSound++;
 		if (waitForNeedToPlayStopSound == 5) {
@@ -1064,7 +1086,7 @@ void vBlankHandler() {
 		// Playback animated icons
 		for (int i = 0; i < ((movingApp != -1) ? 41 : 40); i++) {
 			if (bnriconisDSi[i] && playBannerSequence(i) && !updateFrame) {
-				updateFrame = (displayGameIcons && (ms().theme != TWLSettings::EThemeSaturn)) ? ((i >= CURPOS-2 && i <= CURPOS+2) || i == 40) : (i == CURPOS);
+				updateFrame = (displayGameIcons && (ms().theme != TWLSettings::EThemeSaturn)) ? ((i >= CURPOS-ICON_GRID_MAX_OFFSET && i <= CURPOS+ICON_GRID_MAX_OFFSET) || i == 40) : (i == CURPOS);
 			}
 		}
 	}
@@ -1217,7 +1239,11 @@ void vBlankHandler() {
 			int realCurPos = (titleboxXpos[ms().secondaryDevice] + 32) / titleboxXspacing;
 			int titleboxOffset = (realCurPos * titleboxXspacing) - (titleboxXpos[ms().secondaryDevice]);
 
-			int maxIconNumber = (ms().theme == TWLSettings::EThemeSaturn ? 0 : 3);
+			// One icon bank per box drawn below, or two boxes in the same frame
+			// alias onto one bank (see ICON_GRID_BANKS in iconHandler.h).
+			static_assert(2 * ICON_GRID_MAX_OFFSET + 1 <= ICON_GRID_BANKS,
+					  "icon grid draws more boxes than it has texture banks");
+			int maxIconNumber = (ms().theme == TWLSettings::EThemeSaturn ? 0 : ICON_GRID_MAX_OFFSET);
 			for (int pos = std::max(CURPOS - maxIconNumber, 0); pos <= std::min(CURPOS + maxIconNumber, 39); pos++) {
 				int i = pos;
 
@@ -1253,7 +1279,26 @@ void vBlankHandler() {
 
 					if (i >= movingApp - (PAGENUM * 40))
 						i++;
+
+					// The gap left by the moving app shifts content one slot right,
+					// which would widen the entries drawn this frame to
+					// [CURPOS-3, CURPOS+4] -- one more than ICON_GRID_BANKS, so two
+					// would alias. The extra box sits off the right of the screen
+					// (move mode uses titleboxXspacing 76), so drop it instead.
+					// continue, not break: the DSi brace below reads the loop's
+					// final spawnedboxXpos, which is already assigned above.
+					if (i > CURPOS + maxIconNumber)
+						continue;
 				}
+
+				// Positions are final here (after the DSi nudge and the move-mode
+				// shift), so skip boxes that fall entirely off-screen. Saves up to
+				// two glSprite/drawIcon pairs per frame and stops drawIcon marking
+				// palettes dirty for entries nobody can see. Every sprite drawn at
+				// this x (box full/empty, folder, settings) is a fixed 64px wide.
+				const int boxScreenX = spawnedboxXpos - titleboxXpos[ms().secondaryDevice];
+				if (boxScreenX <= -64 || boxScreenX >= SCREEN_WIDTH)
+					continue;
 
 				if (i < spawnedtitleboxes) {
 					if (isDirectory[i]) {
@@ -1564,18 +1609,6 @@ void vBlankHandler() {
 		glEnd2D();
 		GFX_FLUSH = 0;
 		updateFrame = false;
-	}
-
-	if (vblankRefreshCounter >= REFRESH_EVERY_VBLANKS) {
-		if (showdialogbox && dbox_Ypos == -192) {
-			// Reload the dialog box palettes here...
-			reloadDboxPalette();
-		} else if (!showdialogbox) {
-			reloadIconPalettes();
-		}
-		vblankRefreshCounter = 0;
-	} else {
-		vblankRefreshCounter++;
 	}
 
 	if (boxArtColorDeband) {
