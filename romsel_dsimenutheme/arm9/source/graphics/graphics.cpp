@@ -98,6 +98,7 @@ extern bool showSTARTborder;
 extern bool needToPlayStopSound;
 extern int waitForNeedToPlayStopSound;
 extern int movingApp;
+extern int movingAppXpos;
 extern int movingAppYpos;
 extern bool movingAppIsDir;
 extern bool draggingIcons;
@@ -769,6 +770,7 @@ void vBlankHandler() {
 	static bool showProgressBarPrev = showProgressBar;
 	static int progressBarLengthPrev = progressBarLength;
 	static bool dbox_showIconPrev = dbox_showIcon;
+	static int movingAppXposPrev = movingAppXpos;
 	static int movingAppYposPrev = movingAppYpos;
 
 	if (whiteScreenPrev != whiteScreen) {
@@ -1033,6 +1035,13 @@ void vBlankHandler() {
 		updateFrame = true;
 	}
 
+	// The stylus drag moves the carried box horizontally without touching
+	// anything else, so nothing above would mark the frame dirty.
+	if (movingAppXposPrev != movingAppXpos) {
+		movingAppXposPrev = movingAppXpos;
+		updateFrame = true;
+	}
+
 	if (applaunchprep && titleboxYmovepos < 192) {
 		titleboxYmovepos += 5;
 		updateFrame = true;
@@ -1274,6 +1283,8 @@ void vBlankHandler() {
 						}
 					}
 				} else {
+					// Move mode. insertSlotAtScreenX() in fileBrowse.cpp is the inverse
+					// of this layout -- keep the two in step.
 					spawnedboxXpos = 96 + 38 + pos * titleboxXspacing;
 					iconXpos = 112 + 38 + pos * titleboxXspacing;
 
@@ -1350,33 +1361,38 @@ void vBlankHandler() {
 			}
 
 			if (movingApp != -1) {
+				// movingAppXpos is the carried box'''s screen x: 96 when it sits on the
+				// gap (the keypad move mode never changes it), or wherever the stylus
+				// has dragged it to. +16 is the icon'''s inset inside the 64px box, the
+				// same 112 - 96 relationship the row above uses.
+				const int movingIconXpos = movingAppXpos + 16;
 				if (movingAppIsDir) {
 					if (ms().theme == TWLSettings::ETheme3DS)
-						glSprite(96, titleboxYpos - movingAppYpos, GL_FLIP_NONE, tex().folderImage());
+						glSprite(movingAppXpos, titleboxYpos - movingAppYpos, GL_FLIP_NONE, tex().folderImage());
 					else
-						glSprite(96, titleboxYpos - movingAppYpos + titleboxYposDropDown[movingApp % 5],
+						glSprite(movingAppXpos, titleboxYpos - movingAppYpos + titleboxYposDropDown[movingApp % 5],
 								 GL_FLIP_NONE, tex().folderImage());
-					if (customIcon[movingApp])
-						drawIcon(112,
+					if (customIcon[MOVING_APP_SLOT])
+						drawIcon(movingIconXpos,
 								 (titleboxYpos + iconYposOnTitleBox) - movingAppYpos + titleboxYposDropDown[movingApp % 5],
 								 -1);
 				} else {
-					if (!bnrSysSettings[movingApp]) {
+					if (!bnrSysSettings[MOVING_APP_SLOT]) {
 						if (ms().theme == TWLSettings::ETheme3DS) {
-							glSprite(96, titleboxYpos - movingAppYpos, GL_FLIP_NONE,
+							glSprite(movingAppXpos, titleboxYpos - movingAppYpos, GL_FLIP_NONE,
 									 tex().boxfullImage());
 						} else {
-							glSprite(96,
+							glSprite(movingAppXpos,
 									 titleboxYpos - movingAppYpos + titleboxYposDropDown[movingApp % 5],
 									 GL_FLIP_NONE, &tex().boxfullImage()[0]);
 						}
 					}
-					if (bnrSysSettings[movingApp])
-						glSprite(96,
+					if (bnrSysSettings[MOVING_APP_SLOT])
+						glSprite(movingAppXpos,
 								 (titleboxYpos - 1) - movingAppYpos + titleboxYposDropDown[movingApp % 5],
 								 GL_FLIP_NONE, &tex().settingsImage()[1]);
 					else
-						drawIcon(112, (titleboxYpos + iconYposOnTitleBox) - movingAppYpos + titleboxYposDropDown[movingApp % 5], -1);
+						drawIcon(movingIconXpos, (titleboxYpos + iconYposOnTitleBox) - movingAppYpos + titleboxYposDropDown[movingApp % 5], -1);
 				}
 			}
 

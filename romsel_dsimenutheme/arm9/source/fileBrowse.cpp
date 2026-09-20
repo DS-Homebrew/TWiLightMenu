@@ -104,7 +104,9 @@ extern int titlewindowXpos[2];
 extern int titlewindowXdest[2];
 extern int titleboxXspeed;
 extern int titleboxXspacing;
+extern int titleboxYpos;
 int movingApp = -1;
+int movingAppXpos = 96; // Screen x of the carried box; 96 == centred on the gap it left
 int movingAppYpos = 0;
 bool movingAppIsDir = false;
 bool draggingIcons = false;
@@ -529,6 +531,31 @@ static inline void refreshGridIcons(SwitchState scrn, const std::vector<std::vec
 	refreshGridIcons(dirContents[scrn], centre, waitVBlank);
 }
 
+// The non-blocking half of moveCursor(), for the stylus drag. moveCursor spins
+// for ~12 frames per step (8 animating titleboxXdest, then the first-move delay),
+// during which the carried box would freeze and a release would go unseen. This
+// does the same O(1) work -- step the insertion point, uncover the one icon that
+// step reveals -- and leaves the scroll to the vblank easing.
+//
+// Deliberately does not set draggingIcons: the easing in vBlankHandler is what
+// animates titleboxXpos towards titleboxXdest here, and draggingIcons disables it.
+static void moveHeldCursor(bool right, const std::vector<DirEntry> &entries) {
+	CURPOS += right ? 1 : -1;
+
+	// Same one-entry refresh as moveCursor, including the clamp to 39.
+	const int pos = CURPOS + (right ? ICON_GRID_MAX_OFFSET : -ICON_GRID_MAX_OFFSET);
+	if (pos >= 0 && pos <= 39 && pos + PAGENUM * 40 < (int)entries.size()) {
+		iconUpdate(entries[pos + PAGENUM * 40].isDirectory,
+				   entries[pos + PAGENUM * 40].name.c_str(), pos);
+	}
+
+	titleboxXdest[ms().secondaryDevice] = CURPOS * titleboxXspacing;
+	titlewindowXdest[ms().secondaryDevice] = CURPOS * 5;
+
+	snd().playSelect();
+	settingsChanged = true;
+}
+
 void moveCursor(bool right, const std::vector<DirEntry> dirContents, int maxEntry = 0xFFFF) {
 	if ((right && CURPOS >= last_used_box) || (!right && CURPOS <= 0)) {
 		if (ms().theme != TWLSettings::EThemeSaturn && !edgeBumpSoundPlayed)
@@ -582,8 +609,11 @@ void moveCursor(bool right, const std::vector<DirEntry> dirContents, int maxEntr
 		// bank of the entry that just fell off the far side. Keep this O(1)
 		// rather than calling refreshGridIcons, which would turn one SD read
 		// per keypress into ICON_GRID_BANKS of them.
+		// Clamp to 39: iconUpdate() indexes the [41] per-slot arrays, and index 40
+		// is the moving app's own cache, so an unclamped pos would clobber the
+		// carried entry (pos == 40) or run off the end (pos == 41/42).
 		int pos = CURPOS + (right ? ICON_GRID_MAX_OFFSET : -ICON_GRID_MAX_OFFSET);
-		if (pos >= 0 && pos + PAGENUM * 40 < (int)dirContents.size()) {
+		if (pos >= 0 && pos <= 39 && pos + PAGENUM * 40 < (int)dirContents.size()) {
 			iconUpdate(dirContents[pos + PAGENUM * 40].isDirectory,
 						dirContents[pos + PAGENUM * 40].name.c_str(),
 						pos);
@@ -2881,6 +2911,209 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 	refreshGridIcons(scrn, dirContents, CURPOS, true);
 }
 
+// ---- Move mode: the keypad gesture (KEY_UP) and the stylus drag share all of this ----
+
+// Mirrors the move-mode row layout in graphics.cpp (the movingApp != -1 branch)
+// and the carried box drawn just below it. Keep the two in step.
+static constexpr int MOVE_SPACING = 76;	// titleboxXspacing while an app is carried
+static constexpr int MOVE_BOX_W = 64;	// every box/folder/settings sprite is this wide
+static constexpr int MOVE_HELD_X = 96;	// carried box x when it sits on the gap it left
+static constexpr int MOVE_GAP_CENTRE = MOVE_HELD_X + MOVE_BOX_W / 2;
+
+// Stylus drag tuning.
+static constexpr int MOVE_HOLD_FRAMES = 15;	// ~0.25s of holding still to pick an app up
+static constexpr int MOVE_HOLD_SLOP = 8;	// px of y wander tolerated while holding
+static constexpr int MOVE_SCROLL_DELAY = 4;	// frames between edge auto-scroll steps
+static constexpr int MOVE_EDGE_PX = 24;		// hard edge zone that can flip the page
+static constexpr int MOVE_PAGE_DWELL = 45;	// frames pinned at an edge before it flips
+
+struct MoveModeState {
+	int orgPage;
+	int orgCursorPosition;
+	DirEntry entry;	// copy of the carried entry, to re-find it after a page flip
+};
+
+// Inverse of the move-mode row layout: display slot p is drawn at
+// 96 + 38 + p * titleboxXspacing - titleboxXpos, so the gap in front of it -- the
+// hole the carried box drops into -- is centred at
+// MOVE_GAP_CENTRE + p * titleboxXspacing - titleboxXpos. Solve for p and round.
+//
+// There is no DSi +/-7 "fan" term because graphics.cpp only applies the fan in the
+// movingApp == -1 branch, so this is exact for both the DSi and 3DS themes.
+static int insertSlotAtScreenX(int centreX) {
+	const int num = centreX - MOVE_GAP_CENTRE + titleboxXpos[ms().secondaryDevice];
+	const int den = titleboxXspacing;	// MOVE_SPACING while carrying; read live
+	// Written out because num is legitimately negative left of the gap and integer
+	// division truncates towards zero.
+	return (num >= 0) ? (num + den / 2) / den : -((-num + den / 2) / den);
+}
+
+// ".." stays at index 0 of page 0; nothing may be dropped in front of it.
+static int minInsertSlot() {
+	return (PAGENUM == 0 && backFound) ? 1 : 0;
+}
+
+// The last slot holding a real entry -- the same clamp the keypad gesture passes to
+// moveCursor() as maxEntry.
+static int maxInsertSlot(const std::vector<DirEntry> &entries) {
+	return std::min(last_used_box, (int)entries.size() - 1 - PAGENUM * 40);
+}
+
+// Lift the app under the cursor out of the row. followStylus slides it across to the
+// stylus as it rises, so a dragged app ends up under the pen rather than on the gap.
+static MoveModeState beginMoveMode(SwitchState scrn, const std::vector<std::vector<DirEntry>> &dirContents,
+					bool followStylus, int stylusPx) {
+	bannerTextShown = false; // Redraw the title when done
+	showSTARTborder = false;
+	currentBg = 2;
+	clearText();
+	updateText(false);
+	mkdir(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/extras" : "fat:/_nds/TWiLightMenu/extras", 0777);
+	movingApp = (PAGENUM * 40) + (CURPOS);
+	titleboxXspacing = MOVE_SPACING;
+	titleboxXdest[ms().secondaryDevice] = titleboxXpos[ms().secondaryDevice] = CURPOS * titleboxXspacing;
+
+	movingAppIsDir = dirContents[scrn][movingApp].isDirectory;
+
+	getGameInfo(dirContents[scrn][movingApp].isDirectory,
+				dirContents[scrn][movingApp].name.c_str(), -1);
+	iconUpdate(dirContents[scrn][movingApp].isDirectory,
+			   dirContents[scrn][movingApp].name.c_str(), -1);
+
+	const int movingAppYmax = ms().theme == TWLSettings::ETheme3DS ? 64 : 82;
+	const int movingAppXmax = followStylus
+					? std::clamp(stylusPx - MOVE_BOX_W / 2, -MOVE_BOX_W / 2, SCREEN_WIDTH - MOVE_BOX_W / 2)
+					: MOVE_HELD_X;
+	movingAppXpos = MOVE_HELD_X;
+	while (movingAppYpos < movingAppYmax) {
+		movingAppYpos += std::max((movingAppYmax - movingAppYpos) / 3, 1);
+		// Interpolated off the rise rather than eased separately, so both axes land
+		// on the same frame however the Y ramp is tuned.
+		movingAppXpos = MOVE_HELD_X + (movingAppXmax - MOVE_HELD_X) * movingAppYpos / movingAppYmax;
+		bgOperations(true);
+	}
+	movingAppXpos = movingAppXmax;
+
+	showMovingArrow = true;
+
+	return {PAGENUM, CURPOS, dirContents[scrn][movingApp]};
+}
+
+// Flip a page while still carrying an app. landAtEnd puts the cursor on the last
+// entry of the page instead of the first, which is what dragging off the left edge
+// wants. Returns false (with the "wrong" sound) if there is no page that way.
+static bool moveModePageFlip(bool forward, bool landAtEnd, SwitchState scrn,
+				std::vector<std::vector<DirEntry>> &dirContents,
+				const std::vector<std::string_view> &extensionList,
+				const MoveModeState &mv) {
+	if (forward ? !(file_count > 40 + PAGENUM * 40) : !(PAGENUM > 0)) {
+		snd().playWrong();
+		return false;
+	}
+
+	snd().playSwitch(forward ? 200 : 55);
+	fadeType = false; // Fade to white
+	for (int i = 0; i < 6; i++) {
+		bgOperations(true);
+	}
+	PAGENUM += forward ? 1 : -1;
+	CURPOS = 0;
+	titleboxXdest[ms().secondaryDevice] = 0;
+	titlewindowXdest[ms().secondaryDevice] = 0;
+	titleboxXpos[ms().secondaryDevice] = titleboxXdest[ms().secondaryDevice];
+	titlewindowXpos[ms().secondaryDevice] = titlewindowXdest[ms().secondaryDevice];
+	whiteScreen = true;
+	shouldersRendered = false;
+	displayNowLoading();
+	getDirectoryContents(dirContents[scrn], extensionList);
+
+	// movingApp is an absolute index into a vector getDirectoryContents has just
+	// rebuilt. It normally comes back identical -- nothing is written to [ORDER]
+	// until the drop -- but an SD card change or a dirInfo.twlm.ini appearing
+	// mid-carry could shift or remove the entry, and reordering the wrong file
+	// would be worse than abandoning the move.
+	if (movingApp >= (int)dirContents[scrn].size()
+			|| dirContents[scrn][movingApp].name != mv.entry.name) {
+		const auto it = std::find_if(dirContents[scrn].begin(), dirContents[scrn].end(),
+			[&](const DirEntry &e) { return e.name == mv.entry.name; });
+		movingApp = (it == dirContents[scrn].end()) ? -1 : (int)(it - dirContents[scrn].begin());
+	}
+
+	// Needs last_used_box, which getDirectoryContents has just recalculated, and has
+	// to happen before getFileInfo so that loads the icons around the right slot.
+	if (landAtEnd) {
+		CURPOS = std::max(maxInsertSlot(dirContents[scrn]), 0);
+		titleboxXdest[ms().secondaryDevice] = titleboxXpos[ms().secondaryDevice] = CURPOS * titleboxXspacing;
+		titlewindowXdest[ms().secondaryDevice] = titlewindowXpos[ms().secondaryDevice] = CURPOS * 5;
+	}
+
+	getFileInfo(scrn, dirContents, true);
+
+	while (!screenFadedOut()) {
+		bgOperations(true);
+	}
+	nowLoadingDisplaying = false;
+	whiteScreen = false;
+	displayGameIcons = true;
+	fadeType = true; // Fade in from white
+	for (int i = 0; i < 5; i++) {
+		bgOperations(true);
+	}
+	if (!vramSafeToUnmap()) swiWaitForVBlank(); // unmaps VRAM E/F/G while it copies
+	reloadIconPalettes();
+	clearText();
+	updateText(false);
+	return true;
+}
+
+// Drop the carried app into the gap and write the new order out. Does nothing but
+// settle the box if it landed back where it started, or if the entry went missing
+// across a page flip.
+static void endMoveMode(SwitchState scrn, std::vector<std::vector<DirEntry>> &dirContents,
+			const MoveModeState &mv) {
+	showMovingArrow = false;
+
+	const int dropFromX = movingAppXpos;
+	const int dropFromY = std::max(movingAppYpos, 1);
+	while (movingAppYpos > 0) {
+		movingAppYpos -= std::max(movingAppYpos / 3, 1);
+		// Slide back onto the gap as it falls, so a stylus drop does not snap sideways.
+		movingAppXpos = MOVE_HELD_X + (dropFromX - MOVE_HELD_X) * movingAppYpos / dropFromY;
+		bgOperations(true);
+	}
+	movingAppXpos = MOVE_HELD_X;
+
+	if (movingApp != -1 && ((PAGENUM != mv.orgPage) || (CURPOS != mv.orgCursorPosition))) {
+		currentBg = 1;
+		writeBannerText(STR_PLEASE_WAIT, STR_PLEASE_WAIT);
+		updateText(false);
+
+		int dest = CURPOS + (PAGENUM * 40);
+
+		DirEntry entry = dirContents[scrn][movingApp];
+		dirContents[scrn].erase(dirContents[scrn].begin() + movingApp);
+		dirContents[scrn].insert(dirContents[scrn].begin() + dest, entry);
+
+		std::vector<std::string> dirNames(dirContents[scrn].size());
+		for (uint i = 0; i < dirContents[scrn].size(); i++) {
+			dirNames[i] = dirContents[scrn][i].name;
+		}
+
+		CIniFile gameOrderIni(gameOrderIniPath);
+		getcwd(path, PATH_MAX);
+		gameOrderIni.SetStringVector("ORDER", path, dirNames, ':');
+		gameOrderIni.SaveIniFile(gameOrderIniPath);
+
+		// Every per-slot cache (titles, banners, box art) is indexed by grid slot, so
+		// the whole page has to be re-read once the entries have shifted.
+		getFileInfo(scrn, dirContents, false);
+	}
+
+	movingApp = -1;
+	titleboxXspacing = 58;
+	titleboxXdest[ms().secondaryDevice] = titleboxXpos[ms().secondaryDevice] = CURPOS * titleboxXspacing;
+}
+
 static bool previousPage(SwitchState scrn, vector<vector<DirEntry>> dirContents) {
 	if (CURPOS == 0 && !showLshoulder) {
 		snd().playWrong();
@@ -3321,35 +3554,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				dsiWareRAMLimitMsgPrepped = false;
 				infoCheckTimer = 0;
 			} else if ((pressed & KEY_UP) && (PAGENUM > 0 || CURPOS > 0 || !backFound) && (ms().theme != TWLSettings::EThemeSaturn && ms().theme != TWLSettings::EThemeHBL) && !dirInfoIniFound && (ms().sortMethod == 4) && (CURPOS + PAGENUM * 40 < ((int)dirContents[scrn].size()))) { // Move apps (DSi & 3DS themes)
-				bannerTextShown = false; // Redraw the title when done
-				showSTARTborder = false;
-				currentBg = 2;
-				clearText();
-				updateText(false);
-				mkdir(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/extras" : "fat:/_nds/TWiLightMenu/extras", 0777);
-				movingApp = (PAGENUM * 40) + (CURPOS);
-				titleboxXspacing = 76;
-				titleboxXdest[ms().secondaryDevice] = titleboxXpos[ms().secondaryDevice] = CURPOS * titleboxXspacing;
-
-				if (dirContents[scrn][movingApp].isDirectory)
-					movingAppIsDir = true;
-				else
-					movingAppIsDir = false;
-
-				getGameInfo(dirContents[scrn][movingApp].isDirectory,
-							dirContents[scrn][movingApp].name.c_str(), -1);
-				iconUpdate(dirContents[scrn][movingApp].isDirectory,
-						   dirContents[scrn][movingApp].name.c_str(), -1);
-
-				int movingAppYmax = ms().theme == TWLSettings::ETheme3DS ? 64 : 82;
-				while (movingAppYpos < movingAppYmax) {
-					movingAppYpos += std::max((movingAppYmax - movingAppYpos) / 3, 1);
-					bgOperations(true);
-				}
-
-				int orgCursorPosition = CURPOS;
-				int orgPage = PAGENUM;
-				showMovingArrow = true;
+				MoveModeState mv = beginMoveMode(scrn, dirContents, /* followStylus = */ false, 0);
 
 				while (1) {
 					scanKeys();
@@ -3377,119 +3582,18 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							edgeBumpSoundPlayed = true;
 						}
 					} else if (pressed & KEY_DOWN) {
-						showMovingArrow = false;
-						while (movingAppYpos > 0) {
-							movingAppYpos -= std::max(movingAppYpos / 3, 1);
-							bgOperations(true);
-						}
 						break;
 					} else if (pressed & KEY_L) {
-						if (PAGENUM > 0) {
-							snd().playSwitch(55);
-							fadeType = false; // Fade to white
-							for (int i = 0; i < 6; i++) {
-								bgOperations(true);
-							}
-							PAGENUM -= 1;
-							CURPOS = 0;
-							titleboxXdest[ms().secondaryDevice] = 0;
-							titlewindowXdest[ms().secondaryDevice] = 0;
-							titleboxXpos[ms().secondaryDevice] = titleboxXdest[ms().secondaryDevice];
-							titlewindowXpos[ms().secondaryDevice] = titlewindowXdest[ms().secondaryDevice];
-							whiteScreen = true;
-							shouldersRendered = false;
-							displayNowLoading();
-							getDirectoryContents(dirContents[scrn], extensionList);
-							getFileInfo(scrn, dirContents, true);
-
-							while (!screenFadedOut()) {
-								bgOperations(true);
-							}
-							nowLoadingDisplaying = false;
-							whiteScreen = false;
-							displayGameIcons = true;
-							fadeType = true; // Fade in from white
-							for (int i = 0; i < 5; i++) {
-								bgOperations(true);
-							}
-							if (!vramSafeToUnmap()) swiWaitForVBlank(); // unmaps VRAM E/F/G while it copies
-			reloadIconPalettes();
-							clearText();
-							updateText(false);
-						} else {
-							snd().playWrong();
-						}
+						moveModePageFlip(false, /* landAtEnd = */ false, scrn, dirContents, extensionList, mv);
 					} else if (pressed & KEY_R) {
-						if (file_count > 40 + PAGENUM * 40) {
-							snd().playSwitch(200);
-							fadeType = false; // Fade to white
-							for (int i = 0; i < 6; i++) {
-								bgOperations(true);
-							}
-							PAGENUM += 1;
-							CURPOS = 0;
-							titleboxXdest[ms().secondaryDevice] = 0;
-							titlewindowXdest[ms().secondaryDevice] = 0;
-							titleboxXpos[ms().secondaryDevice] = titleboxXdest[ms().secondaryDevice];
-							titlewindowXpos[ms().secondaryDevice] = titlewindowXdest[ms().secondaryDevice];
-							whiteScreen = true;
-							shouldersRendered = false;
-							displayNowLoading();
-							getDirectoryContents(dirContents[scrn], extensionList);
-							getFileInfo(scrn, dirContents, true);
-
-							while (!screenFadedOut()) {
-								bgOperations(true);
-							}
-							nowLoadingDisplaying = false;
-							whiteScreen = false;
-							displayGameIcons = true;
-							fadeType = true; // Fade in from white
-							for (int i = 0; i < 5; i++) {
-								bgOperations(true);
-							}
-							if (!vramSafeToUnmap()) swiWaitForVBlank(); // unmaps VRAM E/F/G while it copies
-			reloadIconPalettes();
-							clearText();
-							updateText(false);
-						} else {
-							snd().playWrong();
-						}
+						moveModePageFlip(true, /* landAtEnd = */ false, scrn, dirContents, extensionList, mv);
 					}
+
+					if (movingApp == -1) // The entry went missing across a page flip
+						break;
 				}
 
-				if ((PAGENUM != orgPage) || (CURPOS != orgCursorPosition)) {
-					currentBg = 1;
-					writeBannerText(STR_PLEASE_WAIT, STR_PLEASE_WAIT);
-					updateText(false);
-
-					int dest = CURPOS + (PAGENUM * 40);
-
-					DirEntry entry = dirContents[scrn][movingApp];
-					dirContents[scrn].erase(dirContents[scrn].begin() + movingApp);
-					dirContents[scrn].insert(dirContents[scrn].begin() + dest, entry);
-
-					std::vector<std::string> dirNames(dirContents[scrn].size());
-					for (uint i=0;i<dirContents[scrn].size();i++) {
-						dirNames[i] = dirContents[scrn][i].name;
-					}
-
-					CIniFile gameOrderIni(gameOrderIniPath);
-					getcwd(path, PATH_MAX);
-					gameOrderIni.SetStringVector("ORDER", path, dirNames, ':');
-					gameOrderIni.SaveIniFile(gameOrderIniPath);
-
-					if (ms().sortMethod != TWLSettings::ESortCustom) {
-						ms().sortMethod = TWLSettings::ESortCustom;
-						ms().saveSettings();
-					}
-
-					getFileInfo(scrn, dirContents, false);
-				}
-
-				movingApp = -1;
-				titleboxXspacing = 58;
-				titleboxXdest[ms().secondaryDevice] = titleboxXpos[ms().secondaryDevice] = CURPOS * titleboxXspacing;
+				endMoveMode(scrn, dirContents, mv);
 			} else if ((pressed & KEY_TOUCH) && touch.py > 171 && touch.px >= 19 && touch.px <= 236 && ms().theme == TWLSettings::EThemeDSi) { // Scroll bar (DSi theme)
 				touchPosition startTouch = touch;
 				showSTARTborder = false;
@@ -3565,7 +3669,19 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				infoCheckTimer = 0;
 
 				bool tapped = false;
+				bool lifted = false;
 				bool dsiCursorMove = false;
+
+				// Same gate as the keypad move gesture, plus: only the box under the
+				// cursor can be picked up, and it has to be a real entry.
+				const bool canLift = !dirInfoIniFound
+						&& ms().sortMethod == TWLSettings::ESortCustom
+						&& ms().theme != TWLSettings::EThemeSaturn && ms().theme != TWLSettings::EThemeHBL
+						&& (PAGENUM > 0 || CURPOS > 0 || !backFound)
+						&& startTouch.px >= 96 && startTouch.px < 160 // the moveBy == 0 band below
+						&& CURPOS + PAGENUM * 40 < ((int)dirContents[scrn].size());
+
+				int holdFrames = 0;
 				while (1) {
 					scanKeys();
 					touchRead(&touch);
@@ -3580,10 +3696,89 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					} else if (touch.px < startTouch.px - 2
 							|| touch.px > startTouch.px + 2) {
 						break;
+					} else if (canLift) {
+						// Holding still picks the app up. x is already pinned to +/-2 by
+						// the test above, so only y needs slop; wandering out of it resets
+						// the timer rather than cancelling, so settling after a wobble
+						// still lifts.
+						if (touch.py < startTouch.py - MOVE_HOLD_SLOP
+								|| touch.py > startTouch.py + MOVE_HOLD_SLOP) {
+							holdFrames = 0;
+						} else if (++holdFrames >= MOVE_HOLD_FRAMES) {
+							lifted = true;
+							break;
+						}
 					}
 				}
 
-				if (tapped) {
+				if (lifted) {
+					MoveModeState mv = beginMoveMode(scrn, dirContents, /* followStylus = */ true, startTouch.px);
+					const int dev = ms().secondaryDevice;
+					const int liftY = (ms().theme == TWLSettings::ETheme3DS) ? 64 : 82;
+					// Not startTouch: the shared tail below restores that into touch, and
+					// on the 3DS theme a py > 171 there reads as "launch the selection".
+					int grabY = startTouch.py;
+					int scrollDelay = 0;
+					int edgeDwell = 0;
+
+					while (1) {
+						scanKeys();
+						// Test the release before sampling: the digitizer's last reading
+						// before lift-off is often garbage, so the drop has to commit the
+						// CURPOS established by the previous good frame.
+						if (!(keysHeld() & KEY_TOUCH))
+							break;
+						touchRead(&touch);
+
+						movingAppXpos = std::clamp(touch.px - MOVE_BOX_W / 2, -MOVE_BOX_W / 2, SCREEN_WIDTH - MOVE_BOX_W / 2);
+						movingAppYpos = std::clamp(liftY - (touch.py - grabY), 0, titleboxYpos);
+
+						const int lo = minInsertSlot();
+						const int hi = maxInsertSlot(dirContents[scrn]);
+						// hi < lo only for a page with nothing movable on it, which canLift
+						// already excludes; guard anyway, since std::clamp would be UB.
+						const int want = (hi < lo) ? CURPOS : std::clamp(insertSlotAtScreenX(touch.px), lo, hi);
+
+						if (scrollDelay > 0)
+							scrollDelay--;
+						const bool settled = (titleboxXpos[dev] == titleboxXdest[dev]);
+
+						if (settled && scrollDelay == 0 && want != CURPOS) {
+							// The row slides under the stylus, so holding near an edge keeps
+							// re-evaluating to CURPOS +/- 1 -- this is also the edge auto-scroll.
+							moveHeldCursor(want > CURPOS, dirContents[scrn]);
+							scrollDelay = MOVE_SCROLL_DELAY;
+							edgeDwell = 0;
+						} else if (settled && want == CURPOS
+								&& (touch.px <= MOVE_EDGE_PX || touch.px >= SCREEN_WIDTH - MOVE_EDGE_PX)) {
+							// Pinned against the end of the page with the stylus held in the
+							// hard edge zone: flip. The dwell is long because a flip costs a
+							// fade, a directory re-read and 40 banner loads.
+							const bool forward = (touch.px >= SCREEN_WIDTH - MOVE_EDGE_PX);
+							const bool pinned = forward ? (CURPOS >= hi) : (CURPOS <= lo);
+							const bool canFlip = forward ? (file_count > 40 + PAGENUM * 40) : (PAGENUM > 0);
+							if (pinned && canFlip && ++edgeDwell >= MOVE_PAGE_DWELL) {
+								edgeDwell = 0;
+								moveModePageFlip(forward, /* landAtEnd = */ !forward, scrn, dirContents,
+										 extensionList, mv);
+								if (movingApp == -1) // The entry went missing across the flip
+									break;
+								scanKeys();
+								if (!(keysHeld() & KEY_TOUCH))
+									break;
+								touchRead(&touch);
+								grabY = touch.py; // Re-anchor the y grab across the load
+								scrollDelay = MOVE_SCROLL_DELAY;
+							}
+						} else {
+							edgeDwell = 0;
+						}
+
+						bgOperations(true);
+					}
+
+					endMoveMode(scrn, dirContents, mv);
+				} else if (tapped) {
 					int moveBy;
 					if (startTouch.px < 39)
 						moveBy = -2;

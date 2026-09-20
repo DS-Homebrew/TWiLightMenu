@@ -16,11 +16,11 @@
 
 static u32 arm9Sig[3][4];
 
-char gameTid[40][5] = {0};
-u8 romVersion[40] = {0};
-u8 unitCode[40] = {0};
-u16 headerCRC[40] = {0};
-u32 a7mbk6[40] = {0};
+char gameTid[41][5] = {0};
+u8 romVersion[41] = {0};
+u8 unitCode[41] = {0};
+u16 headerCRC[41] = {0};
+u32 a7mbk6[41] = {0};
 
 bool checkDsiBinaries(const char* filename, const int num) {
 	if (unitCode[num] == 0) {

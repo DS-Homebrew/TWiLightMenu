@@ -269,11 +269,13 @@ u32 getSDKVersion(FILE* ndsFile);
  */
 bool checkRomAP(const char* filename, const int num);
 
-extern char gameTid[40][5];
-extern u8 romVersion[40];
-extern u8 unitCode[40];
-extern u16 headerCRC[40];
-extern u32 a7mbk6[40];
+// 41, not 40: getGameInfo() writes index MOVING_APP_SLOT for the app being
+// carried in move mode, the same as every other per-title array below.
+extern char gameTid[41][5];
+extern u8 romVersion[41];
+extern u8 unitCode[41];
+extern u16 headerCRC[41];
+extern u32 a7mbk6[41];
 
 extern sNDSBannerExt bnriconTile[41];
 
