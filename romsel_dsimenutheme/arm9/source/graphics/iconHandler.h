@@ -14,7 +14,13 @@
 // icon (and steals its palette in loadDeferredIconPalettes).
 #define ICON_GRID_BANKS (2 * ICON_GRID_MAX_OFFSET + 1)
 
-// Dedicated bank for the app being dragged in move mode (list index 40).
+// Slot reserved in every per-title cache array (gameTid[], bnrSysSettings[],
+// customIcon[], bnriconTile[], ... -- all sized 41) for the app being carried in
+// move mode. It is NOT the app'''s index in the list: that keeps counting past 40
+// on later pages, and indexing the caches with it reads out of bounds.
+#define MOVING_APP_SLOT 40
+
+// Dedicated bank for the app being dragged in move mode (cache MOVING_APP_SLOT).
 #define ICON_MOVING_BANK ICON_GRID_BANKS
 
 #define NDS_ICON_BANK_COUNT (ICON_GRID_BANKS + 1)

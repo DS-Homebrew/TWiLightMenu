@@ -264,7 +264,7 @@ void clearTitle(int num) {
 
 void getGameInfo(bool isDir, const char *name, int num, bool fromArgv) {
 	if (num == -1)
-		num = 40;
+		num = MOVING_APP_SLOT;
 
 	bnriconPalLine[num] = 0;
 	bnriconPalLoaded[num] = 0;
