@@ -365,7 +365,7 @@ int runUnlaunchDsi (const char* filename, bool isRunFromSD, u32 sector) {
 				return 11;
 
 			char patchPath[56];
-			sprintf(patchPath, "%s:/_nds/TWiLightMenu/unlaunch/unlaunch-patch.bin", isRunFromSD ? "sd" : "fat");
+			sprintf(patchPath, "%s:/_nds/TWiLightMenu/unlaunch/patch.bin", isRunFromSD ? "sd" : "fat");
 			FILE *patch = fopen(patchPath, "rb");
 			if (!patch)
 				return 12;
