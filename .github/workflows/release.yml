@@ -122,7 +122,6 @@ jobs:
           rm -rf "Virtual Console (3DS, Full)"
           rm -rf _nds/GBARunner2_arm7dldi_dsi.nds
           rm -rf _nds/GBARunner2_arm7dldi_nodsp_dsi.nds
-          rm -rf _nds/TWiLightMenu/unlaunch
           rm -rf _nds/TWiLightMenu/bootplg.srldr
           rm -rf _nds/TWiLightMenu/gbaswitch.srldr
           rm -rf ntrboot.nds

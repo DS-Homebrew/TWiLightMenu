@@ -324,7 +324,7 @@ bool runNds9 (const char* filename, bool dsModeSwitch) {
 	return true;
 }
 
-int runUnlaunchDsi (const char* filename, u32 sector) {
+int runUnlaunchDsi (const char* filename, bool isRunFromSD, u32 sector) {
 	FILE* ndsFile = fopen(filename, "rb");
 	fseek(ndsFile, 0, SEEK_SET);
 	fread(__DSiHeader, 1, 0x1000, ndsFile);
@@ -364,7 +364,9 @@ int runUnlaunchDsi (const char* filename, u32 sector) {
 			if (memcmp(ver20String, "2.0", 3) != 0)
 				return 11;
 
-			FILE *patch = fopen("nitro:/unlaunch-patch.bin", "rb");
+			char patchPath[56];
+			sprintf(patchPath, "%s:/_nds/TWiLightMenu/unlaunch/unlaunch-patch.bin", isRunFromSD ? "sd" : "fat");
+			FILE *patch = fopen(patchPath, "rb");
 			if (!patch)
 				return 12;
 
@@ -386,7 +388,7 @@ int runUnlaunchDsi (const char* filename, u32 sector) {
 
 		extern const char *charUnlaunchBg;
 		char bgPath[256];
-		sprintf(bgPath, "sd:/_nds/TWiLightMenu/unlaunch/backgrounds/%s", charUnlaunchBg);
+		sprintf(bgPath, "%s:/_nds/TWiLightMenu/unlaunch/backgrounds/%s", isRunFromSD ? "sd" : "fat", charUnlaunchBg);
 
 		FILE* gifFile = fopen(bgPath, "rb");
 		long fsize = 0;
@@ -475,7 +477,7 @@ int runNdsFile (
 		fclose(ndsFile);
 
 		if (memcmp(gameTitle, "UNLAUNCH.DSI", 0xC) == 0) {
-			return runUnlaunchDsi (filename, st.st_ino);
+			return runUnlaunchDsi (filename, isRunFromSD, st.st_ino);
 		}
 	}
 
