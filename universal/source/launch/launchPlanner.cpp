@@ -283,9 +283,13 @@ static void planBootstrapHb(LaunchPlan &plan, const LauncherBinary &emulator, co
 	plan.args.push_back(plan.romPathFat);
 	plan.homebrewArg = "";
 
-	if (romToRamDisk == 0)
+	if (romToRamDisk == 0) {
 		plan.romIsCompressed = endsWithNoCase(plan.romPath, ".lz77.gen") || endsWithNoCase(plan.romPath, ".lz77.md");
-	else if (romToRamDisk == 1)
+		if (!plan.romIsCompressed) {
+			plan.romToRamDisk = -1;
+			plan.bootstrapRamDrivePath = "";
+		}
+	} else if (romToRamDisk == 1)
 		plan.romIsCompressed = endsWithNoCase(plan.romPath, ".lz77.smc") || endsWithNoCase(plan.romPath, ".lz77.sfc");
 	else if (romToRamDisk == 4)
 		plan.romIsCompressed = endsWithNoCase(plan.romPath, ".lz77.pce");
@@ -364,7 +368,7 @@ static void planGenesis(LaunchPlan &plan, const CustomLauncher &launcher, const 
 		finishDirectPlan(plan, launcher, env, request, onFat);
 		plan.dsModeSwitch = !usePicoDrive;
 	} else {
-		planBootstrapHb(plan, jEnesisBinary(launcher, env), request, 0, "fat:/ROM.BIN", "", true);
+		planBootstrapHb(plan, jEnesisBinary(launcher, env), request, 0, "fat:/ROM.BIN", plan.romPath, true);
 	}
 }
 
