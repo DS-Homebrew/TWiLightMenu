@@ -1267,9 +1267,7 @@ void getGameInfo(int fileOffset, bool isDir, const char* name, bool fromArgv)
 				isModernHomebrew = false; // Homebrew is old (requires a DLDI driver to read from SD)
 			}
 			if (!ms().secondaryDevice) {
-				if ((ndsHeader.arm9binarySize == 0x98F70 && ndsHeader.arm7binarySize == 0xED94)		// jEnesisDS 0.7.4
-				|| (ndsHeader.arm9binarySize == 0x48950 && ndsHeader.arm7binarySize == 0x74C4)			// SNEmulDS06-WIP2
-				|| (ndsHeader.arm9binarySize == 0xD45C0 && ndsHeader.arm7binarySize == 0x2B7C)			// ikuReader v0.058
+				if ((ndsHeader.arm9binarySize == 0x48950 && ndsHeader.arm7binarySize == 0x74C4)			// SNEmulDS06-WIP2
 				|| (ndsHeader.arm9binarySize == 0x54620 && ndsHeader.arm7binarySize == 0x1538)) {		// XRoar 0.24fp3
 					requiresRamDisk = true;
 				}
