@@ -351,7 +351,7 @@ static void planSnes(LaunchPlan &plan, const CustomLauncher &launcher, const Lau
 
 // PicoDrive TWL or jEnesisDS (see genesisUsesPicoDrive()). PicoDrive TWL, and jEnesisDS for
 // ROMs on a flashcard, boot directly, jEnesisDS in DS mode. jEnesisDS for ROMs on SD boots
-// through nds-bootstrap-hb with the ROM in RAM.
+// through nds-bootstrap-hb.
 static void planGenesis(LaunchPlan &plan, const CustomLauncher &launcher, const LaunchEnv &env, const LaunchRequest &request)
 {
 	const bool usePicoDrive = genesisUsesPicoDrive(env, plan.romPath);
@@ -364,7 +364,7 @@ static void planGenesis(LaunchPlan &plan, const CustomLauncher &launcher, const 
 		finishDirectPlan(plan, launcher, env, request, onFat);
 		plan.dsModeSwitch = !usePicoDrive;
 	} else {
-		planBootstrapHb(plan, jEnesisBinary(launcher, env), request, 0, "fat:/ROM.BIN", plan.romPath, true);
+		planBootstrapHb(plan, jEnesisBinary(launcher, env), request, 0, "fat:/ROM.BIN", "", true);
 	}
 }
 
