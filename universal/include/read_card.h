@@ -36,14 +36,21 @@
 extern "C" {
 #endif
 
-extern bool cardInited;
 extern sNDSHeaderExt ndsCardHeader;
 
-void my_cardReset (bool properReset);
+extern void picoInit(bool irq);
 
-int cardInit (void);
+extern u32 cardNandRomEnd;
+extern u32 cardNandRwStart;
 
-void cardRead (u32 src, void* dest, size_t len);
+int cardInit ();
+int cardInitWithoutSlotReset ();
+
+void cardRead (u32 src, void* dest, size_t len, bool nandSave);
+
+u32 cardGetId ();
+
+void cardDSiSlot1Reset(void);
 
 #ifdef __cplusplus
 }

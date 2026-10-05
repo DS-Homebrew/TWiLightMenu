@@ -146,6 +146,8 @@ You can help translate TWiLight Menu++ on the [Crowdin project](https://crowdin.
 - [ahezard](https://github.com/ahezard): NDMA code from nds-bootstrap
 - Another World & Yellow Wood Goblin: The original akMenu/Wood UI
     - [Rocket Robz](https://github.com/RocketRobz): Re-developed the Wood UI with pieces of the original code ported over
+- [ApacheThunder](https://github.com/ApacheThunder): Support for mounting flashcards (which aren't Acekard 2(i) and/or R4(i) Ultra) without the need to launch them first (ported from [GodMode9**i**](https://github.com/DS-Homebrew/GodMode9i))
+    - [tasken](https://github.com/tasken): Allowing booting homebrew from flashcards without the need to launch them first if running from DSi/3DS SD
 - [Arisotura](https://github.com/Arisotura): ROM list from melonDS, and BIOS dumper code from [dsibiosdumper](https://github.com/Arisotura/dsibiosdumper)
 - [Dartz150](https://github.com/Dartz150): Provided fix for *Iridion II* & *Top Gun: Combat Zones* GBA games
 - [devkitPro](https://github.com/devkitPro): Code used in nds-hb-menu, and the use of the bootloader, devkitARM, libnds, and libfat

@@ -1048,7 +1048,6 @@ void refreshNdsCard(bool refreshBoxArt) {
 	if (sys().arm7SCFGLocked() && refreshBoxArt) {
 		//loadBoxArt("nitro:/graphics/boxart_unknown.png", true);
 	} else {
-		my_cardReset(true);
 		cardInit();
 		/* if ((cardInit() == 0) && refreshBoxArt) {
 			char game_TID[5] = {0};

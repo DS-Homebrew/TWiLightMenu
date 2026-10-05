@@ -89,7 +89,9 @@ typedef struct {
 	u8 unitCode;				//!< identifies the required hardware.
 	u8 deviceType;				//!< type of device in the game card
 	u8 deviceSize;				//!< capacity of the device (1 << n Mbit)
-	u8 reserved1[9];
+	u8 reserved1[7];
+	u8 dsiTwlRegionFlags;
+	u8 ndsRegion_dsiJump;
 	u8 romversion;				//!< version of the ROM.
 	u8 flags;					//!< bit 2: auto-boot flag.
 
@@ -129,7 +131,10 @@ typedef struct {
 	u32 romSize;				//!< total size of the ROM.
 
 	u32 headerSize;				//!< ROM header size.
-	u32 zeros88[14];
+	u32 zeros88[3];
+	u16 nandRomEnd;				//!< ROM region end for NAND games.
+	u16 nandRwStart;			//!< RW region start for NAND games.
+	u32 zeros98[10];
 	u8 gbaLogo[156];			//!< Nintendo logo needed for booting the game.
 	u16 logoCRC16;				//!< Nintendo Logo Checksum, CRC-16.
 	u16 headerCRC16;			//!< header checksum, CRC-16.

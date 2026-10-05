@@ -31,12 +31,11 @@ ARCH	:=	-march=armv4t -mthumb -mthumb-interwork
 CFLAGS	:=	-g -Wall -O2 \
  		-mcpu=arm7tdmi -mtune=arm7tdmi -fomit-frame-pointer\
 		-ffast-math \
-		-flto \
 		$(ARCH)
 
 CFLAGS	+=	$(INCLUDE) -DARM7
 
-ASFLAGS	:=	-g $(ARCH) -flto
+ASFLAGS	:=	-g $(ARCH)
 LDFLAGS	=	-specs=ds_arm7.specs -g $(ARCH) -Wl,--nmagic -Wl,-Map,$(notdir $*).map
 
 

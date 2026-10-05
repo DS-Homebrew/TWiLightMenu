@@ -30,6 +30,7 @@
 #include <nds.h>
 #include <string.h>
 #include <maxmod7.h>
+#include "card_init.h"
 #include "common/isPhatCheck.h"
 #include "common/arm7status.h"
 #include "common/picoLoader7.h"
@@ -98,6 +99,9 @@ static void resetDSPico() {
 
 static void menuValue32Handler(u32 value, void* data) {
 	switch (value) {
+		case 0x54494E49: // 'INIT'
+			fifoSendValue32(FIFO_USER_02, initFlashcardArm7());
+			break;
 		case 0x4F434950: // 'PICO'
 			reset_pico = true;
 			break;

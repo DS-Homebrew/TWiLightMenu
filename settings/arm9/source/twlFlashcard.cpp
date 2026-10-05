@@ -12,15 +12,16 @@
 #include "common/tonccpy.h"
 #include "read_card.h"
 
-/*TWL_CODE bool UpdateCardInfo(char* gameid, char* gamename) {
-	memcpy(gameid, ndsCardHeader.gameCode, 4);
+TWL_CODE bool UpdateCardInfo(char* gameid, char* gamename) {
+	cardReadHeader((uint8*)&ndsCardHeader);
+	tonccpy(gameid, ndsCardHeader.gameCode, 4);
 	gameid[4] = 0x00;
-	memcpy(gamename, ndsCardHeader.gameTitle, 12);
+	tonccpy(gamename, ndsCardHeader.gameTitle, 12);
 	gamename[12] = 0x00;
 	return true;
 }
 
-TWL_CODE void ShowGameInfo(const char gameid[], const char gamename[]) {
+/*TWL_CODE void ShowGameInfo(const char gameid[], const char gamename[]) {
 	iprintf("Game id: %s\nName:    %s", gameid, gamename);
 }*/
 
@@ -202,67 +203,115 @@ TWL_CODE const DISC_INTERFACE *dldiGet(void) {
 }
 
 TWL_CODE void twl_flashcardInit(void) {
-	if (REG_SCFG_MC != 0x11 && !sys().arm7SCFGLocked()) {
-		// Reset Slot-1 to allow reading title name and ID
-		my_cardReset(false);
+	if (REG_SCFG_MC == 0x11 || sys().arm7SCFGLocked()) {
+		return;
+	}
 
+	sysSetCardOwner (BUS_OWNER_ARM9);
+
+	// Reset Slot-1 to allow reading title name and ID
+	disableSlot1();
+	{
 		CIniFile settingsini( DSIMENUPP_INI );
 
 		if (settingsini.GetInt("SRLOADER", "SECONDARY_ACCESS", 0) == false) {
-			disableSlot1();
 			return;
 		}
+	}
+	for(int i = 0; i < 25; i++) { swiWaitForVBlank(); }
 
-		// Read title name and ID
-		cardInit();
+	if (REG_SCFG_MC == 0x11) {
+		sysSetCardOwner (BUS_OWNER_ARM7);
+		return;
+	}
 
-		/*char gamename[13];
-		char gameid[5];
+	enableSlot1();
+	for(int i = 0; i < 15; i++) { swiWaitForVBlank(); }
 
-		UpdateCardInfo(&gameid[0], &gamename[0]);
-
-		consoleDemoInit();
-		iprintf("REG_SCFG_MC: %x\n", REG_SCFG_MC);
-		ShowGameInfo(gameid, gamename);
-
-		for (int i = 0; i < 60*5; i++) {
-			swiWaitForVBlank();
-		}*/
-
-		sysSetCardOwner (BUS_OWNER_ARM7);	// 3DS fix
-
-		// Read a DLDI driver specific to the cart
-		/*if (!memcmp(ndsCardHeader.gameCode, "ASMA", 4)) {
-			io_dldi_data = dldiLoadFromFile("nitro:/dldi/r4tf.dldi");
-			fatMountSimple("fat", &io_dldi_data->ioInterface);
-		} else if (!memcmp(ndsCardHeader.gameTitle, "TOP TF/SD DS", 12) || !memcmp(ndsCardHeader.gameCode, "A76E", 4) || ((u32)ndsCardHeader.gameCode == 0xB003C24)) {
-			io_dldi_data = dldiLoadFromFile("nitro:/dldi/ttio.dldi");
-			fatMountSimple("fat", &io_dldi_data->ioInterface);
-		} else if (!memcmp(ndsCardHeader.gameTitle, "PASS", 4) && !memcmp(ndsCardHeader.gameCode, "ASME", 4)) {
-			io_dldi_data = dldiLoadFromFile("nitro:/dldi/CycloEvo.dldi");
-			fatMountSimple("fat", &io_dldi_data->ioInterface);
-		} else if (!memcmp(ndsCardHeader.gameTitle, "D!S!XTREME", 12) && !memcmp(ndsCardHeader.gameCode, "AYIE", 4)) {
-			io_dldi_data = dldiLoadFromFile("nitro:/dldi/dsx.dldi");
-			fatMountSimple("fat", &io_dldi_data->ioInterface);
-		} else*/ if (!memcmp(ndsCardHeader.gameTitle, "QMATETRIAL", 9) || !memcmp(ndsCardHeader.gameTitle, "R4DSULTRA", 9) // R4iDSN/R4 Ultra
-				|| !memcmp(ndsCardHeader.gameCode, "ACEK", 4) || !memcmp(ndsCardHeader.gameCode, "YCEP", 4) || !memcmp(ndsCardHeader.gameCode, "AHZH", 4) || !memcmp(ndsCardHeader.gameCode, "CHPJ", 4) || !memcmp(ndsCardHeader.gameCode, "ADLP", 4)) { // Acekard 2(i)
-			myDldiLoadFromFile("nitro:/dldi/ak2.dldi");
-			fatMountSimple("fat", dldiGet());
-		} else if (!memcmp(ndsCardHeader.gameCode, "DSGB", 4)) {
-			myDldiLoadFromFile("nitro:/dldi/nrio.lz77");
-			fatMountSimple("fat", dldiGet());
-		} /*else if (!memcmp(ndsCardHeader.gameCode, "ALXX", 4)) {
-			io_dldi_data = dldiLoadFromFile("nitro:/dldi/dstwo.dldi");
-			fatMountSimple("fat", &io_dldi_data->ioInterface);
-		} else if (!memcmp(ndsCardHeader.gameCode, "VCKF", 4)) {
-			io_dldi_data = dldiLoadFromFile("nitro:/dldi/CycloIEvo.dldi");
-			fatMountSimple("fat", &io_dldi_data->ioInterface);
-		} */
-
-		flashcardFoundReset();
-		if (!flashcardFound()) {
-			disableSlot1();
+	// Follow HBMenu Deluxe's ARM7-first initialization order, without a later slot reset:
+	// https://github.com/ApacheThunder/ntr-hb-menu/blob/deluxe/arm7/source/main.c
+	// https://github.com/ApacheThunder/ntr-hb-menu/blob/deluxe/arm9/include/read_card.c
+	{
+		sysSetCardOwner(BUS_OWNER_ARM7);
+		if (!fifoSendValue32(FIFO_USER_02, 0x54494E49)) {
+			sysSetCardOwner(BUS_OWNER_ARM9);
+			// printf("Failed to request ARM7 card initialization.\n");
+			return;
 		}
+		fifoWaitValue32(FIFO_USER_02);
+		u32 cardInitResult = fifoGetValue32(FIFO_USER_02);
+		sysSetCardOwner(BUS_OWNER_ARM9);
+		if (cardInitResult != 0) {
+			// printf("ARM7 card initialization failed: %lu\n", (unsigned long)cardInitResult);
+			return;
+		}
+	}
+
+	char gamename[13];
+	char gameid[5];
+
+	UpdateCardInfo(&gameid[0], &gamename[0]);
+
+	/*consoleDemoInit();
+	iprintf("REG_SCFG_MC: %x\n", REG_SCFG_MC);
+	ShowGameInfo(gameid, gamename);
+
+	for (int i = 0; i < 60*5; i++) {
+		swiWaitForVBlank();
+	}*/
+
+	sysSetCardOwner (BUS_OWNER_ARM7);	// 3DS fix
+
+	if (gameid[0] >= 0x00 && gameid[0] < 0x20) {
+		return;
+	}
+
+	bool doCardInit = false;
+	bool isDSPico = false;
+
+	// Read a DLDI driver specific to the cart
+	if (!memcmp(gameid, "DSPI", 4) || !memcmp(gameid, "NTRJ", 4)) { // DSpico
+		doCardInit = true;
+		isDSPico = true;
+		myDldiLoadFromFile("nitro:/dldi/pico.dldi");
+	} else if (!memcmp(gamename, "QMATETRIAL", 9) || !memcmp(gamename, "R4DSULTRA", 9) // R4iDSN/R4 Ultra
+	 || !memcmp(gameid, "ACEK", 4) || !memcmp(gameid, "YCEP", 4) || !memcmp(gameid, "AHZH", 4) || !memcmp(gameid, "CHPJ", 4) || !memcmp(gameid, "ADLP", 4)) { // Acekard 2(i)
+		myDldiLoadFromFile("nitro:/dldi/ak2.dldi");
+	} else if (!memcmp(gameid, "ASMA", 4)) {
+		doCardInit = true;
+		myDldiLoadFromFile((!memcmp(gamename, "MEDIAPLAYER", 11)) ? "nitro:/dldi/gmtf.dldi" : "nitro:/dldi/r4tf.dldi");
+	} else if (!memcmp(gameid, "ASME", 4)) {
+		doCardInit = true;
+		myDldiLoadFromFile("nitro:/dldi/CycloEvo.dldi");
+	} else if (!memcmp(gameid, "ABJJ", 4)) {
+		doCardInit = true;
+		myDldiLoadFromFile("nitro:/dldi/ez5n.dldi");
+	} else if (!memcmp(gameid, "TTDS", 4)) {
+		myDldiLoadFromFile("nitro:/dldi/ttio.dldi");
+	} else if (!memcmp(gamename, "20130628ver", 11)) { // Some DSTTi clones report 0x0 of their flashrom instead of their rom title with certain homebrew header reads.... lol
+		doCardInit = true; // Demon clones require card init else they hang on DLDI init.
+		myDldiLoadFromFile("nitro:/dldi/ttio.dldi");
+	} else if (!memcmp(gameid, "DSGB", 4)) {
+		myDldiLoadFromFile("nitro:/dldi/nrio.lz77");
+	} /*else if (!memcmp(gameid, "ALXX", 4)) { // SuperCard DSTWO
+		myDldiLoadFromFile("nitro:/dldi/dstwo.dldi");
+	}*/
+
+	if (doCardInit) { // Certain flashcarts require card init before DLDI will work.
+		int result = cardInitWithoutSlotReset();
+		if (result != 0) {
+			// printf("ARM9 card initialization failed: %d\n", result);
+			return;
+		}
+		for (int i = 0; i < 30; i++) swiWaitForVBlank();
+		if (isDSPico) picoInit(false);
+	}
+
+	fatMountSimple("fat", dldiGet());
+
+	flashcardFoundReset();
+	if (!flashcardFound()) {
+		disableSlot1();
 	}
 }
 

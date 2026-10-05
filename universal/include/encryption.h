@@ -19,8 +19,12 @@
 #ifndef ENCRYPTION_H
 #define ENCRYPTION_H
 
+enum card_device_key_type { NTR_CARD_KEY, DSI_CARD_KEY, DSI_DEV_CARD_KEY };
+
+typedef enum card_device_key_type card_device_key_t;
+
 #include <nds/ndstypes.h>
-void init_keycode (u32 idcode, u32 level, u32 modulo, int iCardDevice);
+void init_keycode (u32 idcode, u32 level, u32 modulo, card_device_key_t iCardDevice);
 void crypt_64bit_down (u32* ptr);
 void crypt_64bit_up (u32* ptr);
 

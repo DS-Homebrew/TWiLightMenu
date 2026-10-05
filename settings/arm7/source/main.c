@@ -30,6 +30,7 @@
 #include <nds.h>
 #include <string.h>
 #include <maxmod7.h>
+#include "card_init.h"
 #include "common/isPhatCheck.h"
 #include "common/arm7status.h"
 
@@ -84,6 +85,17 @@ void ReturntoDSiMenu() {
 		u8 readCommand = readPowerManagement(0x10);
 		readCommand |= BIT(0);
 		writePowerManagement(0x10, readCommand);
+	}
+}
+
+static void menuValue32Handler(u32 value, void* data) {
+	switch (value) {
+		case 0x54494E49: // 'INIT'
+			fifoSendValue32(FIFO_USER_02, initFlashcardArm7());
+			break;
+		default:
+			ReturntoDSiMenu();
+			break;
 	}
 }
 
@@ -257,6 +269,7 @@ int main() {
 		getConsoleID();
 	}
 
+	fifoSetValue32Handler(FIFO_USER_02, menuValue32Handler, 0);
 
 	// Keep the ARM7 mostly idle
 	while (!exitflag) {
@@ -309,10 +322,6 @@ int main() {
 				status = (status & ~SD_MASK) | ((1 << SD_OFF) & SD_MASK);
 				fifoSendValue32(FIFO_USER_03, status);
 			}
-		}
-
-		if (fifoCheckValue32(FIFO_USER_02)) {
-			ReturntoDSiMenu();
 		}
 
 		if (*(u32*)(0x2FFFD0C) == 0x54494D52) {
