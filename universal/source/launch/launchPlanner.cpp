@@ -350,7 +350,7 @@ static void planSnes(LaunchPlan &plan, const CustomLauncher &launcher, const Lau
 		plan.launchType = LAUNCH_TYPE_CUSTOM;
 		plan.ok = true;
 	} else {
-		const LauncherBinary *legacy = launcher.variant("LEGACY");
+		const LauncherBinary *legacy = launcher.variant((request.romFolder == "sd:/roms/snes") ? "LEGACY_TWLM" : "LEGACY");
 		if (!legacy)
 			return;
 		planBootstrapHb(plan, *legacy, request, 1, "fat:/ROM.SMC", plan.romPath, false);
