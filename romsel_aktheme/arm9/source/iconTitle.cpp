@@ -1308,8 +1308,7 @@ void getGameInfo(int num, int fileOffset, bool isDir, const char* name, bool fro
 				isModernHomebrew[num] = false; // Homebrew is old (requires a DLDI driver to read from SD)
 			}
 			if (!ms().secondaryDevice && num < 40) {
-				if ((ndsHeader.arm9binarySize == 0x48950 && ndsHeader.arm7binarySize == 0x74C4)			// SNEmulDS06-WIP2
-				|| (ndsHeader.arm9binarySize == 0x54620 && ndsHeader.arm7binarySize == 0x1538)) {		// XRoar 0.24fp3
+				if (ndsHeader.arm9binarySize == 0x54620 && ndsHeader.arm7binarySize == 0x1538) {		// XRoar 0.24fp3
 					requiresRamDisk[num] = true;
 				}
 			}

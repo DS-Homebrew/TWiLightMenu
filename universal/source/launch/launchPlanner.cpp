@@ -289,9 +289,13 @@ static void planBootstrapHb(LaunchPlan &plan, const LauncherBinary &emulator, co
 			plan.romToRamDisk = -1;
 			plan.bootstrapRamDrivePath = "";
 		}
-	} else if (romToRamDisk == 1)
+	} else if (romToRamDisk == 1) {
 		plan.romIsCompressed = endsWithNoCase(plan.romPath, ".lz77.smc") || endsWithNoCase(plan.romPath, ".lz77.sfc");
-	else if (romToRamDisk == 4)
+		if (!plan.romIsCompressed) {
+			plan.romToRamDisk = -1;
+			plan.bootstrapRamDrivePath = "";
+		}
+	} else if (romToRamDisk == 4)
 		plan.romIsCompressed = endsWithNoCase(plan.romPath, ".lz77.pce");
 
 	plan.launchType = LAUNCH_TYPE_SD_FLASHCARD;
