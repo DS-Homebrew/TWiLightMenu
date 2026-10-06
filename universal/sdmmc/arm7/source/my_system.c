@@ -31,10 +31,12 @@
 #include <nds/bios.h>
 #include <nds/arm7/clock.h>
 #include <nds/arm7/i2c.h>
+#include <string.h>
 
 void powerValueHandler(u32 value, void* user_data);
 void firmwareMsgHandler(int bytes, void *user_data);
-void my_sdmmcHandler(u32 value, void* user_data);
+void my_sdmmcHandler();
+void my_sdmmcHandlerFifo(u32 value, void* user_data);
 
 //---------------------------------------------------------------------------------
 void my_installSystemFIFO(void) {
@@ -44,8 +46,12 @@ void my_installSystemFIFO(void) {
 	fifoSetDatamsgHandler(FIFO_FIRMWARE, firmwareMsgHandler, 0);
 	
 	//if (isDSiMode() || (REG_SCFG_EXT & BIT(18))) {
-	fifoSetValue32Handler(FIFO_SDMMC, my_sdmmcHandler, 0);
-	//}
+	if (strncmp((const char*)0x04FFFA00, "no$gba", 6) == 0) {
+		irqSet(IRQ_IPC_SYNC, my_sdmmcHandler);
+		irqEnable(IRQ_IPC_SYNC);
+	} else {
+		fifoSetValue32Handler(FIFO_SDMMC, my_sdmmcHandlerFifo, 0);
+	}
 }
 
 

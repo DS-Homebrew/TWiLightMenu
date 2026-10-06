@@ -13,6 +13,7 @@
 #define CRYPT_BUF_LEN 64
 
 extern vu32* sharedAddr;
+extern bool my_sdio_isNoSGba;
 
 static bool is3DS;
 
@@ -65,7 +66,11 @@ bool my_nand_ReadSectors(sec_t sector, sec_t numSectors,void* buffer) {
 	sharedAddr[2] = (vu32)buffer;
 	
 	sharedAddr[3] = 0x4452414E;
-	fifoSendValue32(FIFO_SDMMC, 6);
+	if (my_sdio_isNoSGba) {
+		IPC_SendSync(6);
+	} else {
+		fifoSendValue32(FIFO_SDMMC, 6);
+	}
 	while (sharedAddr[3] == 0x4452414E) {
 		swiDelay(100);
 	}
@@ -79,7 +84,11 @@ bool nandio_startup() {
 	int result = 0;
 
 	sharedAddr[3] = 0x56484453;
-	fifoSendValue32(FIFO_SDMMC, 1);
+	if (my_sdio_isNoSGba) {
+		IPC_SendSync(1);
+	} else {
+		fifoSendValue32(FIFO_SDMMC, 1);
+	}
 	while (sharedAddr[3] == 0x56484453) {
 		swiDelay(100);
 	}
@@ -88,7 +97,11 @@ bool nandio_startup() {
 	if (result==0) return false;
 
 	sharedAddr[3] = 0x5453414E;
-	fifoSendValue32(FIFO_SDMMC, 2);
+	if (my_sdio_isNoSGba) {
+		IPC_SendSync(2);
+	} else {
+		fifoSendValue32(FIFO_SDMMC, 2);
+	}
 	while (sharedAddr[3] == 0x5453414E) {
 		swiDelay(100);
 	}

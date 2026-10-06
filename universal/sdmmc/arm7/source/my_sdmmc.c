@@ -512,7 +512,7 @@ int my_sdmmc_sd_startup() {
 }
 
 //---------------------------------------------------------------------------------
-void my_sdmmcHandler(u32 value, void* user_data) {
+void my_sdmmcHandler() {
 //---------------------------------------------------------------------------------
 	int result = 0;
 	int sdflag = 0;
@@ -524,7 +524,7 @@ void my_sdmmcHandler(u32 value, void* user_data) {
 		result = (sdmmc_read16(REG_SDSTATUS0) & BIT(5)) != 0;
 		break;
 
-	case  0x54534453: // SDMMC_SD_START
+	case 0x54534453: // SDMMC_SD_START
 		sdflag = 1;
 		/* Falls through. */
 	case 0x5453414E: // SDMMC_NAND_START
@@ -579,6 +579,12 @@ void my_sdmmcHandler(u32 value, void* user_data) {
 
 	//fifoSendValue32(FIFO_SDMMC, result);
 	*(u32*)0x02FFFA0C = result;
+}
+
+//---------------------------------------------------------------------------------
+void my_sdmmcHandlerFifo(u32 value, void* user_data) {
+//---------------------------------------------------------------------------------
+	my_sdmmcHandler();
 }
 
 //---------------------------------------------------------------------------------

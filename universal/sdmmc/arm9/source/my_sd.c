@@ -7,8 +7,10 @@
 #include <nds/memory.h>
 #include <nds/arm9/cache.h>
 #include <nds/arm9/dldi.h>
+#include <string.h>
 
 vu32* sharedAddr = (vu32*)0x02FFFA00;
+bool my_sdio_isNoSGba = false;
 
 //---------------------------------------------------------------------------------
 bool my_sdio_Startup() {
@@ -18,6 +20,8 @@ bool my_sdio_Startup() {
 		sharedAddr = (vu32*)0x0CFFFA00;
 	}
 
+	my_sdio_isNoSGba = (strncmp((const char*)0x04FFFA00, "no$gba", 6) == 0);
+
 	int result = 0;
 
 	if (sharedAddr[1] == 0x49444C44) {
@@ -25,7 +29,11 @@ bool my_sdio_Startup() {
 		sysSetCardOwner(BUS_OWNER_ARM7);
 	} else {
 		sharedAddr[3] = 0x56484453;
-		fifoSendValue32(FIFO_SDMMC, 1);
+		if (my_sdio_isNoSGba) {
+			IPC_SendSync(1);
+		} else {
+			fifoSendValue32(FIFO_SDMMC, 1);
+		}
 		while (sharedAddr[3] == 0x56484453) {
 			swiDelay(100);
 		}
@@ -35,7 +43,11 @@ bool my_sdio_Startup() {
 	}
 
 	sharedAddr[3] = 0x54534453;
-	fifoSendValue32(FIFO_SDMMC, 1);
+	if (my_sdio_isNoSGba) {
+		IPC_SendSync(1);
+	} else {
+		fifoSendValue32(FIFO_SDMMC, 1);
+	}
 	while (sharedAddr[3] == 0x54534453) {
 		swiDelay(100);
 	}
@@ -49,7 +61,11 @@ bool my_sdio_Startup() {
 bool my_sdio_IsInserted() {
 //---------------------------------------------------------------------------------
 	sharedAddr[3] = 0x4E494453;
-	fifoSendValue32(FIFO_SDMMC, 3);
+	if (my_sdio_isNoSGba) {
+		IPC_SendSync(3);
+	} else {
+		fifoSendValue32(FIFO_SDMMC, 3);
+	}
 	while (sharedAddr[3] == 0x4E494453) {
 		swiDelay(100);
 	}
@@ -68,7 +84,11 @@ bool my_sdio_ReadSectors(sec_t sector, sec_t numSectors,void* buffer) {
 	sharedAddr[2] = (vu32)buffer;
 
 	sharedAddr[3] = 0x44524453;
-	fifoSendValue32(FIFO_SDMMC, 4);
+	if (my_sdio_isNoSGba) {
+		IPC_SendSync(4);
+	} else {
+		fifoSendValue32(FIFO_SDMMC, 4);
+	}
 	while (sharedAddr[3] == 0x44524453) {
 		swiDelay(100);
 	}
@@ -88,7 +108,11 @@ bool my_sdio_WriteSectors(sec_t sector, sec_t numSectors,const void* buffer) {
 	sharedAddr[2] = (vu32)buffer;
 
 	sharedAddr[3] = 0x52574453;
-	fifoSendValue32(FIFO_SDMMC, 5);
+	if (my_sdio_isNoSGba) {
+		IPC_SendSync(5);
+	} else {
+		fifoSendValue32(FIFO_SDMMC, 5);
+	}
 	while (sharedAddr[3] == 0x52574453) {
 		swiDelay(100);
 	}
