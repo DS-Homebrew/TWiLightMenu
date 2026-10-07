@@ -7,10 +7,10 @@
 #include <nds/memory.h>
 #include <nds/arm9/cache.h>
 #include <nds/arm9/dldi.h>
-#include <string.h>
+// #include <string.h>
 
 vu32* sharedAddr = (vu32*)0x02FFFA00;
-bool my_sdio_isNoSGba = false;
+// bool my_sdio_isNoSGba = false;
 
 //---------------------------------------------------------------------------------
 bool my_sdio_Startup() {
@@ -29,11 +29,11 @@ bool my_sdio_Startup() {
 		sysSetCardOwner(BUS_OWNER_ARM7);
 	} else {
 		sharedAddr[3] = 0x56484453;
-		if (my_sdio_isNoSGba) {
+		// if (my_sdio_isNoSGba) {
 			IPC_SendSync(1);
-		} else {
+		/* } else {
 			fifoSendValue32(FIFO_SDMMC, 1);
-		}
+		} */
 		while (sharedAddr[3] == 0x56484453) {
 			swiDelay(100);
 		}
@@ -61,11 +61,11 @@ bool my_sdio_Startup() {
 bool my_sdio_IsInserted() {
 //---------------------------------------------------------------------------------
 	sharedAddr[3] = 0x4E494453;
-	if (my_sdio_isNoSGba) {
+	// if (my_sdio_isNoSGba) {
 		IPC_SendSync(3);
-	} else {
+	/* } else {
 		fifoSendValue32(FIFO_SDMMC, 3);
-	}
+	} */
 	while (sharedAddr[3] == 0x4E494453) {
 		swiDelay(100);
 	}
@@ -84,11 +84,11 @@ bool my_sdio_ReadSectors(sec_t sector, sec_t numSectors,void* buffer) {
 	sharedAddr[2] = (vu32)buffer;
 
 	sharedAddr[3] = 0x44524453;
-	if (my_sdio_isNoSGba) {
+	// if (my_sdio_isNoSGba) {
 		IPC_SendSync(4);
-	} else {
+	/* } else {
 		fifoSendValue32(FIFO_SDMMC, 4);
-	}
+	} */
 	while (sharedAddr[3] == 0x44524453) {
 		swiDelay(100);
 	}
@@ -108,11 +108,11 @@ bool my_sdio_WriteSectors(sec_t sector, sec_t numSectors,const void* buffer) {
 	sharedAddr[2] = (vu32)buffer;
 
 	sharedAddr[3] = 0x52574453;
-	if (my_sdio_isNoSGba) {
+	// if (my_sdio_isNoSGba) {
 		IPC_SendSync(5);
-	} else {
+	/* } else {
 		fifoSendValue32(FIFO_SDMMC, 5);
-	}
+	} */
 	while (sharedAddr[3] == 0x52574453) {
 		swiDelay(100);
 	}
