@@ -20,7 +20,7 @@ bool my_sdio_Startup() {
 		sharedAddr = (vu32*)0x0CFFFA00;
 	}
 
-	my_sdio_isNoSGba = (strncmp((const char*)0x04FFFA00, "no$gba", 6) == 0);
+	// my_sdio_isNoSGba = (strncmp((const char*)0x04FFFA00, "no$gba", 6) == 0);
 
 	int result = 0;
 
@@ -43,11 +43,11 @@ bool my_sdio_Startup() {
 	}
 
 	sharedAddr[3] = 0x54534453;
-	if (my_sdio_isNoSGba) {
+	// if (my_sdio_isNoSGba) {
 		IPC_SendSync(1);
-	} else {
+	/* } else {
 		fifoSendValue32(FIFO_SDMMC, 1);
-	}
+	} */
 	while (sharedAddr[3] == 0x54534453) {
 		swiDelay(100);
 	}

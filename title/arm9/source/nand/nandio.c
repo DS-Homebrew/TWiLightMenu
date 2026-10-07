@@ -84,11 +84,11 @@ bool nandio_startup() {
 	int result = 0;
 
 	sharedAddr[3] = 0x56484453;
-	if (my_sdio_isNoSGba) {
+	// if (my_sdio_isNoSGba) {
 		IPC_SendSync(1);
-	} else {
+	/* } else {
 		fifoSendValue32(FIFO_SDMMC, 1);
-	}
+	} */
 	while (sharedAddr[3] == 0x56484453) {
 		swiDelay(100);
 	}
