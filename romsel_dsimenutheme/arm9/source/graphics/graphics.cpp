@@ -1636,6 +1636,7 @@ void vBlankHandler() {
 	bottomBgRefresh(); // Refresh the background image on vblank
 }
 
+bool allowPhotoReload = true;
 static bool currentPhotoIsBootstrap = false;
 static std::string currentPhotoPath;
 static int currentBootstrapPhoto = 0;
@@ -1644,7 +1645,7 @@ void loadPhoto(const std::string &path, const bool bufferOnly);
 void loadBootstrapScreenshot(FILE *file, const bool bufferOnly);
 
 bool loadPhotoList() {
-	if (!tex().photoBuffer()) {
+	if (!allowPhotoReload) {
 		return false;
 	}
 
@@ -1750,11 +1751,48 @@ void loadPhoto(const std::string &path, const bool bufferOnly) {
 	if (photoWidth > 208 || photoHeight > 156) {
 		image.clear();
 		// Image is too big, load the default
-		lodepng::decode(image, photoWidth, photoHeight, "nitro:/graphics/photo_default.png");
+		char path[64];
+		snprintf(path, sizeof(path), "nitro:/languages/%s/photo_default.png", ms().getGuiLanguageString().c_str());
+		currentPhotoPath = path;
+		lodepng::decode(image, photoWidth, photoHeight, path);
 	}
 
+	u16* topBorderBuffer = tex().topBorderBuffer();
+	u16* topBorderBuffer2 = tex().topBorderBuffer2();
+
+	// Fill area with black
+	for (int y = 24; y < 180; y++) {
+		dmaFillHalfWords(0x8000, topBorderBuffer + (y * 256) + 24, 208 * 2);
+		if (boxArtColorDeband) {
+			dmaFillHalfWords(0x8000, topBorderBuffer2 + (y * 256) + 24, 208 * 2);
+		}
+	}
+
+	u16 *bgSubBuffer = bufferOnly ? NULL : tex().beginBgSubModify();
+	u16* bgSubBuffer2 = bufferOnly ? NULL : tex().bgSubBuffer2();
+
+	if (!bufferOnly) {
+		tex().clearTopGuiMask(24, 24, 208, 156); // The photo covers any GUI there
+		// Fill area with black
+		for (int y = 24; y < 180; y++) {
+			dmaFillHalfWords(0x8000, bgSubBuffer + (y * 256) + 24, 208 * 2);
+			if (boxArtColorDeband) {
+				dmaFillHalfWords(0x8000, bgSubBuffer2 + (y * 256) + 24, 208 * 2);
+			}
+		}
+	}
+
+	// Start loading
+	uint startX = 24 + (208 - photoWidth) / 2;
 	for (int b = 0; b < boxArtColorDeband+1; b++) {
+		uint y = 24 + ((156 - photoHeight) / 2);
+		uint x = startX;
 		for (uint i=0;i<image.size()/4;i++) {
+			if (x >= startX + photoWidth) {
+				x = startX;
+				y++;
+			}
+
 			const u8 oldR = image[(i*4)];
 			const u8 oldG = image[(i*4)+1];
 			const u8 oldB = image[(i*4)+2];
@@ -1775,24 +1813,32 @@ void loadPhoto(const std::string &path, const bool bufferOnly) {
 				if (oldB >= 2 && newB < 0xFE) newB += 2;
 				if (oldAlpha >= 2 && newAlpha < 0xFE) newAlpha += 2;
 			}
-			u16 color = newR>>3 | (newG>>3)<<5 | (newB>>3)<<10 | BIT(15);
+			const u16 color = newR>>3 | (newG>>3)<<5 | (newB>>3)<<10 | BIT(15);
 			if (b == 0) {
+				u16* dst = topBorderBuffer+(y * 256 + x);
 				if (oldAlpha == 255) {
-					tex().photoBuffer()[i] = color;
+					*dst = color;
 				} else {
-					tex().photoBuffer()[i] = alphablend(color, 0, newAlpha);
+					*dst = alphablend(color, 0, newAlpha);
 				}
 				if (colorTable) {
-					tex().photoBuffer()[i] = colorTable[tex().photoBuffer()[i] % 0x8000] | BIT(15);
+					*dst = colorTable[*dst % 0x8000] | BIT(15);
+				}
+				if (!bufferOnly) {
+					bgSubBuffer[y * 256 + x] = *dst;
 				}
 			} else if (boxArtColorDeband) {
+				u16* dst = topBorderBuffer2+(y * 256 + x);
 				if (oldAlpha == 255) {
-					tex().photoBuffer2()[i] = color;
+					*dst = color;
 				} else {
-					tex().photoBuffer2()[i] = alphablend(color, 0, newAlpha);
+					*dst = alphablend(color, 0, newAlpha);
 				}
 				if (colorTable) {
-					tex().photoBuffer2()[i] = colorTable[tex().photoBuffer()[i] % 0x8000] | BIT(15);
+					*dst = colorTable[*dst % 0x8000] | BIT(15);
+				}
+				if (!bufferOnly) {
+					bgSubBuffer2[y * 256 + x] = *dst;
 				}
 			}
 			if ((i % photoWidth) == photoWidth-1) {
@@ -1801,44 +1847,14 @@ void loadPhoto(const std::string &path, const bool bufferOnly) {
 			}
 			alternatePixel = !alternatePixel;
 			alternatePixel2 = !alternatePixel2;
+			x++;
 		}
 		alternatePixel = !alternatePixel;
 	}
 
-	if (bufferOnly) {
-		return;
+	if (!bufferOnly) {
+		tex().commitBgSubModify();
 	}
-
-	u16 *bgSubBuffer = tex().beginBgSubModify();
-	u16* bgSubBuffer2 = tex().bgSubBuffer2();
-	tex().clearTopGuiMask(24, 24, 208, 156); // The photo covers any GUI there
-
-	// Fill area with black
-	for (int y = 24; y < 180; y++) {
-		dmaFillHalfWords(0x8000, bgSubBuffer + (y * 256) + 24, 208 * 2);
-		if (boxArtColorDeband) {
-			dmaFillHalfWords(0x8000, bgSubBuffer2 + (y * 256) + 24, 208 * 2);
-		}
-	}
-
-	// Start loading
-	u16 *src = tex().photoBuffer();
-	u16 *src2 = tex().photoBuffer2();
-	uint startX = 24 + (208 - photoWidth) / 2;
-	uint y = 24 + ((156 - photoHeight) / 2);
-	uint x = startX;
-	for (uint i = 0; i < photoWidth * photoHeight; i++) {
-		if (x >= startX + photoWidth) {
-			x = startX;
-			y++;
-		}
-		bgSubBuffer[y * 256 + x] = *(src++);
-		if (boxArtColorDeband) {
-			bgSubBuffer2[y * 256 + x] = *(src2++);
-		}
-		x++;
-	}
-	tex().commitBgSubModify();
 }
 
 void loadBootstrapScreenshot(FILE *file, const bool bufferOnly) {
@@ -1859,14 +1875,28 @@ void loadBootstrapScreenshot(FILE *file, const bool bufferOnly) {
 	u16 *buffer = new u16[256 * 192];
 	fread(buffer, 2, 256 * 192, file);
 
-	u16 *bgSubBuffer = tex().beginBgSubModify();
-	u16* bgSubBuffer2 = tex().bgSubBuffer2();
+	u16* topBorderBuffer = tex().topBorderBuffer();
+	u16* topBorderBuffer2 = tex().topBorderBuffer2();
+
+	// Fill area with black
+	for (int y = 24; y < 180; y++) {
+		dmaFillHalfWords(0x8000, topBorderBuffer + (y * 256) + 24, 208 * 2);
+		if (boxArtColorDeband) {
+			dmaFillHalfWords(0x8000, topBorderBuffer2 + (y * 256) + 24, 208 * 2);
+		}
+	}
+
+	u16 *bgSubBuffer = bufferOnly ? NULL : tex().beginBgSubModify();
+	u16* bgSubBuffer2 = bufferOnly ? NULL : tex().bgSubBuffer2();
 
 	if (!bufferOnly) {
-		tex().clearTopGuiMask(24, 24, 208, 156); // The screenshot covers any GUI there
+		tex().clearTopGuiMask(24, 24, 208, 156); // The photo covers any GUI there
 		// Fill area with black
 		for (int y = 24; y < 180; y++) {
 			dmaFillHalfWords(0x8000, bgSubBuffer + (y * 256) + 24, 208 * 2);
+			if (boxArtColorDeband) {
+				dmaFillHalfWords(0x8000, bgSubBuffer2 + (y * 256) + 24, 208 * 2);
+			}
 		}
 	}
 
@@ -1882,15 +1912,15 @@ void loadBootstrapScreenshot(FILE *file, const bool bufferOnly) {
 			} */
 
 			u8 y = photoHeight - row - 1;
+			topBorderBuffer[(24 + y) * 256 + 24 + col] = val;
+			if (boxArtColorDeband) {
+				topBorderBuffer2[(24 + y) * 256 + 24 + col] = val;
+			}
 			if (!bufferOnly) {
 				bgSubBuffer[(24 + y) * 256 + 24 + col] = val;
-			}
-			tex().photoBuffer()[y * photoWidth + col] = val;
-			if (boxArtColorDeband) {
-				if (!bufferOnly) {
+				if (boxArtColorDeband) {
 					bgSubBuffer2[(24 + y) * 256 + 24 + col] = val;
 				}
-				tex().photoBuffer2()[y * photoWidth + col] = val;
 			}
 		}
 	}

@@ -210,8 +210,8 @@ public:
 	static u16* bgMainBuffer();
 	static u16* bgSubBuffer();
 	static u16* bgSubBuffer2();
-	static u16* photoBuffer();
-	static u16* photoBuffer2();
+	static u16* topBorderBuffer();
+	static u16* topBorderBuffer2();
 	static u16* frameBuffer(bool secondBuffer);
 	static u16* frameBufferBot(bool secondBuffer);
 

@@ -63,21 +63,19 @@ extern bool rocketVideo_field;
 extern int rocketVideo_videoYpos;
 extern int rocketVideo_videoYposBottom;
 extern u8 *rotatingCubesLocation;
+extern bool allowPhotoReload;
 
 // #include <nds/arm9/decompress.h>
 extern bool showColon;
 
 static u16 _bgMainBuffer[256 * 192] = {0};
 static u16 _bgSubBuffer[256 * 192] = {0};
-static u16* _photoBuffer = NULL;
-static u16 _topBorderBuffer[256 * 192] = {0};
 static u16* _bgSubBuffer2 = (u16*)_bgSubBuffer;
-static u16* _photoBuffer2 = (u16*)_photoBuffer;
+static u16 _topBorderBuffer[256 * 192] = {0};
+static u16* _topBorderBuffer2 = (u16*)_topBorderBuffer;
 // DSi mode double-frame buffers
 //static u16* _frameBuffer[2] = {(u16*)0x02F80000, (u16*)0x02F98000};
 static u16* _frameBufferBot[2] = {NULL};
-
-static bool topBorderBufferLoaded = false;
 
 // Width of the last shoulder labels drawn, so a shorter one can erase the longer
 // one it replaces instead of leaving its tail behind.
@@ -329,6 +327,10 @@ void ThemeTextures::loadBackgrounds() {
 		if (ms().theme == TWLSettings::EThemeDSi) _backgroundTextures.emplace_back(TFN_BG_BOTTOMMOVINGBG, TFN_FALLBACK_BG_BOTTOMMOVINGBG);
 	}
 	
+	_backgroundTextures[ms().macroMode].copy(_topBorderBuffer, false);
+	if (boxArtColorDeband) {
+		tonccpy(_topBorderBuffer2, _topBorderBuffer, (256 * 192)*sizeof(u16));
+	}
 }
 
 void ThemeTextures::loadHBTheme() {	
@@ -1152,11 +1154,6 @@ void ThemeTextures::clearTopScreen() {
 void ThemeTextures::drawProfileName() {
 	if (_profileNameLoaded || ms().theme == TWLSettings::EThemeSaturn || ms().theme == TWLSettings::EThemeHBL) return;
 
-	if (!topBorderBufferLoaded) {
-		_backgroundTextures[ms().macroMode].copy(_topBorderBuffer, false);
-		topBorderBufferLoaded = true;
-	}
-
 	// Load username
 	int xPos = ((dsiFeatures() && !sys().i2cBricked()) ? tc().usernameRenderX() : tc().usernameRenderXDS());
 	int yPos = tc().usernameRenderY();
@@ -1594,60 +1591,23 @@ bool ThemeTextures::drawBoxArtPng(const char *filename, bool inMem) {
 	return true;
 }
 
-#define MAX_PHOTO_WIDTH 208
-#define MAX_PHOTO_HEIGHT 156
-#define PHOTO_OFFSET 24
-// Redraw background and photo over the boxart bounds
+// Redraw background over the boxart bounds
 void ThemeTextures::drawOverBoxArt(uint photoWidth, uint photoHeight) {
 	if (boxArtWidth == 0 || boxArtHeight == 0) return;
 	uint boxArtX = (SCREEN_WIDTH - boxArtWidth) / 2;
 	uint boxArtY = (SCREEN_HEIGHT - boxArtHeight) / 2;
 
 	beginBgSubModify();
-	if (!ms().showPhoto || !tc().renderPhoto() || boxArtWidth > MAX_PHOTO_WIDTH || boxArtHeight > MAX_PHOTO_HEIGHT) {
-		if (!topBorderBufferLoaded) {
-			_backgroundTextures[0].copy(_topBorderBuffer, false);
-			topBorderBufferLoaded = true;
-		}
-		clearTopGuiMask(boxArtX, boxArtY, boxArtWidth, boxArtHeight);
-		for (uint y = 0; y < boxArtHeight; y++) {
-			uint offset = boxArtX + (boxArtY + y) * SCREEN_WIDTH;
-			tonccpy(_bgSubBuffer + offset, _topBorderBuffer + offset, sizeof(u16) * boxArtWidth);
-			if (boxArtColorDeband) {
-				tonccpy(_bgSubBuffer2 + offset, _topBorderBuffer + offset, sizeof(u16) * boxArtWidth);
-			}
+
+	clearTopGuiMask(boxArtX, boxArtY, boxArtWidth, boxArtHeight);
+	for (uint y = 0; y < boxArtHeight; y++) {
+		uint offset = boxArtX + (boxArtY + y) * SCREEN_WIDTH;
+		tonccpy(_bgSubBuffer + offset, _topBorderBuffer + offset, sizeof(u16) * boxArtWidth);
+		if (boxArtColorDeband) {
+			tonccpy(_bgSubBuffer2 + offset, _topBorderBuffer2 + offset, sizeof(u16) * boxArtWidth);
 		}
 	}
 	
-	if (ms().showPhoto && tc().renderPhoto()) {
-		// fill black within boxart and photo bounds
-		uint blackX = boxArtX > PHOTO_OFFSET ? boxArtX : PHOTO_OFFSET;
-		uint blackY = boxArtY > PHOTO_OFFSET ? boxArtY : PHOTO_OFFSET;
-		uint blackWidth = boxArtWidth < MAX_PHOTO_WIDTH ? boxArtWidth : MAX_PHOTO_WIDTH;
-		uint blackHeight = boxArtHeight < MAX_PHOTO_HEIGHT ? boxArtHeight : MAX_PHOTO_HEIGHT;
-		clearTopGuiMask(blackX, blackY, blackWidth, blackHeight);
-		for (uint y = 0; y < blackHeight; y++) {
-			uint offset = blackX + (blackY + y) * SCREEN_WIDTH;
-			dmaFillHalfWords(0x8000, _bgSubBuffer + offset, sizeof(u16) * blackWidth);
-			if (boxArtColorDeband) {
-				dmaFillHalfWords(0x8000, _bgSubBuffer2 + offset, sizeof(u16) * blackWidth);
-			}
-		}
-		// draw photo within boxart bounds
-		uint photoX = PHOTO_OFFSET + (MAX_PHOTO_WIDTH - photoWidth) / 2;
-		uint photoY = PHOTO_OFFSET + (MAX_PHOTO_HEIGHT - photoHeight) / 2;
-		uint xOffset = boxArtX > photoX ? boxArtX - photoX : 0;
-		uint yOffset = boxArtY > photoY ? boxArtY - photoY : 0;
-		uint copyWidth = boxArtWidth < photoWidth ? boxArtWidth : photoWidth;
-		uint copyHeight = boxArtHeight < photoHeight ? boxArtHeight : photoHeight;
-		for (uint y = 0; y < copyHeight; y++) {
-			uint offset = photoX + xOffset + (photoY + yOffset + y) * SCREEN_WIDTH;
-			tonccpy(_bgSubBuffer + offset, _photoBuffer + xOffset + (yOffset + y) * photoWidth, sizeof(u16) * copyWidth);
-			if (boxArtColorDeband) {
-				tonccpy(_bgSubBuffer2 + offset, _photoBuffer2 + xOffset + (yOffset + y) * photoWidth, sizeof(u16) * copyWidth);
-			}
-		}
-	}
 	commitBgSubModify();
 }
 
@@ -1730,10 +1690,6 @@ ITCM_CODE void ThemeTextures::drawVolumeImageCached() {
 	int volumeLevel = getVolumeLevel();
 	if (_cachedVolumeLevel != volumeLevel) {
 		_cachedVolumeLevel = volumeLevel;
-		if (!topBorderBufferLoaded) {
-			_backgroundTextures[ms().macroMode].copy(_topBorderBuffer, false);
-			topBorderBufferLoaded = true;
-		}
 		ms().macroMode ? drawVolumeImageMacro(volumeLevel) : drawVolumeImage(volumeLevel);
 	}
 }
@@ -1822,10 +1778,6 @@ ITCM_CODE void ThemeTextures::drawBatteryImageCached() {
 	else if (batteryLevel == 7 && showColon)	batteryLevel++;
 	if (_cachedBatteryLevel != batteryLevel) {
 		_cachedBatteryLevel = batteryLevel;
-		if (!topBorderBufferLoaded) {
-			_backgroundTextures[ms().macroMode].copy(_topBorderBuffer, false);
-			topBorderBufferLoaded = true;
-		}
 		ms().macroMode ? drawBatteryImageMacro(batteryLevel, dsiFeatures() && !sys().i2cBricked(), sys().isRegularDS()) : drawBatteryImage(batteryLevel, dsiFeatures() && !sys().i2cBricked(), sys().isRegularDS());
 	}
 }
@@ -1836,11 +1788,6 @@ ITCM_CODE void ThemeTextures::resetCachedBatteryLevel() {
 
 void ThemeTextures::drawShoulders(bool LShoulderActive, bool RShoulderActive) {
 	beginBgSubModify();
-
-	if (!topBorderBufferLoaded) {
-		_backgroundTextures[0].copy(_topBorderBuffer, false);
-		topBorderBufferLoaded = true;
-	}
 
 	// The labels below are alpha-blended, so they must land on the clean background
 	// (plus this frame's button art), not on whatever was composited here last time.
@@ -1855,7 +1802,7 @@ void ThemeTextures::drawShoulders(bool LShoulderActive, bool RShoulderActive) {
 			tonccpy(&_bgSubBuffer[y * 256 + sx], &_topBorderBuffer[y * 256 + sx],
 				(ex - sx) * sizeof(u16));
 			if (boxArtColorDeband) {
-				tonccpy(&_bgSubBuffer2[y * 256 + sx], &_topBorderBuffer[y * 256 + sx],
+				tonccpy(&_bgSubBuffer2[y * 256 + sx], &_topBorderBuffer2[y * 256 + sx],
 					(ex - sx) * sizeof(u16));
 			}
 			toncset(&_topGuiMask[y * 256 + sx], 0, ex - sx);
@@ -1961,11 +1908,6 @@ void ThemeTextures::drawShoulders(bool LShoulderActive, bool RShoulderActive) {
 }
 
 ITCM_CODE void ThemeTextures::drawDateTime(const char *str, int posX, int posY, bool isDate) {
-	if (!topBorderBufferLoaded) {
-		_backgroundTextures[0].copy(_topBorderBuffer, false);
-		topBorderBufferLoaded = true;
-	}
-
 	toncset16(FontGraphic::textBuf[1], 0, 256 * dateTimeFont()->height());
 	dateTimeFont()->print(0, 0, true, str, Alignment::left, FontPalette::dateTime);
 	int width = std::max(dateTimeFont()->calcWidth(str), isDate ? _previousDateWidth : _previousTimeWidth);
@@ -2024,11 +1966,6 @@ ITCM_CODE void ThemeTextures::drawDateTime(const char *str, int posX, int posY, 
 
 ITCM_CODE void ThemeTextures::drawDateTimeMacro(const char *str, int posX, int posY, bool isDate) {
 	if (ms().theme == TWLSettings::EThemeSaturn) return;
-
-	if (!topBorderBufferLoaded) {
-		_backgroundTextures[1].copy(_topBorderBuffer, false);
-		topBorderBufferLoaded = true;
-	}
 
 	toncset16(FontGraphic::textBuf[1], 0, 256 * dateTimeFont()->height());
 	dateTimeFont()->print(0, 0, true, str, Alignment::left, FontPalette::dateTime);
@@ -2102,8 +2039,8 @@ void ThemeTextures::applyUserPaletteToAllGrfTextures() {
 u16 *ThemeTextures::bgMainBuffer() { return _bgMainBuffer; }
 u16 *ThemeTextures::bgSubBuffer() { return _bgSubBuffer; }
 u16 *ThemeTextures::bgSubBuffer2() { return _bgSubBuffer2; }
-u16 *ThemeTextures::photoBuffer() { return _photoBuffer; }
-u16 *ThemeTextures::photoBuffer2() { return _photoBuffer2; }
+u16 *ThemeTextures::topBorderBuffer() { return _topBorderBuffer; }
+u16 *ThemeTextures::topBorderBuffer2() { return _topBorderBuffer2; }
 //u16 *ThemeTextures::frameBuffer(bool secondBuffer) { return _frameBuffer[secondBuffer]; }
 u16 *ThemeTextures::frameBufferBot(bool secondBuffer) { return _frameBufferBot[secondBuffer]; }
 
@@ -2646,24 +2583,10 @@ void ThemeTextures::unloadRotatingCubes() {
 	}
 }
 void ThemeTextures::unloadPhotoBuffer() {
-	if (!_photoBuffer) {
-		return;
-	}
-
-	delete[] _photoBuffer;
-	if (boxArtColorDeband) {
-		delete[] _photoBuffer2;
-	}
-
-	_photoBuffer = NULL;
-	_photoBuffer2 = NULL;
+	allowPhotoReload = false;
 }
 void ThemeTextures::reloadPhotoBuffer() {
-	_photoBuffer = new u16[208 * 156];
-	if (boxArtColorDeband) {
-		_photoBuffer2 = new u16[208 * 156];
-	}
-
+	allowPhotoReload = true;
 	extern void reloadPhoto();
 	reloadPhoto();
 }
@@ -2765,13 +2688,11 @@ void ThemeTextures::videoSetup() {
 		loadRotatingCubes();
 	}
 
-	_photoBuffer = new u16[208 * 156];
-
 	boxArtColorDeband = (ms().boxArtColorDeband && !ms().macroMode && (sys().isRegularDS() ? sys().dsDebugRam() : ndmaEnabled()) && !rotatingCubesLoaded && ms().theme != TWLSettings::EThemeHBL);
 
 	if (boxArtColorDeband) {
 		_bgSubBuffer2 = new u16[256 * 192];
-		_photoBuffer2 = new u16[208 * 156];
+		_topBorderBuffer2 = new u16[256 * 192];
 		_frameBufferBot[0] = new u16[256 * 192];
 		_frameBufferBot[1] = new u16[256 * 192];
 	}
