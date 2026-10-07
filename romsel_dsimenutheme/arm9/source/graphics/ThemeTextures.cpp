@@ -2582,14 +2582,6 @@ void ThemeTextures::unloadRotatingCubes() {
 		rotatingCubesBufferAllocated = false;
 	}
 }
-void ThemeTextures::unloadPhotoBuffer() {
-	allowPhotoReload = false;
-}
-void ThemeTextures::reloadPhotoBuffer() {
-	allowPhotoReload = true;
-	extern void reloadPhoto();
-	reloadPhoto();
-}
 void ThemeTextures::videoSetup() {
 	logPrint("tex().videoSetup()\n");
 	//////////////////////////////////////////////////////////

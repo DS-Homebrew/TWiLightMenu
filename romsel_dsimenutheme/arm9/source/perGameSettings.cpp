@@ -1513,11 +1513,12 @@ void perGameSettings (std::string filename, bool* dsiBinariesFound, bool* dsiBin
 			}
 		}
 		if ((pressed & KEY_X) && !isHomebrew[CURPOS] && showCheats) {
+			extern bool allowNewPhotoLoad;
 			if (!dsiFeatures()) {
 				// Unload music, SFX data, and photo buffer in DS mode to fit the cheat list
 				snd().unloadStream();
 				snd().unloadSfxData();
-				tex().unloadPhotoBuffer();
+				allowNewPhotoLoad = false;
 			}
 			{
 				(ms().theme == TWLSettings::EThemeSaturn) ? snd().playLaunch() : snd().playSelect();
@@ -1528,7 +1529,7 @@ void perGameSettings (std::string filename, bool* dsiBinariesFound, bool* dsiBin
 				snd().loadStream(false);
 				snd().beginStream();
 				snd().reloadSfxData();
-				tex().reloadPhotoBuffer();
+				allowNewPhotoLoad = true;
 			}
 		}
 	}

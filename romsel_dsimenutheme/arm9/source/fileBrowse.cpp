@@ -4316,7 +4316,6 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 								// Free some RAM space to avoid possible memory leaks
 								snd().unloadStream();
 								snd().unloadSfxData();
-								tex().unloadPhotoBuffer();
 							}
 
 							mkdir(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/extras" : "fat:/_nds/TWiLightMenu/extras",

@@ -1834,7 +1834,6 @@ int dsiMenuTheme(void) {
 
 					if (!dsiFeatures()) {
 						snd().unloadSfxData();
-						tex().unloadPhotoBuffer();
 						prepareCheats(ms().dsiWareSrlPath, (ms().secondaryDevice && ms().dsiWareToSD && sdFound()));
 					}
 
@@ -2005,7 +2004,6 @@ int dsiMenuTheme(void) {
 
 						if (!dsiFeatures()) {
 							snd().unloadSfxData();
-							tex().unloadPhotoBuffer();
 						}
 
 						int err = picoLaunchRom(path, savepath, !isNdz[CURPOS]);
@@ -2163,7 +2161,6 @@ int dsiMenuTheme(void) {
 
 						if (!dsiFeatures()) {
 							snd().unloadSfxData();
-							tex().unloadPhotoBuffer();
 							prepareCheats(path, false);
 						}
 

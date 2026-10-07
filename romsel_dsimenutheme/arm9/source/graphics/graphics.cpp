@@ -1636,16 +1636,16 @@ void vBlankHandler() {
 	bottomBgRefresh(); // Refresh the background image on vblank
 }
 
-bool allowPhotoReload = true;
+bool allowNewPhotoLoad = true;
 static bool currentPhotoIsBootstrap = false;
 static std::string currentPhotoPath;
 static int currentBootstrapPhoto = 0;
 
-void loadPhoto(const std::string &path, const bool bufferOnly);
-void loadBootstrapScreenshot(FILE *file, const bool bufferOnly);
+void loadPhoto(const std::string &path);
+void loadBootstrapScreenshot(FILE *file);
 
 bool loadPhotoList() {
-	if (!allowPhotoReload) {
+	if (!allowNewPhotoLoad) {
 		return false;
 	}
 
@@ -1674,7 +1674,7 @@ bool loadPhotoList() {
 		closedir(dir);
 		if (photoList.size() > 0) {
 			currentPhotoPath = photoList[rand() / ((RAND_MAX + 1u) / photoList.size())];
-			loadPhoto(currentPhotoPath, false);
+			loadPhoto(currentPhotoPath);
 			currentPhotoIsBootstrap = false;
 			return true;
 		}
@@ -1697,7 +1697,7 @@ bool loadPhotoList() {
 		if (screenshots.size() > 0) {
 			currentBootstrapPhoto = screenshots[rand() % screenshots.size()];
 			fseek(file, 0x200 + 0x18400 * currentBootstrapPhoto, SEEK_SET);
-			loadBootstrapScreenshot(file, false);
+			loadBootstrapScreenshot(file);
 			currentPhotoIsBootstrap = true;
 			return true;
 		}
@@ -1707,41 +1707,12 @@ bool loadPhotoList() {
 	char path[64];
 	snprintf(path, sizeof(path), "nitro:/languages/%s/photo_default.png", ms().getGuiLanguageString().c_str());
 	currentPhotoPath = path;
-	loadPhoto(path, false);
+	loadPhoto(path);
 	currentPhotoIsBootstrap = false;
 	return true;
 }
 
-void reloadPhoto() {
-	if (!currentPhotoIsBootstrap) {
-		loadPhoto(currentPhotoPath, true);
-		return;
-	}
-
-	// If no photos found, try find a bootstrap screenshot
-	FILE *file = fopen(sys().isRunFromSD() ? "sd:/_nds/nds-bootstrap/screenshots.tar" : "fat:/_nds/nds-bootstrap/screenshots.tar", "rb");
-	if (!file)
-		file = fopen(sys().isRunFromSD() ? "fat:/_nds/nds-bootstrap/screenshots.tar" : "sd:/_nds/nds-bootstrap/screenshots.tar", "rb");
-	
-	if (!file) {
-		return;
-	}
-
-	std::vector<int> screenshots;
-	fseek(file, 0x200, SEEK_SET);
-	for (int i = 0; i < 50; i++) {
-		if (fgetc(file) == 'B')
-			screenshots.push_back(i);
-		fseek(file, 0x18400 - 1, SEEK_CUR);
-	}
-
-	if (screenshots.size() > 0) {
-		fseek(file, 0x200 + 0x18400 * currentBootstrapPhoto, SEEK_SET);
-		loadBootstrapScreenshot(file, true);
-	}
-}
-
-void loadPhoto(const std::string &path, const bool bufferOnly) {
+void loadPhoto(const std::string &path) {
 	std::vector<unsigned char> image;
 	bool alternatePixel = false;
 	bool alternatePixel2 = false;
@@ -1759,26 +1730,17 @@ void loadPhoto(const std::string &path, const bool bufferOnly) {
 
 	u16* topBorderBuffer = tex().topBorderBuffer();
 	u16* topBorderBuffer2 = tex().topBorderBuffer2();
+	u16 *bgSubBuffer = tex().beginBgSubModify();
+	u16* bgSubBuffer2 = tex().bgSubBuffer2();
 
+	tex().clearTopGuiMask(24, 24, 208, 156); // The photo covers any GUI there
 	// Fill area with black
 	for (int y = 24; y < 180; y++) {
 		dmaFillHalfWords(0x8000, topBorderBuffer + (y * 256) + 24, 208 * 2);
+		dmaFillHalfWords(0x8000, bgSubBuffer + (y * 256) + 24, 208 * 2);
 		if (boxArtColorDeband) {
 			dmaFillHalfWords(0x8000, topBorderBuffer2 + (y * 256) + 24, 208 * 2);
-		}
-	}
-
-	u16 *bgSubBuffer = bufferOnly ? NULL : tex().beginBgSubModify();
-	u16* bgSubBuffer2 = bufferOnly ? NULL : tex().bgSubBuffer2();
-
-	if (!bufferOnly) {
-		tex().clearTopGuiMask(24, 24, 208, 156); // The photo covers any GUI there
-		// Fill area with black
-		for (int y = 24; y < 180; y++) {
-			dmaFillHalfWords(0x8000, bgSubBuffer + (y * 256) + 24, 208 * 2);
-			if (boxArtColorDeband) {
-				dmaFillHalfWords(0x8000, bgSubBuffer2 + (y * 256) + 24, 208 * 2);
-			}
+			dmaFillHalfWords(0x8000, bgSubBuffer2 + (y * 256) + 24, 208 * 2);
 		}
 	}
 
@@ -1824,9 +1786,7 @@ void loadPhoto(const std::string &path, const bool bufferOnly) {
 				if (colorTable) {
 					*dst = colorTable[*dst % 0x8000] | BIT(15);
 				}
-				if (!bufferOnly) {
-					bgSubBuffer[y * 256 + x] = *dst;
-				}
+				bgSubBuffer[y * 256 + x] = *dst;
 			} else if (boxArtColorDeband) {
 				u16* dst = topBorderBuffer2+(y * 256 + x);
 				if (oldAlpha == 255) {
@@ -1837,9 +1797,7 @@ void loadPhoto(const std::string &path, const bool bufferOnly) {
 				if (colorTable) {
 					*dst = colorTable[*dst % 0x8000] | BIT(15);
 				}
-				if (!bufferOnly) {
-					bgSubBuffer2[y * 256 + x] = *dst;
-				}
+				bgSubBuffer2[y * 256 + x] = *dst;
 			}
 			if ((i % photoWidth) == photoWidth-1) {
 				alternatePixel = !alternatePixel;
@@ -1852,12 +1810,10 @@ void loadPhoto(const std::string &path, const bool bufferOnly) {
 		alternatePixel = !alternatePixel;
 	}
 
-	if (!bufferOnly) {
-		tex().commitBgSubModify();
-	}
+	tex().commitBgSubModify();
 }
 
-void loadBootstrapScreenshot(FILE *file, const bool bufferOnly) {
+void loadBootstrapScreenshot(FILE *file) {
 	// Simple check to ensure we're seeked to a BMP
 	if (fgetc(file) != 'B' || fgetc(file) != 'M')
 		return;
@@ -1877,26 +1833,17 @@ void loadBootstrapScreenshot(FILE *file, const bool bufferOnly) {
 
 	u16* topBorderBuffer = tex().topBorderBuffer();
 	u16* topBorderBuffer2 = tex().topBorderBuffer2();
+	u16 *bgSubBuffer = tex().beginBgSubModify();
+	u16* bgSubBuffer2 = tex().bgSubBuffer2();
 
+	tex().clearTopGuiMask(24, 24, 208, 156); // The photo covers any GUI there
 	// Fill area with black
 	for (int y = 24; y < 180; y++) {
 		dmaFillHalfWords(0x8000, topBorderBuffer + (y * 256) + 24, 208 * 2);
+		dmaFillHalfWords(0x8000, bgSubBuffer + (y * 256) + 24, 208 * 2);
 		if (boxArtColorDeband) {
 			dmaFillHalfWords(0x8000, topBorderBuffer2 + (y * 256) + 24, 208 * 2);
-		}
-	}
-
-	u16 *bgSubBuffer = bufferOnly ? NULL : tex().beginBgSubModify();
-	u16* bgSubBuffer2 = bufferOnly ? NULL : tex().bgSubBuffer2();
-
-	if (!bufferOnly) {
-		tex().clearTopGuiMask(24, 24, 208, 156); // The photo covers any GUI there
-		// Fill area with black
-		for (int y = 24; y < 180; y++) {
-			dmaFillHalfWords(0x8000, bgSubBuffer + (y * 256) + 24, 208 * 2);
-			if (boxArtColorDeband) {
-				dmaFillHalfWords(0x8000, bgSubBuffer2 + (y * 256) + 24, 208 * 2);
-			}
+			dmaFillHalfWords(0x8000, bgSubBuffer2 + (y * 256) + 24, 208 * 2);
 		}
 	}
 
@@ -1913,20 +1860,14 @@ void loadBootstrapScreenshot(FILE *file, const bool bufferOnly) {
 
 			u8 y = photoHeight - row - 1;
 			topBorderBuffer[(24 + y) * 256 + 24 + col] = val;
+			bgSubBuffer[(24 + y) * 256 + 24 + col] = val;
 			if (boxArtColorDeband) {
 				topBorderBuffer2[(24 + y) * 256 + 24 + col] = val;
-			}
-			if (!bufferOnly) {
-				bgSubBuffer[(24 + y) * 256 + 24 + col] = val;
-				if (boxArtColorDeband) {
-					bgSubBuffer2[(24 + y) * 256 + 24 + col] = val;
-				}
+				bgSubBuffer2[(24 + y) * 256 + 24 + col] = val;
 			}
 		}
 	}
-	if (!bufferOnly) {
-		tex().commitBgSubModify();
-	}
+	tex().commitBgSubModify();
 
 	delete[] buffer;
 }
