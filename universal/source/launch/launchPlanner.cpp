@@ -89,14 +89,9 @@ static const LauncherBinary &jEnesisBinary(const CustomLauncher &launcher, const
 
 // genesis: PicoDrive TWL (LAUNCHER_PATH_PICO) is forced by a locked SCFG in DSi mode, chosen
 // in Settings, or picked by the Hybrid setting for ROMs over 3 MB
-static bool genesisPicoForced(const LaunchEnv &env)
-{
-	return env.isDSiMode && env.sdFound && env.arm7SCFGLocked;
-}
-
 static bool genesisUsesPicoDrive(const LaunchEnv &env, const std::string &romPath)
 {
-	return genesisPicoForced(env) || env.mdEmulator == 2
+	return env.mdEmulator == 2
 		|| (env.mdEmulator == 3 && env.fileSize && env.fileSize(romPath.c_str()) > 0x300000);
 }
 
@@ -149,7 +144,7 @@ bool launcherAvailable(const CustomLauncher &launcher, const LaunchEnv &env)
 			return variantExists(launcher, "LEGACY") || (env.secondaryDevice && variantExists(launcher, "LEGACY_TWLM"));
 		case LauncherHandler::Genesis:
 			// The ROM size isn't known here, so Hybrid needs either emulator
-			if (genesisPicoForced(env) || env.mdEmulator == 2)
+			if (env.mdEmulator == 2)
 				return variantExists(launcher, "PICO");
 			if (env.mdEmulator == 3)
 				return jEnesisBinary(launcher, env).exists() || variantExists(launcher, "PICO");
@@ -295,24 +290,18 @@ static void planBootstrapHb(LaunchPlan &plan, const LauncherBinary &emulator, co
 			plan.romToRamDisk = -1;
 			plan.bootstrapRamDrivePath = "";
 		}
-	} else if (romToRamDisk == 4)
-		plan.romIsCompressed = endsWithNoCase(plan.romPath, ".lz77.pce");
+	}
 
 	plan.launchType = LAUNCH_TYPE_SD_FLASHCARD;
 	plan.ok = true;
 }
 
-// NitroGrafx: through nds-bootstrap-hb with the ROM in RAM when Settings' "SMS/GG in RAM"
-// option is on, the ROM is on SD and SCFG is unlocked; otherwise directly
+// NitroGrafx: directly
 static void planPce(LaunchPlan &plan, const CustomLauncher &launcher, const LaunchEnv &env, const LaunchRequest &request)
 {
-	if (!env.secondaryDevice && !env.arm7SCFGLocked && env.smsGgInRam) {
-		planBootstrapHb(plan, launcher.binary, request, 4, plan.romPath, "", true);
-	} else {
-		bool onFat;
-		plan.ndsToBoot = resolveSdFirst(launcher.binary, env, onFat);
-		finishDirectPlan(plan, launcher, env, request, onFat);
-	}
+	bool onFat;
+	plan.ndsToBoot = resolveSdFirst(launcher.binary, env, onFat);
+	finishDirectPlan(plan, launcher, env, request, onFat);
 }
 
 // SNEmulDS, one of three ways:
@@ -455,12 +444,6 @@ LaunchPrecheck launcherPrecheck(const CustomLauncher *launcher, const LaunchEnv 
 		case LauncherHandler::Genesis:
 			if (env.mdEmulator == 1 && env.fileSize && env.fileSize(romPath.c_str()) > 0x300000)
 				return LaunchPrecheck::MdRomTooBig;
-			break;
-		case LauncherHandler::Snes:
-		case LauncherHandler::Pce:
-			if ((launcher->handler == LauncherHandler::Snes || env.smsGgInRam)
-			 && env.isDSiMode && !env.dldiIsCycloDsi && env.arm7SCFGLocked)
-				return LaunchPrecheck::LockedScfg;
 			break;
 		default:
 			break;

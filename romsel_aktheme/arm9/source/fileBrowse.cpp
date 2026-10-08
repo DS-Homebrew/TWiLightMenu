@@ -1674,9 +1674,6 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					proceedToLaunch = false;
 					mdRomTooBig();
 					refreshBanners(screenOffset, fileOffset, dirContents);
-				} else if (precheck == LaunchPrecheck::LockedScfg) {
-					proceedToLaunch = cannotLaunchMsg(0);
-					refreshBanners(screenOffset, fileOffset, dirContents);
 				}
 
 				if (hasAP > 0) {

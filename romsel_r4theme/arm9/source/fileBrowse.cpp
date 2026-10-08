@@ -1337,8 +1337,6 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				} else if (precheck == LaunchPrecheck::MdRomTooBig) {
 					proceedToLaunch = false;
 					mdRomTooBig();
-				} else if (precheck == LaunchPrecheck::LockedScfg) {
-					proceedToLaunch = cannotLaunchMsg(0);
 				}
 
 				if (hasAP > 0) {

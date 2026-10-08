@@ -93,7 +93,6 @@ LaunchEnv captureLaunchEnv(bool secondaryDevice)
 	env.sgEmulator = ms().sgEmulator;
 	env.mdEmulator = ms().mdEmulator;
 	env.newSnesEmuVer = ms().newSnesEmuVer;
-	env.smsGgInRam = ms().smsGgInRam;
 	env.gbar2DldiAccess = ms().gbar2DldiAccess;
 	env.macroMode = ms().macroMode;
 

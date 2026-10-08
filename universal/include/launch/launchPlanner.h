@@ -54,7 +54,6 @@ struct LaunchEnv {
 	int sgEmulator = 0;
 	int mdEmulator = 0;
 	bool newSnesEmuVer = false;
-	bool smsGgInRam = false;
 	bool gbar2DldiAccess = false;
 	bool macroMode = false;
 
@@ -127,8 +126,7 @@ void appendLauncherExtensions(std::vector<std::string_view> &extensionList, cons
 enum class LaunchPrecheck {
 	None,
 	GbaBios,	// GBARunner may need the GBA BIOS: the menu's checkForGbaBiosRequirement() decides
-	MdRomTooBig,	// jEnesisDS can't play Genesis ROMs over 3 MB
-	LockedScfg	// SNEmulDS, and NitroGrafx with the ROM in RAM, can't run with SCFG locked
+	MdRomTooBig	// jEnesisDS can't play Genesis ROMs over 3 MB
 };
 
 // launcher may be NULL (no config), which needs no check. romPath may be relative to the current folder.

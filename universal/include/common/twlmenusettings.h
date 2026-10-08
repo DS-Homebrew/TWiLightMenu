@@ -370,7 +370,6 @@ public:
 	TDSiWareBooter dsiWareBooter;
 	bool dsiWareToSD;
 	bool newSnesEmuVer;
-	bool smsGgInRam;
 	bool dlplayRsaPatch;
 	bool esrbRatingScreen;
 

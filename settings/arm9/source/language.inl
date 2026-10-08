@@ -148,8 +148,6 @@ STRING(GBA_BOOTER, "GBA booter")
 STRING(SG_EMULATOR, "Sega SG/SC emulator")
 STRING(SMS_EMULATOR, "Sega MS/GG emulator")
 STRING(MD_EMULATOR, "Sega MD/Gen emulator")
-STRING(RUNFLUBBAEMUSIN, "Run FluBBa emus. in")
-STRING(SYSSD_RUNFLUBBAEMUSIN, "Sys SD: FluBBa emus. in")
 STRING(DLPLAY_RSA_PATCH, "DS Download Play RSA patch")
 
 STRING(HYBRID, "Hybrid")
@@ -164,7 +162,6 @@ STRING(DESCRIPTION_GBA_BOOTER, "Select how to run GBA ROMs.")
 STRING(DESCRIPTION_SG_EMULATOR, "Select which emulator to use for SG-1000 and SC-3000 ROMs.")
 STRING(DESCRIPTION_SMS_EMULATOR, "Select which emulator to use for Sega Master System and Game Gear ROMs.")
 STRING(DESCRIPTION_MD_EMULATOR, "Select which emulator to use for Sega Genesis/Mega Drive ROMs.")
-STRING(DESCRIPTION_RUNFLUBBAEMUSIN, "Run emulators developed by FluBBa in either DS or DSi mode. An older S8DS version will be used for SMS/GG ROMS. Set to DS mode if you can't run ROMs.")
 STRING(DESCRIPTION_DLPLAY_RSA_PATCH, "Remove signature checks from DS Download Play, so it can receive unsigned apps such as homebrew and ROM hacks.")
 
 // GBARunner2 settings

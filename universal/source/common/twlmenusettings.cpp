@@ -123,7 +123,6 @@ TWLSettings::TWLSettings()
 	dsiWareBooter = EDSiWareBootstrap;
 	dsiWareToSD = true;
 	newSnesEmuVer = false;
-	smsGgInRam = false;
 	dlplayRsaPatch = true;
 	esrbRatingScreen = false;
 
@@ -257,13 +256,9 @@ void TWLSettings::loadSettings()
 	sgEmulator = (TColSegaEmulator)settingsini.GetInt("SRLOADER", "SHOW_SG", sgEmulator);
 	if (sgEmulator == 0) // 0 (don't show) is deprecated
 		sgEmulator = EColSegaColecoDS;
-	if (!(isDSiMode() && (access("sd:/", F_OK) == 0) && sys().arm7SCFGLocked())) {
-		mdEmulator = (TMegaDriveEmulator)settingsini.GetInt("SRLOADER", "SHOW_MDGEN", mdEmulator);
-		if (mdEmulator == 0) // 0 (don't show) is deprecated
-			mdEmulator = EMegaDriveHybrid;
-	} else {
-		mdEmulator = EMegaDrivePico; // Use only PicoDriveTWL
-	}
+	mdEmulator = (TMegaDriveEmulator)settingsini.GetInt("SRLOADER", "SHOW_MDGEN", mdEmulator);
+	if (mdEmulator == 0) // 0 (don't show) is deprecated
+		mdEmulator = EMegaDriveHybrid;
 	//snesEmulator = settingsini.GetInt("SRLOADER", "SNES_EMULATOR", snesEmulator);
 	updateRecentlyPlayedList = settingsini.GetInt("SRLOADER", "UPDATE_RECENTLY_PLAYED_LIST", updateRecentlyPlayedList);
 	sortMethod = (TSortMethod)settingsini.GetInt("SRLOADER", "SORT_METHOD", sortMethod);
@@ -330,7 +325,6 @@ void TWLSettings::loadSettings()
 	dsiWareBooter = (TDSiWareBooter)settingsini.GetInt("SRLOADER", "DSIWARE_BOOTER", dsiWareBooter);
 	dsiWareToSD = settingsini.GetInt("SRLOADER", "DSIWARE_TO_SD", dsiWareToSD);
 	newSnesEmuVer = settingsini.GetInt("SRLOADER", "NEW_SNES_EMU_VER", newSnesEmuVer);
-	smsGgInRam = settingsini.GetInt("SRLOADER", "SMS_GG_IN_RAM", smsGgInRam);
 	dlplayRsaPatch = settingsini.GetInt("SRLOADER", "DLPLAY_RSA_PATCH", dlplayRsaPatch);
 	esrbRatingScreen = settingsini.GetInt("SRLOADER", "ESRB_RATING_SCREEN", esrbRatingScreen);
 
@@ -453,9 +447,7 @@ void TWLSettings::saveSettings()
 	}
 	settingsini.SetInt("SRLOADER", "SHOW_COL", colEmulator);
 	settingsini.SetInt("SRLOADER", "SHOW_SG", sgEmulator);
-	if (!(isDSiMode() && (access("sd:/", F_OK) == 0) && sys().arm7SCFGLocked())) {
-		settingsini.SetInt("SRLOADER", "SHOW_MDGEN", mdEmulator);
-	}
+	settingsini.SetInt("SRLOADER", "SHOW_MDGEN", mdEmulator);
 	// settingsini.SetInt("SRLOADER", "SNES_EMULATOR", snesEmulator);
 	settingsini.SetInt("SRLOADER", "UPDATE_RECENTLY_PLAYED_LIST", updateRecentlyPlayedList);
 	settingsini.SetInt("SRLOADER", "SORT_METHOD", sortMethod);
@@ -514,7 +506,6 @@ void TWLSettings::saveSettings()
 	settingsini.SetInt("SRLOADER", "DONT_SHOW_DSIWARE_IN_DS_MODE_WARNING", dontShowDSiWareInDSModeWarning);
 	settingsini.SetInt("SRLOADER", "DSIWARE_BOOTER", dsiWareBooter);
 	settingsini.SetInt("SRLOADER", "DSIWARE_TO_SD", dsiWareToSD);
-	settingsini.SetInt("SRLOADER", "SMS_GG_IN_RAM", smsGgInRam);
 	settingsini.SetInt("SRLOADER", "DLPLAY_RSA_PATCH", dlplayRsaPatch);
 	settingsini.SetInt("SRLOADER", "ESRB_RATING_SCREEN", esrbRatingScreen);
 

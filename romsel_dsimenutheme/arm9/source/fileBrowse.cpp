@@ -4110,8 +4110,6 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					} else if (precheck == LaunchPrecheck::MdRomTooBig) {
 						proceedToLaunch = false;
 						mdRomTooBig();
-					} else if (precheck == LaunchPrecheck::LockedScfg) {
-						proceedToLaunch = cannotLaunchMsg(launchName.c_str());
 					}
 					if (hasAP) {
 						if (ms().theme == TWLSettings::EThemeSaturn) {
