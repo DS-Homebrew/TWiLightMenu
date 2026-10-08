@@ -2183,6 +2183,7 @@ int dsiMenuTheme(void) {
 								sprintf(patchOffsetCacheFilePath, "sd:/_nds/nds-bootstrap/patchOffsetCache/%s-%04X.bin", gameTid[CURPOS], headerCRC[CURPOS]);
 								std::string fatPath = replaceAll(path, "sd:/", "fat:/");
 
+								argarray.at(0) = (char *)fatPath.c_str();
 								err = bootstrapHbRunNdsFile (path.c_str(), fatPath.c_str(),
 								perGameSettings_ramDiskNo >= 0 ? ramdiskpath.c_str() : "sd:/null.img",
 								"sd:/snemulds.cfg",

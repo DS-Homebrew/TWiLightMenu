@@ -226,9 +226,6 @@ int bootstrapHbRunNdsFile (const char* filename, const char* fatFilename, const 
 	u32 clusterCfg = 0;
 	u32 clusterPatchCache = 0;
 	u32 clusterSr = 0;
-	char filePath[PATH_MAX];
-	int pathLen;
-	const char* args[1];
 
 	if (romIsCompressed) {
 		FILE *ramDiskTemplate = fopen(ramDiskFilename, "rb");
@@ -272,16 +269,9 @@ int bootstrapHbRunNdsFile (const char* filename, const char* fatFilename, const 
 	}
 
 	if (argc <= 0 || !argv) {
-		// Construct a command line if we weren't supplied with one
-		if (!getcwd (filePath, PATH_MAX)) {
-			//free(hbLoad_bin);
-			//free(hbLoadInject_bin);
-			return 2;
-		}
-		pathLen = strlen (filePath);
-		strcpy (filePath + pathLen, fatFilename);
-		args[0] = filePath;
-		argv = args;
+		//free(hbLoad_bin);
+		//free(hbLoadInject_bin);
+		return 2;
 	}
 
 	//bool havedsiSD = false;
