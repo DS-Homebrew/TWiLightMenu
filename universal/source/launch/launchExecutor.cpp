@@ -201,7 +201,7 @@ void applyLaunchSideEffects(const LaunchPlan &plan, const GbaNativeUi *gbaNative
 
 		bootstrapini.SetString("NDS-BOOTSTRAP", "GUI_LANGUAGE", ms().getGuiLanguageString());
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", ms().gameLanguage);
-		bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", plan.dsiMode);
 		bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", plan.ndsToBoot);
 		bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", plan.bootstrapHomebrewArg);
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", plan.bootstrapBoostCpu);
@@ -283,7 +283,7 @@ int runLaunch(const LaunchPlan &plan, bool bootstrapDirect)
 				argv.size(),
 				&argv[0],
 				ms().gameLanguage,
-				0,
+				plan.dsiMode,
 				plan.boostCpu,
 				plan.boostVram,
 				ms().consoleModel, ms().soundFreq, false);

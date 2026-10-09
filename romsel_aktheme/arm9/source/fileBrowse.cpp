@@ -612,14 +612,16 @@ void refreshBanners(const int startRow, const int fileOffset, std::vector<DirEnt
 }
 
 void mdRomTooBig(void) {
+	char text[24];
+	snprintf(text, sizeof(text), "size limit of %iMB.", ms().secondaryDevice ? 3 : 4);
 	dialogboxHeight = 3;
 	showdialogbox = true;
 	clearText(false);
 	printSmall(false, 0, 74, "Error!", Alignment::center, FontPalette::formTitleText);
 	printSmall(false, 0, 90, "This SEGA Genesis/Mega Drive", Alignment::center, FontPalette::formText);
 	printSmall(false, 0, 102, "ROM cannot be launched,", Alignment::center, FontPalette::formText);
-	printSmall(false, 0, 114, "due to its surpassing the", Alignment::center, FontPalette::formText);
-	printSmall(false, 0, 126, "size limit of 3MB.", Alignment::center, FontPalette::formText);
+	printSmall(false, 0, 114, "due to it surpassing the", Alignment::center, FontPalette::formText);
+	printSmall(false, 0, 126, text, Alignment::center, FontPalette::formText);
 	printSmall(false, 0, 144, " OK", Alignment::center, FontPalette::formText);
 	updateText(false);
 	int pressed = 0;

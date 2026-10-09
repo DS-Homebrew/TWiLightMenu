@@ -380,13 +380,15 @@ void mdRomTooBig(void) {
 		lcdMainOnBottom();
 		lcdSwapped = true;
 	}
+	char text[24];
+	snprintf(text, sizeof(text), "size limit of %iMB.", ms().secondaryDevice ? 3 : 4);
 	dialogboxHeight = 3;
 	showdialogbox = true;
 	printSmall(false, 0, 74, "Error!", Alignment::center, FontPalette::white);
 	printSmall(false, 0, 90, "This SEGA Genesis/Mega Drive", Alignment::center);
 	printSmall(false, 0, 102, "ROM cannot be launched,", Alignment::center);
-	printSmall(false, 0, 114, "due to its surpassing the", Alignment::center);
-	printSmall(false, 0, 126, "size limit of 3MB.", Alignment::center);
+	printSmall(false, 0, 114, "due to it surpassing the", Alignment::center);
+	printSmall(false, 0, 126, text, Alignment::center);
 	printSmall(false, 0, 144, " OK", Alignment::center);
 	updateText(false);
 	int pressed = 0;

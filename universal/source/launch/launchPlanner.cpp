@@ -88,11 +88,11 @@ static const LauncherBinary &jEnesisBinary(const CustomLauncher &launcher, const
 }
 
 // genesis: PicoDrive TWL (LAUNCHER_PATH_PICO) is forced by a locked SCFG in DSi mode, chosen
-// in Settings, or picked by the Hybrid setting for ROMs over 3 MB
+// in Settings, or picked by the Hybrid setting for ROMs over 3 MB for flashcards, or 4 MB for DSi/3DS SD card
 static bool genesisUsesPicoDrive(const LaunchEnv &env, const std::string &romPath)
 {
 	return env.mdEmulator == 2
-		|| (env.mdEmulator == 3 && env.fileSize && env.fileSize(romPath.c_str()) > 0x300000);
+		|| (env.mdEmulator == 3 && env.fileSize && env.fileSize(romPath.c_str()) > (env.secondaryDevice ? 0x300000 : 0x400000));
 }
 
 // gba: Settings' native GBA mode with a Slot-2 RAM or NOR cart inserted
@@ -258,7 +258,7 @@ static bool endsWithNoCase(const std::string &str, const char *suffix)
 // emulator and its argument from nds-bootstrap.ini; with a RAM disk (romToRamDisk
 // 0 = Genesis, 1 = SNES, 4 = PC Engine) it also loads the ROM into RAM itself.
 static void planBootstrapHb(LaunchPlan &plan, const LauncherBinary &emulator, const LaunchRequest &request,
-			    int romToRamDisk, const std::string &iniHomebrewArg, const std::string &iniRamDrivePath, bool boostCpu)
+			    int romToRamDisk, const std::string &iniHomebrewArg, const std::string &iniRamDrivePath, bool dsiMode, bool boostCpu)
 {
 	plan.useNDSB = true;
 	plan.romToRamDisk = romToRamDisk;
@@ -270,6 +270,7 @@ static void planBootstrapHb(LaunchPlan &plan, const LauncherBinary &emulator, co
 	plan.bootstrapRamDrivePath = iniRamDrivePath;
 	plan.bootstrapBoostCpu = boostCpu ? 1 : 0;
 
+	plan.dsiMode = dsiMode;
 	plan.boostCpu = boostCpu;
 	plan.boostVram = false;
 	plan.dsModeSwitch = false;
@@ -280,7 +281,9 @@ static void planBootstrapHb(LaunchPlan &plan, const LauncherBinary &emulator, co
 
 	if (romToRamDisk == 0) {
 		plan.romIsCompressed = endsWithNoCase(plan.romPath, ".lz77.gen") || endsWithNoCase(plan.romPath, ".lz77.md");
-		if (!plan.romIsCompressed) {
+		if (plan.romIsCompressed) {
+			plan.dsiMode = false;
+		} else {
 			plan.romToRamDisk = -1;
 			plan.bootstrapRamDrivePath = "";
 		}
@@ -342,7 +345,7 @@ static void planSnes(LaunchPlan &plan, const CustomLauncher &launcher, const Lau
 		const LauncherBinary *legacy = launcher.variant((request.romFolder == "sd:/roms/snes") ? "LEGACY_TWLM" : "LEGACY");
 		if (!legacy)
 			return;
-		planBootstrapHb(plan, *legacy, request, 1, "fat:/ROM.SMC", plan.romPath, false);
+		planBootstrapHb(plan, *legacy, request, 1, "fat:/ROM.SMC", plan.romPath, false, false);
 	}
 }
 
@@ -361,7 +364,7 @@ static void planGenesis(LaunchPlan &plan, const CustomLauncher &launcher, const 
 		finishDirectPlan(plan, launcher, env, request, onFat);
 		plan.dsModeSwitch = !usePicoDrive;
 	} else {
-		planBootstrapHb(plan, jEnesisBinary(launcher, env), request, 0, "fat:/ROM.BIN", plan.romPath, true);
+		planBootstrapHb(plan, jEnesisBinary(launcher, env), request, 0, "fat:/ROM.BIN", plan.romPath, true, true);
 	}
 }
 
@@ -410,7 +413,7 @@ static void planGba(LaunchPlan &plan, const CustomLauncher &launcher, const Laun
 		const LauncherBinary *runner = launcher.variant(gbaRunner2Name(env, true, false));
 		if (!runner)
 			return;
-		planBootstrapHb(plan, *runner, request, -1, plan.romPath, "", true);
+		planBootstrapHb(plan, *runner, request, -1, plan.romPath, "", false, true);
 	}
 }
 
@@ -442,7 +445,7 @@ LaunchPrecheck launcherPrecheck(const CustomLauncher *launcher, const LaunchEnv 
 				return LaunchPrecheck::GbaBios;
 			break;
 		case LauncherHandler::Genesis:
-			if (env.mdEmulator == 1 && env.fileSize && env.fileSize(romPath.c_str()) > 0x300000)
+			if (env.mdEmulator == 1 && env.fileSize && env.fileSize(romPath.c_str()) > (env.secondaryDevice ? 0x300000 : 0x400000))
 				return LaunchPrecheck::MdRomTooBig;
 			break;
 		default:
