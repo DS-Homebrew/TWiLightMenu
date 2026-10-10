@@ -133,11 +133,16 @@ You can help translate TWiLight Menu++ on the [Crowdin project](https://crowdin.
      - Kirby
      - Pokémon Day
 	 - Zelda
-- [spinal_cord](https://gbatemp.net/members/spinal_cord.90607/): [DSi4DS](https://gbatemp.net/threads/dsi4ds.173617/) and [DSision2](https://gbatemp.net/threads/dsision2.92740/) graphics
+- [spinal_cord](https://gbatemp.net/members/spinal_cord.90607/): DSi Menu and other graphics (such as folder icon) extracted from [DSi4DS](https://gbatemp.net/threads/dsi4ds.173617/) and [DSision2](https://gbatemp.net/threads/dsision2.92740/)
 - [StarvingArtist](https://www.deviantart.com/starvingartist/): Game Console icons
+- Nintendo: DSi text font and graphical/audio assets from the Nintendo DSi Menu and 3DS HOME Menu
+- SEGA: Graphical/audio assets from the SEGA Saturn BIOS menu
+- Sonic Team: The bubble (from Sonic 1) used in the HBL UI
+- Nintendo, HAL Laboratory, Game Freak, The Pokémon Company, syn Sophia, SEGA, and Sonic Team: Graphical/audio assets used in special/easter egg TWLMenu++ splash screens 
 ## Music
 - [BlastoiseVeteran](https://soundcloud.com/blastyveteran): Remastered version of Nintendo DSi Shop music
 - IkaMusumeYiyaRoxie: General N64 MIDI Soundfont, used for the title splash fanfare on old versions
+- syn Sophia: Soundfont (from Style Savvy) used for the default short/long title splash fanfares
 - [TeciorFILM](https://www.youtube.com/channel/UCEyPYQavt2g_tdmkd-pQgYw): The video ([10 Minutes of Nintendo DSi Menu Music (Authentic)](https://www.youtube.com/watch?v=LLc3-z8VZwc)) used for the better DSi Menu music add-on
 ## Sound
 - [dbry](https://github.com/dbry): Xtreme Quality IMA-ADPCM decoder code from [adpcm-xq](https://github.com/dbry/adpcm-xq).
