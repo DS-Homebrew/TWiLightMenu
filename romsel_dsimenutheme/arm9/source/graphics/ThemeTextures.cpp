@@ -303,18 +303,17 @@ void ThemeTextures::loadBackgrounds() {
 	} else {
 		_backgroundTextures.emplace_back(TFN_BG_TOPBG, TFN_FALLBACK_BG_TOPBG);
 	}
-		
-	
+
 	if (ms().theme == TWLSettings::ETheme3DS && !sys().isRegularDS()) {
 		_backgroundTextures.emplace_back(TFN_BG_BOTTOMBG, TFN_FALLBACK_BG_BOTTOMBG);
 		_backgroundTextures.emplace_back(TFN_BG_BOTTOMBUBBLEBG, TFN_FALLBACK_BG_BOTTOMBUBBLEBG);
-		return;
+		goto loadToTopBorderBuffer;
 	}
 
 	if (ms().theme == TWLSettings::ETheme3DS && sys().isRegularDS()) {
 		_backgroundTextures.emplace_back(TFN_BG_BOTTOMBG_DS, TFN_FALLBACK_BG_BOTTOMBG_DS);
 		_backgroundTextures.emplace_back(TFN_BG_BOTTOMBUBBLEBG_DS, TFN_FALLBACK_BG_BOTTOMBUBBLEBG_DS);
-		return;
+		goto loadToTopBorderBuffer;
 	}
 	// DSi Theme
 	if (ms().macroMode) {
@@ -326,14 +325,15 @@ void ThemeTextures::loadBackgrounds() {
 		_backgroundTextures.emplace_back(TFN_BG_BOTTOMBUBBLEBG, TFN_FALLBACK_BG_BOTTOMBUBBLEBG);
 		if (ms().theme == TWLSettings::EThemeDSi) _backgroundTextures.emplace_back(TFN_BG_BOTTOMMOVINGBG, TFN_FALLBACK_BG_BOTTOMMOVINGBG);
 	}
-	
+
+loadToTopBorderBuffer:
 	_backgroundTextures[ms().macroMode].copy(_topBorderBuffer, false);
 	if (boxArtColorDeband) {
 		tonccpy(_topBorderBuffer2, _topBorderBuffer, (256 * 192)*sizeof(u16));
 	}
 }
 
-void ThemeTextures::loadHBTheme() {	
+void ThemeTextures::loadHBTheme() {
 	logPrint("tex().loadHBTheme()\n");
 
 	// iprintf("tex().loadBackgrounds()\n");
@@ -360,7 +360,7 @@ void ThemeTextures::loadHBTheme() {
 	_settingsIconTexture = std::make_unique<Texture>(TFN_GRF_ICON_SETTINGS, TFN_FALLBACK_GRF_ICON_SETTINGS);
 	_manualIconTexture = std::make_unique<Texture>(TFN_GRF_ICON_MANUAL, TFN_FALLBACK_GRF_ICON_MANUAL);
 
-	
+
 	// iprintf("tex().loadSettingsImage(*_settingsIconTexture)\n");
 	loadSettingsImage(*_settingsIconTexture);
 	// iprintf("tex().loadBraceImage(*_braceTexture)\n");
@@ -379,15 +379,15 @@ void ThemeTextures::loadHBTheme() {
 	loadSmallCartImage(*_smallCartTexture);
 	// iprintf("tex().loadFolderImage(*_folderTexture)\n");
 	loadFolderImage(*_folderTexture);
-	
+
 	// iprintf("tex().loadProgressImage(*_progressTexture)\n");
 	loadProgressImage(*_progressTexture);
 	// iprintf("tex().loadWirelessIcons(*_wirelessIconsTexture)\n");
 	loadWirelessIcons(*_wirelessIconsTexture);
-	
+
 }
 
-void ThemeTextures::loadSaturnTheme() {	
+void ThemeTextures::loadSaturnTheme() {
 	logPrint("tex().loadSaturnTheme()\n");
 
 	loadBackgrounds();
@@ -462,7 +462,7 @@ void ThemeTextures::load3DSTheme() {
 	loadWirelessIcons(*_wirelessIconsTexture);
 }
 
-void ThemeTextures::loadDSiTheme() {	
+void ThemeTextures::loadDSiTheme() {
 	logPrint("tex().loadDSiTheme()\n");
 
 	//iprintf("loadBackgrounds()\n");
@@ -1607,7 +1607,7 @@ void ThemeTextures::drawOverBoxArt(uint photoWidth, uint photoHeight) {
 			tonccpy(_bgSubBuffer2 + offset, _topBorderBuffer2 + offset, sizeof(u16) * boxArtWidth);
 		}
 	}
-	
+
 	commitBgSubModify();
 }
 
@@ -1701,7 +1701,7 @@ ITCM_CODE void ThemeTextures::resetCachedVolumeLevel() {
 ITCM_CODE int ThemeTextures::getVolumeLevel(void) {
 	if (!dsiFeatures() || sys().i2cBricked())
 		return -1;
-	
+
 	u8 volumeLevel = sys().volumeStatus();
 	if (volumeLevel == 0)
 		return 0;
@@ -2024,7 +2024,7 @@ void ThemeTextures::applyUserPaletteToAllGrfTextures() {
 		_startTextTexture->applyUserPaletteFile(TFN_PALETTE_START_TEXT, effectDSiStartTextPalettes);
 	if (_wirelessIconsTexture && tc().wirelessIconsUserPalette())
 		_wirelessIconsTexture->applyUserPaletteFile(TFN_PALETTE_WIRELESSICONS, effectDSiArrowButtonPalettes);
-	
+
 	if (_boxEmptyTexture && tc().boxUserPalette())
 		_boxEmptyTexture->applyUserPaletteFile(TFN_PALETTE_BOX_EMPTY, effectDSiArrowButtonPalettes);
 	if (_boxFullTexture && tc().boxUserPalette())
