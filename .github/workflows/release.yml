@@ -59,6 +59,7 @@ jobs:
           mkdir -p 7zfile/_nds/TWiLightMenu/extras/fonts/
           mkdir -p 7zfile/_nds/TWiLightMenu/gamesettings/
           mkdir -p 7zfile/_nds/TWiLightMenu/r4menu/themes/
+          mkdir -p 7zfile/DSi\&3DS\ -\ SD\ card\ users/_nds/
 
           # nds-bootstrap
           mkdir -p nds-bootstrap
