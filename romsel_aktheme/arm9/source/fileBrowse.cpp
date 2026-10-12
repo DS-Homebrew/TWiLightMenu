@@ -1972,9 +1972,35 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					updateText(false);
 
 					if (pressed & KEY_A && !isDirectory[cursorPosOnScreen]) {
+						const char* fileNameChar = dirContents.at(fileOffset).name.c_str();
 						displayDiskIcon(ms().secondaryDevice);
-						remove(dirContents.at(fileOffset).name.c_str());
+						remove(fileNameChar);
 						displayDiskIcon(false);
+						if (!ms().macroMode && strlen(fileNameChar) >= 6 && extension(fileNameChar, {".gif", ".bmp", ".png"})) {
+							char fileNameCharBottom[128] = {0};
+							char fileNameChar_noExt[128] = {0};
+							sprintf(fileNameChar_noExt, fileNameChar);
+							for (int i = strlen(fileNameChar); i >= 0; i--) {
+								if (fileNameChar_noExt[i] == '.') {
+									fileNameChar_noExt[i] = 0;
+									break;
+								}
+							}
+
+							if (extension(fileNameChar, {".gif"})) {
+								sprintf(fileNameCharBottom, "%s_bot.gif", fileNameChar_noExt);
+							} else if (extension(fileNameChar, {".bmp"})) {
+								sprintf(fileNameCharBottom, "%s_bot.bmp", fileNameChar_noExt);
+							} else if (extension(fileNameChar, {".png"})) {
+								sprintf(fileNameCharBottom, "%s_bot.png", fileNameChar_noExt);
+							}
+
+							displayDiskIcon(ms().secondaryDevice);
+							if (access(fileNameCharBottom, F_OK) == 0) {
+								remove(fileNameCharBottom); // Remove bottom screen image file
+							}
+							displayDiskIcon(false);
+						}
 					} else if (pressed & KEY_Y) {
 						displayDiskIcon(ms().secondaryDevice);
 						// Remove leading . if it exists
