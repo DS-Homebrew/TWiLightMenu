@@ -10,6 +10,8 @@
 #include <string.h>
 #include <stddef.h>
 
+#define ndmaSlot 0
+
 static struct mmcdevice deviceSD;
 static struct mmcdevice deviceNAND;
 
@@ -198,6 +200,247 @@ void my_sdmmc_send_command(struct mmcdevice *ctx, uint32_t cmd, uint32_t args) {
 		ctx->ret[2] = (u32)(sdmmc_read16(REG_SDRESP4) | (sdmmc_read16(REG_SDRESP5) << 16));
 		ctx->ret[3] = (u32)(sdmmc_read16(REG_SDRESP6) | (sdmmc_read16(REG_SDRESP7) << 16));
 	}
+}
+
+static void sdmmc_send_command_nonblocking_ndma(struct mmcdevice *ctx, u32 cmd, u32 args)
+{
+	*((vu32*)0x4004100) = 0x80020000; //use round robin arbitration method;
+
+	*(vu32*)((u32)0x4004104+0x1C*ndmaSlot) = 0x0400490C;
+	*(vu32*)((u32)0x4004108+0x1C*ndmaSlot) = (u32)ctx->rData;
+
+	*(vu32*)((u32)0x400410C+0x1C*ndmaSlot) = ctx->size;
+
+	*(vu32*)((u32)0x4004110+0x1C*ndmaSlot) = 0x80;
+
+	*(vu32*)((u32)0x4004114+0x1C*ndmaSlot) = 0x10;
+
+	*(vu32*)((u32)0x400411C+0x1C*ndmaSlot) = 0xC8064000;
+
+	//const bool getSDRESP = (cmd << 15) >> 31;
+	u16 flags = (cmd << 15) >> 31;
+	const bool readdata = cmd & 0x20000;
+	const bool writedata = cmd & 0x40000;
+
+	if(readdata || writedata)
+	{
+		flags |= TMIO_STAT0_DATAEND;
+	}
+
+	ctx->error = 0;
+	while((sdmmc_read16(REG_SDSTATUS1) & TMIO_STAT1_CMD_BUSY)); //mmc working?
+	sdmmc_write16(REG_SDIRMASK0,0);
+	sdmmc_write16(REG_SDIRMASK1,0);
+	sdmmc_write16(REG_SDSTATUS0,0);
+	sdmmc_write16(REG_SDSTATUS1,0);
+	sdmmc_mask16(REG_SDDATACTL32,0x1800,0x400); // Disable TX32RQ and RX32RDY IRQ. Clear fifo.
+	sdmmc_write16(REG_SDCMDARG0,args &0xFFFF);
+	sdmmc_write16(REG_SDCMDARG1,args >> 16);
+	sdmmc_write16(REG_SDCMD,cmd &0xFFFF);
+
+	u32 size = ctx->size;
+	const u16 blkSize = sdmmc_read16(REG_SDBLKLEN32);
+	//u32 *rDataPtr32 = (u32*)ctx->rData;
+	//u8  *rDataPtr8  = ctx->rData;
+	const u32 *tDataPtr32 = (u32*)ctx->tData;
+	const u8  *tDataPtr8  = ctx->tData;
+
+	//bool rUseBuf = ( NULL != rDataPtr32 );
+	bool tUseBuf = ( NULL != tDataPtr32 );
+
+    //nocashMessage("main loop");
+
+	while(1)
+	{
+		volatile u16 status1 = sdmmc_read16(REG_SDSTATUS1);
+#ifdef DATA32_SUPPORT
+		volatile u16 ctl32 = sdmmc_read16(REG_SDDATACTL32);
+		if((ctl32 & 0x100))
+#else
+		if((status1 & TMIO_STAT1_RXRDY))
+#endif
+		{
+            /*
+            // should not be needed : ndma unit is taking care of data transfer
+            nocashMessage("readdata check");
+			if(readdata)
+			{
+                nocashMessage("readdata");
+				if(rUseBuf)
+				{
+					sdmmc_mask16(REG_SDSTATUS1, TMIO_STAT1_RXRDY, 0);
+					if(size >= blkSize)
+					{
+						size -= blkSize;
+					}
+				}
+
+				sdmmc_mask16(REG_SDDATACTL32, 0x800, 0);
+			}*/
+		}
+#ifdef DATA32_SUPPORT
+		if(!(ctl32 & 0x200))
+#else
+		if((status1 & TMIO_STAT1_TXRQ))
+#endif
+		{
+            //nocashMessage("writedata check");
+			if(writedata)
+			{
+                //nocashMessage("writedata");
+				if(tUseBuf)
+				{
+					sdmmc_mask16(REG_SDSTATUS1, TMIO_STAT1_TXRQ, 0);
+					if(size >= blkSize)
+					{
+						#ifdef DATA32_SUPPORT
+						if(!((u32)tDataPtr32 & 3))
+						{
+							for(u32 i = 0; i < blkSize; i += 4)
+							{
+								sdmmc_write32(REG_SDFIFO32, *tDataPtr32++);
+							}
+						}
+						else
+						{
+							for(u32 i = 0; i < blkSize; i += 4)
+							{
+								u32 data = *tDataPtr8++;
+								data |= (u32)*tDataPtr8++ << 8;
+								data |= (u32)*tDataPtr8++ << 16;
+								data |= (u32)*tDataPtr8++ << 24;
+								sdmmc_write32(REG_SDFIFO32, data);
+							}
+						}
+						#else
+						if(!((u32)tDataPtr16 & 1))
+						{
+							for(u32 i = 0; i < blkSize; i += 2)
+							{
+								sdmmc_write16(REG_SDFIFO, *tDataPtr16++);
+							}
+						}
+						else
+						{
+							for(u32 i = 0; i < blkSize; i += 2)
+							{
+								u16 data = *tDataPtr8++;
+								data |= (u16)(*tDataPtr8++ << 8);
+								sdmmc_write16(REG_SDFIFO, data);
+							}
+						}
+						#endif
+						size -= blkSize;
+					}
+				}
+
+				sdmmc_mask16(REG_SDDATACTL32, 0x1000, 0);
+			}
+		}
+		if(status1 & TMIO_MASK_GW)
+		{
+            //nocashMessage("error 4");
+			ctx->error |= 4;
+			break;
+		}
+		if(status1 & TMIO_STAT1_CMD_BUSY)
+		{
+            // command is ongoing : return
+            //nocashMessage("cmd busy");
+            break;
+		} 
+        else if (strncmp((const char*)0x04FFFA00, "no$gba", 6) == 0)
+        {
+            // command is finished already without going busy : return
+            // not supposed to happen
+            // needed for no$gba only
+            u16 status0 = sdmmc_read16(REG_SDSTATUS0);
+            //nocashMessage("already finished");
+            if((status0 & flags) == flags)
+            break;
+		}
+	}
+	//ctx->stat0 = sdmmc_read16(REG_SDSTATUS0);
+	//ctx->stat1 = sdmmc_read16(REG_SDSTATUS1);
+	//sdmmc_write16(REG_SDSTATUS0,0);
+	//sdmmc_write16(REG_SDSTATUS1,0);
+
+	/*if(getSDRESP != 0)
+	{
+		ctx->ret[0] = (u32)(sdmmc_read16(REG_SDRESP0) | (sdmmc_read16(REG_SDRESP1) << 16));
+		ctx->ret[1] = (u32)(sdmmc_read16(REG_SDRESP2) | (sdmmc_read16(REG_SDRESP3) << 16));
+		ctx->ret[2] = (u32)(sdmmc_read16(REG_SDRESP4) | (sdmmc_read16(REG_SDRESP5) << 16));
+		ctx->ret[3] = (u32)(sdmmc_read16(REG_SDRESP6) | (sdmmc_read16(REG_SDRESP7) << 16));
+	}*/
+}
+
+/* return true if the command is completed and false if it is still ongoing */
+static bool sdmmc_check_command_ndma(struct mmcdevice *ctx, u32 cmd)
+{
+	const bool getSDRESP = (cmd << 15) >> 31;
+    u16 flags = (cmd << 15) >> 31;
+	const bool readdata = cmd & 0x20000;
+	const bool writedata = cmd & 0x40000;
+
+	if(readdata || writedata)
+	{
+		flags |= TMIO_STAT0_DATAEND;
+	}
+
+    volatile u16 status1 = sdmmc_read16(REG_SDSTATUS1);
+
+    if(status1 & TMIO_MASK_GW)
+	{
+		ctx->error |= 4;
+
+        ctx->stat0 = sdmmc_read16(REG_SDSTATUS0);
+      	ctx->stat1 = sdmmc_read16(REG_SDSTATUS1);
+      	sdmmc_write16(REG_SDSTATUS0,0);
+      	sdmmc_write16(REG_SDSTATUS1,0);
+
+      	if(getSDRESP != 0)
+      	{
+      		ctx->ret[0] = (u32)(sdmmc_read16(REG_SDRESP0) | (sdmmc_read16(REG_SDRESP1) << 16));
+      		ctx->ret[1] = (u32)(sdmmc_read16(REG_SDRESP2) | (sdmmc_read16(REG_SDRESP3) << 16));
+      		ctx->ret[2] = (u32)(sdmmc_read16(REG_SDRESP4) | (sdmmc_read16(REG_SDRESP5) << 16));
+      		ctx->ret[3] = (u32)(sdmmc_read16(REG_SDRESP6) | (sdmmc_read16(REG_SDRESP7) << 16));
+      	}
+        *(vu32*)((u32)0x400411C+ndmaSlot*0x1C) = 0x48064000;
+        return true;
+    }
+
+    if(!(status1 & TMIO_STAT1_CMD_BUSY))
+	{
+		u16 status0 = sdmmc_read16(REG_SDSTATUS0);
+		if(sdmmc_read16(REG_SDSTATUS0) & TMIO_STAT0_CMDRESPEND)
+		{
+			ctx->error |= 0x1;
+		}
+		if(status0 & TMIO_STAT0_DATAEND)
+		{
+			ctx->error |= 0x2;
+		}
+
+        if((status0 & flags) != flags)
+        {
+            return false;
+        }
+
+        ctx->stat0 = sdmmc_read16(REG_SDSTATUS0);
+      	ctx->stat1 = sdmmc_read16(REG_SDSTATUS1);
+      	sdmmc_write16(REG_SDSTATUS0,0);
+      	sdmmc_write16(REG_SDSTATUS1,0);
+
+      	if(getSDRESP != 0)
+      	{
+      		ctx->ret[0] = (u32)(sdmmc_read16(REG_SDRESP0) | (sdmmc_read16(REG_SDRESP1) << 16));
+      		ctx->ret[1] = (u32)(sdmmc_read16(REG_SDRESP2) | (sdmmc_read16(REG_SDRESP3) << 16));
+      		ctx->ret[2] = (u32)(sdmmc_read16(REG_SDRESP4) | (sdmmc_read16(REG_SDRESP5) << 16));
+      		ctx->ret[3] = (u32)(sdmmc_read16(REG_SDRESP6) | (sdmmc_read16(REG_SDRESP7) << 16));
+      	}
+        *(vu32*)((u32)0x400411C+ndmaSlot*0x1C) = 0x48064000; 
+        return true;
+	} else return false;
 }
 
 
@@ -429,7 +672,7 @@ int my_sdmmc_nand_init() {
 }
 
 //---------------------------------------------------------------------------------
-int my_sdmmc_readsectors(struct mmcdevice *device, u32 sector_no, u32 numsectors, void *out) {
+u32 my_sdmmc_readsectors(struct mmcdevice *device, u32 sector_no, u32 numsectors, void *out) {
 //---------------------------------------------------------------------------------
 	if (device->isSDHC == 0) sector_no <<= 9;
 	my_setTarget(device);
@@ -443,7 +686,27 @@ int my_sdmmc_readsectors(struct mmcdevice *device, u32 sector_no, u32 numsectors
 	sdmmc_write16(REG_SDBLKCOUNT,numsectors);
 	device->rData = out;
 	device->size = numsectors << 9;
-	my_sdmmc_send_command(device,0x33C12,sector_no);
+	if (((u32)out % 4) != 0) {
+		my_sdmmc_send_command(device,0x33C12,sector_no);
+	} else {
+        //nocashMessage("my_sdmmc_sdcard_readsectors");
+        sdmmc_send_command_nonblocking_ndma(device,0x33C12,sector_no);
+        //nocashMessage("command sent");
+        if (!sdmmc_check_command_ndma(device,0x33C12)) {
+			return 0x474E4950; // 'PING'
+		}
+        //nocashMessage("command checked");
+	}
+	my_setTarget(&deviceSD);
+	return my_geterror(device);
+}
+
+//---------------------------------------------------------------------------------
+u32 my_sdmmc_continue_readsectors(struct mmcdevice *device) {
+//---------------------------------------------------------------------------------
+    if (!sdmmc_check_command_ndma(device,0x33C12)) {
+		return 0x474E4950; // 'PING'
+	}
 	my_setTarget(&deviceSD);
 	return my_geterror(device);
 }
@@ -514,7 +777,7 @@ int my_sdmmc_sd_startup() {
 //---------------------------------------------------------------------------------
 void my_sdmmcHandler() {
 //---------------------------------------------------------------------------------
-	int result = 0;
+	u32 result = 0;
 	int sdflag = 0;
 	int oldIME = enterCriticalSection();
 
@@ -562,6 +825,9 @@ void my_sdmmcHandler() {
 			useDLDI ? (io_dldi_data->ioInterface.readSectors(*(u32*)0x02FFFA00, *(u32*)0x02FFFA04, (void*)*(u32*)0x02FFFA08) ? 0 : 1)
 					: my_sdmmc_readsectors(&deviceSD, *(u32*)0x02FFFA00, *(u32*)0x02FFFA04, (void*)*(u32*)0x02FFFA08);
 		break;
+	case 0x52434453: // SDMMC_SD_READ_SECTORS
+		result = my_sdmmc_continue_readsectors(&deviceSD);
+		break;
 	case 0x52574453: // SDMMC_SD_WRITE_SECTORS
 		result =
 			useDLDI ? (io_dldi_data->ioInterface.writeSectors(*(u32*)0x02FFFA00, *(u32*)0x02FFFA04, (void*)*(u32*)0x02FFFA08) ? 0 : 1)
@@ -569,6 +835,9 @@ void my_sdmmcHandler() {
 		break;
 	case 0x4452414E: // SDMMC_NAND_READ_SECTORS
 		result = my_sdmmc_readsectors(&deviceNAND, *(u32*)0x02FFFA00, *(u32*)0x02FFFA04, (void*)*(u32*)0x02FFFA08);
+		break;
+	case 0x5243414E: // SDMMC_NAND_READ_SECTORS
+		result = my_sdmmc_continue_readsectors(&deviceNAND);
 		break;
 	case 0x5257414E: // SDMMC_NAND_WRITE_SECTORS
 		result = my_sdmmc_writesectors(&deviceNAND, *(u32*)0x02FFFA00, *(u32*)0x02FFFA04, (void*)*(u32*)0x02FFFA08);

@@ -83,7 +83,7 @@ bool my_sdio_ReadSectors(sec_t sector, sec_t numSectors,void* buffer) {
 	sharedAddr[1] = numSectors;
 	sharedAddr[2] = (vu32)buffer;
 
-	sharedAddr[3] = 0x44524453;
+	sharedAddr[3] = 0x44524453; // 'SDRD'
 	// if (my_sdio_isNoSGba) {
 		IPC_SendSync(4);
 	/* } else {
@@ -91,6 +91,17 @@ bool my_sdio_ReadSectors(sec_t sector, sec_t numSectors,void* buffer) {
 	} */
 	while (sharedAddr[3] == 0x44524453) {
 		swiDelay(100);
+	}
+	while (1) {
+		if (sharedAddr[3] == 0x474E4950) { // 'PING'
+			sharedAddr[3] = 0x52434453; // 'SDCR'
+			IPC_SendSync(4);
+			while (sharedAddr[3] == 0x52434453) {
+				swiDelay(100);
+			}
+		} else {
+			break;
+		}
 	}
 
 	int result = sharedAddr[3];
@@ -107,7 +118,7 @@ bool my_sdio_WriteSectors(sec_t sector, sec_t numSectors,const void* buffer) {
 	sharedAddr[1] = numSectors;
 	sharedAddr[2] = (vu32)buffer;
 
-	sharedAddr[3] = 0x52574453;
+	sharedAddr[3] = 0x52574453; // 'SDWR'
 	// if (my_sdio_isNoSGba) {
 		IPC_SendSync(5);
 	/* } else {
