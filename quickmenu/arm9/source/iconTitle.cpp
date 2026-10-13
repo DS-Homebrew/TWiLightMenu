@@ -946,14 +946,13 @@ void iconUpdate(int num, bool isDir, const char* name)
 
 void titleUpdate(int num, bool top, bool isDir, const char* name)
 {
-	if ((strcmp(name, "slot1") == 0) || infoFound[num]) {
+	if (infoFound[num]) {
 		// this is an nds/app file!
 		// or a file with custom banner text
-		if (infoFound[num]) {
-			printSmall(false, BOX_PX, iconYpos[top ? 0 : 3] + BOX_PY - (calcSmallFontHeight(cachedTitle[num]) / 2), cachedTitle[num], Alignment::center);
-		} else {
-			printSmall(false, BOX_PX, iconYpos[top ? 0 : 3] + BOX_PY - (calcSmallFontHeight(name) / 2), name, Alignment::center);
-		}
+		printSmall(false, BOX_PX, iconYpos[top ? 0 : 3] + BOX_PY - (calcSmallFontHeight(cachedTitle[num]) / 2), cachedTitle[num], Alignment::center);
+	} else if (strcmp(name, "slot1") == 0) {
+		const char* unkText = "???";
+		printSmall(false, BOX_PX, iconYpos[top ? 0 : 3] + BOX_PY - (calcSmallFontHeight(unkText) / 2), unkText, Alignment::center);
 	} else {
 		std::vector<std::string> lines;
 		if (ms().filenameDisplay == 0) {
