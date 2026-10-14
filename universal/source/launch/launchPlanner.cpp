@@ -282,6 +282,7 @@ static void planBootstrapHb(LaunchPlan &plan, const LauncherBinary &emulator, co
 	if (romToRamDisk == 0) {
 		plan.romIsCompressed = endsWithNoCase(plan.romPath, ".lz77.gen") || endsWithNoCase(plan.romPath, ".lz77.md");
 		if (plan.romIsCompressed) {
+			plan.bootstrapHomebrewArg = "fat:/ROM.BIN";
 			plan.dsiMode = false;
 		} else {
 			plan.romToRamDisk = -1;
@@ -289,7 +290,9 @@ static void planBootstrapHb(LaunchPlan &plan, const LauncherBinary &emulator, co
 		}
 	} else if (romToRamDisk == 1) {
 		plan.romIsCompressed = endsWithNoCase(plan.romPath, ".lz77.smc") || endsWithNoCase(plan.romPath, ".lz77.sfc");
-		if (!plan.romIsCompressed) {
+		if (plan.romIsCompressed) {
+			plan.bootstrapHomebrewArg = "fat:/ROM.SMC";
+		} else {
 			plan.romToRamDisk = -1;
 			plan.bootstrapRamDrivePath = "";
 		}
