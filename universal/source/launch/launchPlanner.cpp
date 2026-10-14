@@ -345,7 +345,7 @@ static void planSnes(LaunchPlan &plan, const CustomLauncher &launcher, const Lau
 		const LauncherBinary *legacy = launcher.variant((request.romFolder == "sd:/roms/snes") ? "LEGACY_TWLM" : "LEGACY");
 		if (!legacy)
 			return;
-		planBootstrapHb(plan, *legacy, request, 1, "fat:/ROM.SMC", plan.romPath, false, false);
+		planBootstrapHb(plan, *legacy, request, 1, plan.romPathFat, plan.romPath, false, false);
 	}
 }
 
@@ -364,7 +364,7 @@ static void planGenesis(LaunchPlan &plan, const CustomLauncher &launcher, const 
 		finishDirectPlan(plan, launcher, env, request, onFat);
 		plan.dsModeSwitch = !usePicoDrive;
 	} else {
-		planBootstrapHb(plan, jEnesisBinary(launcher, env), request, 0, "fat:/ROM.BIN", plan.romPath, true, true);
+		planBootstrapHb(plan, jEnesisBinary(launcher, env), request, 0, plan.romPathFat, plan.romPath, true, true);
 	}
 }
 
