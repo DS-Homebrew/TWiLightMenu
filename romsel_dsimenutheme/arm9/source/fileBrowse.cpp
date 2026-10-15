@@ -1669,7 +1669,7 @@ void mdRomTooBig(void) {
 		while (!dboxStopped) { bgOperations(true); }
 	}
 	char text[128];
-	snprintf(text, sizeof(text), STR_MD_ROM_TOO_BIG.c_str(), ms().secondaryDevice ? 3 : 4);
+	snprintf(text, sizeof(text), STR_MD_ROM_TOO_BIG.c_str(), ms().secondaryDevice ? "3" : "7.5");
 	printSmall(false, 0, 64, text, Alignment::center, FontPalette::dialog);
 	printSmall(false, 0, 160, STR_A_OK, Alignment::center, FontPalette::dialog);
 	updateText(false);
