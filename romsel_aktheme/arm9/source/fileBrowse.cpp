@@ -613,7 +613,7 @@ void refreshBanners(const int startRow, const int fileOffset, std::vector<DirEnt
 
 void mdRomTooBig(void) {
 	char text[24];
-	snprintf(text, sizeof(text), "size limit of %sMB.", ms().secondaryDevice ? "3" : "7.5");
+	snprintf(text, sizeof(text), "size limit of %sMB.", ms().secondaryDevice ? (sys().dsDebugRam() ? "4" : "3") : "7.5");
 	dialogboxHeight = 3;
 	showdialogbox = true;
 	clearText(false);

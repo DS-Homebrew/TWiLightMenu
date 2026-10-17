@@ -7,6 +7,7 @@
 */
 
 #include "launch/launchPlanner.h"
+#include "common/systemdetails.h"
 
 #include <string.h>
 #include <strings.h>
@@ -88,11 +89,11 @@ static const LauncherBinary &jEnesisBinary(const CustomLauncher &launcher, const
 }
 
 // genesis: PicoDrive TWL (LAUNCHER_PATH_PICO) is forced by a locked SCFG in DSi mode, chosen
-// in Settings, or picked by the Hybrid setting for ROMs over 3 MB for flashcards, or 4 MB for DSi/3DS SD card
+// in Settings, or picked by the Hybrid setting for ROMs over 3 or 4 MB for flashcards, or 7.5 MB for DSi/3DS SD card
 static bool genesisUsesPicoDrive(const LaunchEnv &env, const std::string &romPath)
 {
 	return env.mdEmulator == 2
-		|| (env.mdEmulator == 3 && env.fileSize && env.fileSize(romPath.c_str()) > (env.secondaryDevice ? 0x300000 : 0x780000));
+		|| (env.mdEmulator == 3 && env.fileSize && env.fileSize(romPath.c_str()) > (env.secondaryDevice ? (sys().dsDebugRam() ? 0x400000 : 0x300000) : 0x780000));
 }
 
 // gba: Settings' native GBA mode with a Slot-2 RAM or NOR cart inserted
@@ -448,7 +449,7 @@ LaunchPrecheck launcherPrecheck(const CustomLauncher *launcher, const LaunchEnv 
 				return LaunchPrecheck::GbaBios;
 			break;
 		case LauncherHandler::Genesis:
-			if (env.mdEmulator == 1 && env.fileSize && env.fileSize(romPath.c_str()) > (env.secondaryDevice ? 0x300000 : 0x780000))
+			if (env.mdEmulator == 1 && env.fileSize && env.fileSize(romPath.c_str()) > (env.secondaryDevice ? (sys().dsDebugRam() ? 0x400000 : 0x300000) : 0x780000))
 				return LaunchPrecheck::MdRomTooBig;
 			break;
 		default:
