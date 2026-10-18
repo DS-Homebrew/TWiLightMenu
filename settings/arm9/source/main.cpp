@@ -1517,9 +1517,11 @@ int settingsMode(void)
 			.option(STR_GBABORDER, STR_DESCRIPTION_GBABORDER, Option::Nul(opt_gba_border_select), {STR_PRESS_A}, {0});
 	}
 	if (emulatorsInstalled) {
-		gamesPage.option(STR_COL_EMULATOR, STR_DESCRIPTION_COL_EMULATOR, Option::Int((int *)&ms().colEmulator), {"S8DS", "ColecoDS"}, {TColSegaEmulator::EColSegaS8DS, TColSegaEmulator::EColSegaColecoDS})
-			.option(STR_MD_EMULATOR, STR_DESCRIPTION_MD_EMULATOR, Option::Int((int *)&ms().mdEmulator), {"jEnesisDS Plus", "PicoDriveTWL", STR_HYBRID}, {TMegaDriveEmulator::EMegaDriveJenesis, TMegaDriveEmulator::EMegaDrivePico, TMegaDriveEmulator::EMegaDriveHybrid})
-			.option(STR_SG_EMULATOR, STR_DESCRIPTION_SG_EMULATOR, Option::Int((int *)&ms().sgEmulator), {"S8DS", "ColecoDS"}, {TColSegaEmulator::EColSegaS8DS, TColSegaEmulator::EColSegaColecoDS});
+		gamesPage.option(STR_COL_EMULATOR, STR_DESCRIPTION_COL_EMULATOR, Option::Int((int *)&ms().colEmulator), {"S8DS", "ColecoDS"}, {TColSegaEmulator::EColSegaS8DS, TColSegaEmulator::EColSegaColecoDS});
+		if (!dsiFeatures() || ms().consoleModel < 2 || (access(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/emulators/jEnesisDSPlus.nds" : "fat:/_nds/TWiLightMenu/emulators/jEnesisDSPlus.nds", F_OK) == 0)) {
+			gamesPage.option(STR_MD_EMULATOR, STR_DESCRIPTION_MD_EMULATOR, Option::Int((int *)&ms().mdEmulator), {"jEnesisDS Plus", "PicoDriveTWL", STR_HYBRID}, {TMegaDriveEmulator::EMegaDriveJenesis, TMegaDriveEmulator::EMegaDrivePico, TMegaDriveEmulator::EMegaDriveHybrid});
+		}
+		gamesPage.option(STR_SG_EMULATOR, STR_DESCRIPTION_SG_EMULATOR, Option::Int((int *)&ms().sgEmulator), {"S8DS", "ColecoDS"}, {TColSegaEmulator::EColSegaS8DS, TColSegaEmulator::EColSegaColecoDS});
 	}
 
 	SettingsPage miscPage(STR_MISC_SETTINGS);
