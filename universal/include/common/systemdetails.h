@@ -32,7 +32,7 @@ public:
 	bool hasRegulableBacklight() { return _hasRegulableBacklight; }
 	bool i2cBricked() { return _i2cBricked; }
 	bool dsDebugRam() { return _dsDebugRam; }
-	u32 commonCache() { return *_lastUsedCommonCache; }
+	u32 commonCache() { return (isDSiMode() || _dsDebugRam) ? *_lastUsedCommonCache : 0; }
 	void initFilesystem(const char *runningPath);
 	void initArm7RegStatuses();
 	u32* allocCommonCache(const u32 tag, u32 allocSize);
