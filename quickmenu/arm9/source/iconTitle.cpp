@@ -596,18 +596,30 @@ void getGameInfo(int num, bool isDir, const char* name, bool fromArgv)
 				 && arm9StartSig[1] == 0xE5800208
 				 && arm9StartSig[2] == 0xE3A00013
 				 && arm9StartSig[3] == 0xE129F000) {
-					// isModernHomebrew[num] = true; // Homebrew is recent (supports reading from SD without a DLDI driver)
 					if (ndsHeader.arm7executeAddress >= 0x037F0000 && ndsHeader.arm7destination >= 0x037F0000) {
-						if ((ndsHeader.arm7binarySize == 0x119A8)	// DS Game Maker homebrew
-						|| (ndsHeader.arm9binarySize == 0xC9F68 && ndsHeader.arm7binarySize == 0x12814)		// Colors! v1.1
-						|| (ndsHeader.arm9binarySize == 0x1B0864 && ndsHeader.arm7binarySize == 0xDB50)		// Mario Paint Composer DS v2 (Bullet Bill)
-						|| (ndsHeader.arm9binarySize == 0xE78FC && ndsHeader.arm7binarySize == 0xF068)		// SnowBros v2.2
-						|| (ndsHeader.arm9binarySize == 0xD45C0 && ndsHeader.arm7binarySize == 0x2B7C)		// ikuReader v0.058
-						|| (ndsHeader.arm9binarySize == 0x7A124 && ndsHeader.arm7binarySize == 0xEED0)		// PPSEDS r11
-						|| (ndsHeader.arm9binarySize == 0x54620 && ndsHeader.arm7binarySize == 0x1538)		// XRoar 0.24fp3
-						|| (ndsHeader.arm9binarySize == 0x2C9A8 && ndsHeader.arm7binarySize == 0xFB98)		// NitroGrafx v0.7
-						|| (ndsHeader.arm9binarySize == 0x22AE4 && ndsHeader.arm7binarySize == 0xA764)) {	// It's 1975 and this man is about to show you the future
-							isModernHomebrew[num] = false; // Have nds-bootstrap load it (in case if it doesn't)
+						isModernHomebrew[num] = false; // Have nds-bootstrap load it
+
+						u32 searchOffset = 0;
+						fseek(fp, ndsHeader.arm7romOffset + 0xC8, SEEK_SET);
+						fread(&searchOffset, sizeof(u32), 1, fp);
+						if (searchOffset >= 0x037F0000 && searchOffset < 0x03810000) {
+							searchOffset -= ndsHeader.arm7destination;
+							searchOffset += ndsHeader.arm7romOffset;
+							searchOffset += 0x200;
+							const u32 searchOffsetEnd = ndsHeader.arm7romOffset + ndsHeader.arm7binarySize;
+
+							// Check if homebrew accesses the SD command register
+							fseek(fp, searchOffset, SEEK_SET);
+							u32 sdReg = 0;
+							for (int i = 0; i < 0x800; i += 4) {
+								fread(&sdReg, sizeof(u32), 1, fp);
+								if (sdReg == 0x04004800) {
+									isModernHomebrew[num] = true; // Homebrew supports reading from SD without a DLDI driver, so do not use nds-bootstrap
+									break;
+								}
+								searchOffset += 4;
+								if (searchOffset >= searchOffsetEnd) break;
+							}
 						}
 					}
 				} else if ((ndsHeader.unitCode == 0) && ((memcmp(ndsHeader.gameTitle, "NMP4BOOT", 8) == 0)
