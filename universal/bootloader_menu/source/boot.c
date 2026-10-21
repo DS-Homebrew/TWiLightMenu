@@ -579,16 +579,16 @@ int main (void) {
 #ifndef NO_SDMMC
 	sdRead = (dsiSD && dsiMode);
 #endif
-	toncset((u32*)0x06000000, 0, 0x8000);
+	toncset((u32*)0x06020000, 0, 0x8000);
 	if (wantToPatchDLDI) {
 		if (*(u32*)0x02FF4184 == 0x69684320) { // DLDI ' Chi' string in bootstub space + bootloader in DLDI driver space
 			const u16 dldiFileSize = 1 << *(u8*)0x02FF418D;
-			tonccpy((u32*)0x06000000, (u32*)0x02FF4180, dldiFileSize);
+			tonccpy((u32*)0x06020000, (u32*)0x02FF4180, dldiFileSize);
 			dldiRelocateBinary();
 			toncset((u32*)0x02FF4000, 0, 0x8180); // Clear bootstub + DLDI driver
 		} else if (*(u32*)0x02FF8004 == 0x69684320) { // DLDI ' Chi' string
 			const u16 dldiFileSize = 1 << *(u8*)0x02FF800D;
-			tonccpy((u32*)0x06000000, (u32*)0x02FF8000, (dldiFileSize > 0x4000) ? 0x4000 : dldiFileSize);
+			tonccpy((u32*)0x06020000, (u32*)0x02FF8000, (dldiFileSize > 0x4000) ? 0x4000 : dldiFileSize);
 			dldiRelocateBinary();
 		} else if (*(u32*)0x02FF8000 == 0x53535A4C) { // LZ77 flag
 			dldiDecompressBinary();
@@ -680,7 +680,7 @@ int main (void) {
 	// Patch with DLDI if desired
 	if (wantToPatchDLDI) {
 		dldiPatchBinary ((u8*)((u32*)NDS_HEAD)[0x0A], ((u32*)NDS_HEAD)[0x0B]);
-		toncset((u32*)0x06000000, 0, 0x8000);
+		toncset((u32*)0x06020000, 0, 0x8000);
 	}
 #endif
 
