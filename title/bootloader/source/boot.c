@@ -749,7 +749,7 @@ int main (void) {
 	// Patch with DLDI if desired
 	if (wantToPatchDLDI) {
 		dldiPatchBinary ((u8*)((u32*)NDS_HEAD)[0x0A], ((u32*)NDS_HEAD)[0x0B]);
-		toncset((u32*)0x06000000, 0, 0x8000);
+		toncset((u32*)0x06020000, 0, 0x8000);
 	}
 #endif
 
