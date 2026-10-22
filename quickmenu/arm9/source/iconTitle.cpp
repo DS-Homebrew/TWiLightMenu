@@ -621,6 +621,8 @@ void getGameInfo(int num, bool isDir, const char* name, bool fromArgv)
 								if (searchOffset >= searchOffsetEnd) break;
 							}
 						}
+					} else {
+						isModernHomebrew[num] = true; // Homebrew supports reading from SD without a DLDI driver, so do not use nds-bootstrap
 					}
 				} else if ((ndsHeader.unitCode == 0) && ((memcmp(ndsHeader.gameTitle, "NMP4BOOT", 8) == 0)
 				 || (ndsHeader.arm7executeAddress >= 0x037F0000 && ndsHeader.arm7destination >= 0x037F0000))) {
