@@ -142,12 +142,12 @@ STRING(DESCRIPTION_AK_ANIM_ON_HIGHLIGHT, "Display an effect for the selected ico
 STRING(DESCRIPTION_LOGGING_TWLMENU, "Logs the TWiLight Menu++ process to sd:/_nds/TWiLightMenu/log.txt")
 
 // Emulation / HB settings
-STRING(COL_EMULATOR, "ColecoVision emulator")
+STRING(COL_EMULATOR, "ColecoVision emu.")
 STRING(DSIWAREBOOTER, "DSiWare booter")
 STRING(GBA_BOOTER, "GBA booter")
-STRING(SG_EMULATOR, "Sega SG/SC emulator")
-STRING(SMS_EMULATOR, "Sega MS/GG emulator")
-STRING(MD_EMULATOR, "Sega MD/Gen emulator")
+STRING(SG_EMULATOR, "Sega SG/SC emu.")
+STRING(SMS_EMULATOR, "Sega MS/GG emu.")
+STRING(MD_EMULATOR, "Sega MD/Gen emu.")
 STRING(DLPLAY_RSA_PATCH, "DS Download Play RSA patch")
 
 STRING(HYBRID, "Hybrid")

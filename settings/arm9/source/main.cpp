@@ -1486,7 +1486,6 @@ int settingsMode(void)
 	}
 
 	SettingsPage gamesPage(STR_GAMESAPPS_SETTINGS);
-	bool gamesPageVisible = false;
 
 	using TFCGameLoader = TWLSettings::TFCGameLoader;
 	using TGbaBooter = TWLSettings::TGbaBooter;
@@ -1494,44 +1493,35 @@ int settingsMode(void)
 	using TMegaDriveEmulator = TWLSettings::TMegaDriveEmulator;
 	using TSlot1LaunchMethod = TWLSettings::TSlot1LaunchMethod;
 
-	if (flashcardFound()) {
-		if (ms().kernelUseable) {
-			gamesPage.option(sdFound() ? ("S1SD: "+STR_GAMELOADER) : STR_GAMELOADER, STR_DESCRIPTION_GAMELOADER, Option::Int(&ms().fcGameLoader), {"nds-bootstrap", STR_KERNEL, "pico"}, {TFCGameLoader::ENdsBootstrap, TFCGameLoader::EKernel, TFCGameLoader::EPicoLoader});
-		} else {
-			gamesPage.option(sdFound() ? ("S1SD: "+STR_GAMELOADER) : STR_GAMELOADER, STR_DESCRIPTION_GAMELOADER, Option::Int(&ms().fcGameLoader), {"nds-bootstrap", "pico"}, {TFCGameLoader::ENdsBootstrap, TFCGameLoader::EPicoLoader});
-		}
-		gamesPageVisible = true;
-	}
-
-	if (emulatorsInstalled) {
-		gamesPage.option(STR_COL_EMULATOR, STR_DESCRIPTION_COL_EMULATOR, Option::Int((int *)&ms().colEmulator), {"S8DS", "ColecoDS"}, {TColSegaEmulator::EColSegaS8DS, TColSegaEmulator::EColSegaColecoDS});
-		gamesPageVisible = true;
-	}
-	if (ms().consoleModel == 0 && sdFound() && !sys().arm7SCFGLocked()) {
-		gamesPage.option(STR_DSIWAREBOOTER, STR_DESCRIPTION_DSIWAREBOOTER, Option::Bool((bool *)&ms().dsiWareBooter), {"nds-bootstrap", "Unlaunch"}, {true, false});
-		gamesPageVisible = true;
-	}
-	gamesPage.option(STR_DLPLAY_RSA_PATCH, STR_DESCRIPTION_DLPLAY_RSA_PATCH, Option::Bool(&ms().dlplayRsaPatch), {STR_ON, STR_OFF}, {true, false});
-	gamesPageVisible = true;
-	if (sys().isRegularDS()) {
-		gamesPage
-			.option(STR_GBA_BOOTER, STR_DESCRIPTION_GBA_BOOTER, Option::Int((int *)&ms().gbaBooter), {gbaR3Found ? STR_NATIVE_GBARUNNER3 : STR_NATIVE_GBARUNNER2, gbaR3Found ? STR_GBARUNNER3_ONLY : STR_GBARUNNER2_ONLY}, {TGbaBooter::EGbaNativeGbar2, TGbaBooter::EGbaGbar2})
-			.option(STR_GBABORDER, STR_DESCRIPTION_GBABORDER, Option::Nul(opt_gba_border_select), {STR_PRESS_A}, {0});
-		gamesPageVisible = true;
-	}
-	if (emulatorsInstalled) {
-		gamesPage.option(STR_MD_EMULATOR, STR_DESCRIPTION_MD_EMULATOR, Option::Int((int *)&ms().mdEmulator), {"jEnesisDS", "PicoDriveTWL", STR_HYBRID}, {TMegaDriveEmulator::EMegaDriveJenesis, TMegaDriveEmulator::EMegaDrivePico, TMegaDriveEmulator::EMegaDriveHybrid})
-			.option(STR_SG_EMULATOR, STR_DESCRIPTION_SG_EMULATOR, Option::Int((int *)&ms().sgEmulator), {"S8DS", "ColecoDS"}, {TColSegaEmulator::EColSegaS8DS, TColSegaEmulator::EColSegaColecoDS});
-		gamesPageVisible = true;
-	}
-
 	if (isDSiMode() && sdFound() && !sys().arm7SCFGLocked()) {
 		if (ms().consoleModel == 0) {
 			gamesPage.option(STR_SLOT1LAUNCHMETHOD, STR_DESCRIPTION_SLOT1LAUNCHMETHOD_1, Option::Int((int *)&ms().slot1LaunchMethod), {STR_REBOOT, STR_DIRECT, "Unlaunch"}, {TSlot1LaunchMethod::EReboot, TSlot1LaunchMethod::EDirect, TSlot1LaunchMethod::EUnlaunch});
 		} else {
 			gamesPage.option(STR_SLOT1LAUNCHMETHOD, STR_DESCRIPTION_SLOT1LAUNCHMETHOD_1, Option::Int((int *)&ms().slot1LaunchMethod), {STR_REBOOT, STR_DIRECT}, {TSlot1LaunchMethod::EReboot, TSlot1LaunchMethod::EDirect});
 		}
-		gamesPageVisible = true;
+	}
+	if (flashcardFound()) {
+		if (ms().kernelUseable) {
+			gamesPage.option(sdFound() ? ("S1SD: "+STR_GAMELOADER) : STR_GAMELOADER, STR_DESCRIPTION_GAMELOADER, Option::Int(&ms().fcGameLoader), {"nds-bootstrap", STR_KERNEL, "pico"}, {TFCGameLoader::ENdsBootstrap, TFCGameLoader::EKernel, TFCGameLoader::EPicoLoader});
+		} else {
+			gamesPage.option(sdFound() ? ("S1SD: "+STR_GAMELOADER) : STR_GAMELOADER, STR_DESCRIPTION_GAMELOADER, Option::Int(&ms().fcGameLoader), {"nds-bootstrap", "pico"}, {TFCGameLoader::ENdsBootstrap, TFCGameLoader::EPicoLoader});
+		}
+	}
+	gamesPage.option(STR_DLPLAY_RSA_PATCH, STR_DESCRIPTION_DLPLAY_RSA_PATCH, Option::Bool(&ms().dlplayRsaPatch), {STR_ON, STR_OFF}, {true, false});
+	if (ms().consoleModel == 0 && sdFound() && !sys().arm7SCFGLocked()) {
+		gamesPage.option(STR_DSIWAREBOOTER, STR_DESCRIPTION_DSIWAREBOOTER, Option::Bool((bool *)&ms().dsiWareBooter), {"nds-bootstrap", "Unlaunch"}, {true, false});
+	}
+	if (sys().isRegularDS()) {
+		gamesPage
+			.option(STR_GBA_BOOTER, STR_DESCRIPTION_GBA_BOOTER, Option::Int((int *)&ms().gbaBooter), {gbaR3Found ? STR_NATIVE_GBARUNNER3 : STR_NATIVE_GBARUNNER2, gbaR3Found ? STR_GBARUNNER3_ONLY : STR_GBARUNNER2_ONLY}, {TGbaBooter::EGbaNativeGbar2, TGbaBooter::EGbaGbar2})
+			.option(STR_GBABORDER, STR_DESCRIPTION_GBABORDER, Option::Nul(opt_gba_border_select), {STR_PRESS_A}, {0});
+	}
+	if (emulatorsInstalled) {
+		gamesPage.option(STR_COL_EMULATOR, STR_DESCRIPTION_COL_EMULATOR, Option::Int((int *)&ms().colEmulator), {"S8DS", "ColecoDS"}, {TColSegaEmulator::EColSegaS8DS, TColSegaEmulator::EColSegaColecoDS});
+		if (!dsiFeatures() || ms().consoleModel < 2 || (access(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/emulators/jEnesisDSPlus.nds" : "fat:/_nds/TWiLightMenu/emulators/jEnesisDSPlus.nds", F_OK) == 0)) {
+			gamesPage.option(STR_MD_EMULATOR, STR_DESCRIPTION_MD_EMULATOR, Option::Int((int *)&ms().mdEmulator), {"jEnesisDS Plus", "PicoDriveTWL", STR_HYBRID}, {TMegaDriveEmulator::EMegaDriveJenesis, TMegaDriveEmulator::EMegaDrivePico, TMegaDriveEmulator::EMegaDriveHybrid});
+		}
+		gamesPage.option(STR_SG_EMULATOR, STR_DESCRIPTION_SG_EMULATOR, Option::Int((int *)&ms().sgEmulator), {"S8DS", "ColecoDS"}, {TColSegaEmulator::EColSegaS8DS, TColSegaEmulator::EColSegaColecoDS});
 	}
 
 	SettingsPage miscPage(STR_MISC_SETTINGS);
@@ -1699,9 +1689,9 @@ int settingsMode(void)
 		gui().addPage(gbar2Page);
 	if (dsiFeatures() && ms().consoleModel == 0 && ms().unlaunchSettings)
 		gui().addPage(unlaunchPage);
-	if (gamesPageVisible)
-		gui().addPage(gamesPage);
-	gui().addPage(miscPage);
+	gui()
+		.addPage(gamesPage)
+		.addPage(miscPage);
 
 	/*if (isDSiMode() && ms().consoleModel >= 2) {
 		gui().addPage(twlfirmPage);

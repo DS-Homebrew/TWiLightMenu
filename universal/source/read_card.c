@@ -84,6 +84,7 @@ void picoInit(bool irq) {
     REG_ROMCTRL = CARD_nRESET | CARD_SEC_SEED | CARD_SEC_EN | CARD_SEC_DAT;
 }
 
+static bool cardInited = false;
 static bool normalChip = false;	// As defined by GBAtek, normal chip secure area is accessed in blocks of 0x200, other chip in blocks of 0x1000
 static u32 portFlags = 0;
 sNDSHeaderExt ndsCardHeader;
@@ -238,6 +239,7 @@ void cardDSiSlot1Reset(void) {
 static int cardInitInternal (bool resetSlot)
 {
 	u32 portFlagsKey1, portFlagsSecRead;
+	cardInited = false;
 	normalChip = false; // As defined by GBAtek, normal chip secure area and header are accessed in blocks of 0x200, other chip in blocks of 0x1000
 	nandChip = false;
 	nandSection = -1;
@@ -390,6 +392,7 @@ static int cardInitInternal (bool resetSlot)
 		}
 	}
 
+	cardInited = true;
 	return ERR_NONE;
 }
 
@@ -407,6 +410,11 @@ u32 cardGetId() {
 
 void cardRead (u32 src, void* dest, size_t len, bool nandSave)
 {
+	if (!cardInited) {
+		toncset (dest, 0, len);
+		return;
+	}
+
 	void* ndsCardHeaderVoid = (void*)&ndsCardHeader;
 	size_t readSize;
 

@@ -1668,7 +1668,9 @@ void mdRomTooBig(void) {
 	} else {
 		while (!dboxStopped) { bgOperations(true); }
 	}
-	printSmall(false, 0, 64, STR_MD_ROM_TOO_BIG, Alignment::center, FontPalette::dialog);
+	char text[128];
+	snprintf(text, sizeof(text), STR_MD_ROM_TOO_BIG.c_str(), ms().secondaryDevice ? (sys().dsDebugRam() ? "4" : "3") : "7.5");
+	printSmall(false, 0, 64, text, Alignment::center, FontPalette::dialog);
 	printSmall(false, 0, 160, STR_A_OK, Alignment::center, FontPalette::dialog);
 	updateText(false);
 	int pressed = 0;
@@ -4589,9 +4591,33 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							}
 							whiteScreen = true;
 						}
-						remove(dirContents[scrn]
+						const char* fileNameChar = dirContents[scrn]
 							   .at(CURPOS + PAGENUM * 40)
-							   .name.c_str()); // Remove game/folder
+							   .name.c_str();
+						remove(fileNameChar); // Remove game/folder
+						if (!ms().macroMode && strlen(fileNameChar) >= 6 && extension(fileNameChar, {".gif", ".bmp", ".png"})) {
+							char fileNameCharBottom[128] = {0};
+							char fileNameChar_noExt[128] = {0};
+							sprintf(fileNameChar_noExt, fileNameChar);
+							for (int i = strlen(fileNameChar); i >= 0; i--) {
+								if (fileNameChar_noExt[i] == '.') {
+									fileNameChar_noExt[i] = 0;
+									break;
+								}
+							}
+
+							if (extension(fileNameChar, {".gif"})) {
+								sprintf(fileNameCharBottom, "%s_bot.gif", fileNameChar_noExt);
+							} else if (extension(fileNameChar, {".bmp"})) {
+								sprintf(fileNameCharBottom, "%s_bot.bmp", fileNameChar_noExt);
+							} else if (extension(fileNameChar, {".png"})) {
+								sprintf(fileNameCharBottom, "%s_bot.png", fileNameChar_noExt);
+							}
+
+							if (access(fileNameCharBottom, F_OK) == 0) {
+								remove(fileNameCharBottom); // Remove bottom screen image file
+							}
+						}
 						if (ms().showBoxArt)
 							clearBoxArt(); // Clear box art
 						boxArtLoaded = false;

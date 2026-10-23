@@ -142,7 +142,7 @@ _copyloader:
 
 	ldr	r0, arm7bootaddr
 	mov	r1, #0x06000000
-	add	r1, r1, #0x8000
+	add	r1, r1, #0x28000
 	str	r1, [r0]
 	
 	ldr	r0, resetcode

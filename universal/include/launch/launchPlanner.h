@@ -84,6 +84,7 @@ struct LaunchPlan {
 	bool tgdsMode = false;
 	bool tscTgds = false;
 	bool dsModeSwitch = false;
+	bool dsiMode = false;
 	bool boostCpu = true;
 	bool boostVram = false;
 	int romToRamDisk = -1;

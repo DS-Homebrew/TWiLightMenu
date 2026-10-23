@@ -612,14 +612,16 @@ void refreshBanners(const int startRow, const int fileOffset, std::vector<DirEnt
 }
 
 void mdRomTooBig(void) {
+	char text[24];
+	snprintf(text, sizeof(text), "size limit of %sMB.", ms().secondaryDevice ? (sys().dsDebugRam() ? "4" : "3") : "7.5");
 	dialogboxHeight = 3;
 	showdialogbox = true;
 	clearText(false);
 	printSmall(false, 0, 74, "Error!", Alignment::center, FontPalette::formTitleText);
 	printSmall(false, 0, 90, "This SEGA Genesis/Mega Drive", Alignment::center, FontPalette::formText);
 	printSmall(false, 0, 102, "ROM cannot be launched,", Alignment::center, FontPalette::formText);
-	printSmall(false, 0, 114, "due to its surpassing the", Alignment::center, FontPalette::formText);
-	printSmall(false, 0, 126, "size limit of 3MB.", Alignment::center, FontPalette::formText);
+	printSmall(false, 0, 114, "due to it surpassing the", Alignment::center, FontPalette::formText);
+	printSmall(false, 0, 126, text, Alignment::center, FontPalette::formText);
 	printSmall(false, 0, 144, " OK", Alignment::center, FontPalette::formText);
 	updateText(false);
 	int pressed = 0;
@@ -1970,9 +1972,35 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					updateText(false);
 
 					if (pressed & KEY_A && !isDirectory[cursorPosOnScreen]) {
+						const char* fileNameChar = dirContents.at(fileOffset).name.c_str();
 						displayDiskIcon(ms().secondaryDevice);
-						remove(dirContents.at(fileOffset).name.c_str());
+						remove(fileNameChar);
 						displayDiskIcon(false);
+						if (!ms().macroMode && strlen(fileNameChar) >= 6 && extension(fileNameChar, {".gif", ".bmp", ".png"})) {
+							char fileNameCharBottom[128] = {0};
+							char fileNameChar_noExt[128] = {0};
+							sprintf(fileNameChar_noExt, fileNameChar);
+							for (int i = strlen(fileNameChar); i >= 0; i--) {
+								if (fileNameChar_noExt[i] == '.') {
+									fileNameChar_noExt[i] = 0;
+									break;
+								}
+							}
+
+							if (extension(fileNameChar, {".gif"})) {
+								sprintf(fileNameCharBottom, "%s_bot.gif", fileNameChar_noExt);
+							} else if (extension(fileNameChar, {".bmp"})) {
+								sprintf(fileNameCharBottom, "%s_bot.bmp", fileNameChar_noExt);
+							} else if (extension(fileNameChar, {".png"})) {
+								sprintf(fileNameCharBottom, "%s_bot.png", fileNameChar_noExt);
+							}
+
+							displayDiskIcon(ms().secondaryDevice);
+							if (access(fileNameCharBottom, F_OK) == 0) {
+								remove(fileNameCharBottom); // Remove bottom screen image file
+							}
+							displayDiskIcon(false);
+						}
 					} else if (pressed & KEY_Y) {
 						displayDiskIcon(ms().secondaryDevice);
 						// Remove leading . if it exists

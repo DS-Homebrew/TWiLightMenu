@@ -380,13 +380,15 @@ void mdRomTooBig(void) {
 		lcdMainOnBottom();
 		lcdSwapped = true;
 	}
+	char text[24];
+	snprintf(text, sizeof(text), "size limit of %sMB.", ms().secondaryDevice ? (sys().dsDebugRam() ? "4" : "3") : "7.5");
 	dialogboxHeight = 3;
 	showdialogbox = true;
 	printSmall(false, 0, 74, "Error!", Alignment::center, FontPalette::white);
 	printSmall(false, 0, 90, "This SEGA Genesis/Mega Drive", Alignment::center);
 	printSmall(false, 0, 102, "ROM cannot be launched,", Alignment::center);
-	printSmall(false, 0, 114, "due to its surpassing the", Alignment::center);
-	printSmall(false, 0, 126, "size limit of 3MB.", Alignment::center);
+	printSmall(false, 0, 114, "due to it surpassing the", Alignment::center);
+	printSmall(false, 0, 126, text, Alignment::center);
 	printSmall(false, 0, 144, " OK", Alignment::center);
 	updateText(false);
 	int pressed = 0;
@@ -1600,7 +1602,31 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					updateText(false);
 
 					if (pressed & KEY_A && !isDirectory) {
-						remove(dirContents.at(fileOffset).name.c_str());
+						const char* fileNameChar = dirContents.at(fileOffset).name.c_str();
+						remove(fileNameChar);
+						if (!ms().macroMode && strlen(fileNameChar) >= 6 && extension(fileNameChar, {".gif", ".bmp", ".png"})) {
+							char fileNameCharBottom[128] = {0};
+							char fileNameChar_noExt[128] = {0};
+							sprintf(fileNameChar_noExt, fileNameChar);
+							for (int i = strlen(fileNameChar); i >= 0; i--) {
+								if (fileNameChar_noExt[i] == '.') {
+									fileNameChar_noExt[i] = 0;
+									break;
+								}
+							}
+
+							if (extension(fileNameChar, {".gif"})) {
+								sprintf(fileNameCharBottom, "%s_bot.gif", fileNameChar_noExt);
+							} else if (extension(fileNameChar, {".bmp"})) {
+								sprintf(fileNameCharBottom, "%s_bot.bmp", fileNameChar_noExt);
+							} else if (extension(fileNameChar, {".png"})) {
+								sprintf(fileNameCharBottom, "%s_bot.png", fileNameChar_noExt);
+							}
+
+							if (access(fileNameCharBottom, F_OK) == 0) {
+								remove(fileNameCharBottom); // Remove bottom screen image file
+							}
+						}
 					} else if (pressed & KEY_Y) {
 						// Remove leading . if it exists
 						if ((strncmp(entry->name.c_str(), ".", 1) == 0 && entry->name != "..")) {

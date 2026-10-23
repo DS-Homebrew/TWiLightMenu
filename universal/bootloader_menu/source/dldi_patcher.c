@@ -110,7 +110,7 @@ static void demangleMagicString(data_t *dest, const data_t *src) {
 
 extern unsigned long dsiMode;
 extern unsigned long dsMode;
-static data_t* _dldi_start = (data_t*)0x06000000;
+static data_t* _dldi_start = (data_t*)0x06020000;
 
 bool dldiPatchBinary (data_t *binData, u32 binSize) {
 
@@ -268,7 +268,7 @@ void dldiRelocateBinary (void) {
 
 	data_t *pDH = _dldi_start;
 
-	memOffset = 0x06000000;
+	memOffset = 0x06020000;
 	ddmemOffset = readAddr (pDH, DO_text_start);
 	relocationOffset = memOffset - ddmemOffset;
 

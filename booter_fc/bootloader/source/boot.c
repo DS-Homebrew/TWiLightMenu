@@ -228,7 +228,20 @@ void resetMemory_ARM7 (void)
 		memset_addrs_arm7(0x02004000, 0x02800000);
 		memset_addrs_arm7(0x02D00000, 0x02FF4000);
 	} else {
-		memset_addrs_arm7(0x02004000, (commonCache >= 0x02000000 && commonCache < 0x03000000) ? commonCache : (dsiMode ? 0x02FF4000 : 0x023F4000));
+		u32 dsModeClearSize = 0x023F4000;
+		if (!dsiMode) {
+			const u32 wordBak = *(vu32*)0x02000000;
+			const u32 wordBak2 = *(vu32*)0x02400000;
+			*(vu32*)(0x02000000) = 0x314D454D;
+			*(vu32*)(0x02400000) = 0x324D454D;
+			if ((*(vu32*)(0x02000000) == 0x314D454D) && (*(vu32*)(0x02400000) == 0x324D454D)) {
+				dsModeClearSize += 0x400000;
+			}
+			*(vu32*)(0x02000000) = wordBak;
+			*(vu32*)(0x02400000) = wordBak2;
+		}
+
+		memset_addrs_arm7(0x02004000, (commonCache >= 0x02000000 && commonCache < 0x03000000) ? commonCache : (dsiMode ? 0x02FF4000 : dsModeClearSize));
 	}
 	*(u32*)(0x2FFFD9C) = 0;	// Clear exception handler
 

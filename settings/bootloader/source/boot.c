@@ -239,7 +239,20 @@ void resetMemory_ARM7 (void)
 		memset_addrs_arm7(0x02004000, 0x02800000);
 		memset_addrs_arm7(0x02D00000, 0x02FF4000);
 	} else {
-		memset_addrs_arm7(0x02004000, (commonCache >= 0x02000000 && commonCache < 0x03000000) ? commonCache : (dsiMode ? 0x02FF4000 : 0x023F4000));
+		u32 dsModeClearSize = 0x023F4000;
+		if (!dsiMode) {
+			const u32 wordBak = *(vu32*)0x02000000;
+			const u32 wordBak2 = *(vu32*)0x02400000;
+			*(vu32*)(0x02000000) = 0x314D454D;
+			*(vu32*)(0x02400000) = 0x324D454D;
+			if ((*(vu32*)(0x02000000) == 0x314D454D) && (*(vu32*)(0x02400000) == 0x324D454D)) {
+				dsModeClearSize += 0x400000;
+			}
+			*(vu32*)(0x02000000) = wordBak;
+			*(vu32*)(0x02400000) = wordBak2;
+		}
+
+		memset_addrs_arm7(0x02004000, (commonCache >= 0x02000000 && commonCache < 0x03000000) ? commonCache : (dsiMode ? 0x02FF4000 : dsModeClearSize));
 	}
 
 	REG_IE = 0;
@@ -449,15 +462,15 @@ int main (void) {
 	sdRead = (dsiSD && dsiMode);
 #endif
 	if (wantToPatchDLDI) {
-		toncset((u32*)0x06000000, 0, 0x8000);
+		toncset((u32*)0x06020000, 0, 0x8000);
 		if (*(u32*)0x02FF4184 == 0x69684320) { // DLDI ' Chi' string in bootstub space + bootloader in DLDI driver space
 			const u16 dldiFileSize = 1 << *(u8*)0x02FF418D;
-			tonccpy((u32*)0x06000000, (u32*)0x02FF4180, dldiFileSize);
+			tonccpy((u32*)0x06020000, (u32*)0x02FF4180, dldiFileSize);
 			dldiRelocateBinary();
 			toncset((u32*)0x02FF4000, 0, 0x8180); // Clear bootstub + DLDI driver
 		} else if (*(u32*)0x02FF8004 == 0x69684320) { // DLDI ' Chi' string
 			const u16 dldiFileSize = 1 << *(u8*)0x02FF800D;
-			tonccpy((u32*)0x06000000, (u32*)0x02FF8000, (dldiFileSize > 0x4000) ? 0x4000 : dldiFileSize);
+			tonccpy((u32*)0x06020000, (u32*)0x02FF8000, (dldiFileSize > 0x4000) ? 0x4000 : dldiFileSize);
 			dldiRelocateBinary();
 		} else if (*(u32*)0x02FF8000 == 0x53535A4C) { // LZ77 flag
 			dldiDecompressBinary();

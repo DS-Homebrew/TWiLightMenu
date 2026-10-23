@@ -14,6 +14,14 @@
 
 #include "boot.h"
 
+static inline void dmaFill9(u32 value, void* dest, u32 size) {
+	DMA_FILL(3) = (u32)value;
+	DMA_SRC(3)  = (u32)&DMA_FILL(3);
+	DMA_DEST(3) = (u32)dest;
+	DMA_CR(3)   = DMA_SRC_FIX | DMA_COPY_WORDS | (size>>2);
+	while (DMA_CR(3) & DMA_BUSY);
+}
+
 /*-------------------------------------------------------------------------
 resetMemory2_ARM9
 Clears the ARM9's DMA channels and resets video memory
@@ -40,8 +48,18 @@ void __attribute__ ((long_call)) __attribute__((naked)) __attribute__((noreturn)
 	REG_IPC_FIFO_CR = IPC_FIFO_ENABLE | IPC_FIFO_SEND_CLEAR;
 	REG_IPC_FIFO_CR = 0;
 
-	VRAM_CR = (VRAM_CR & 0xffff0000) | 0x00008080 ;
-
+	VRAM_A_CR = 0x80;
+	VRAM_B_CR = 0x80;
+	VRAM_C_CR = 0x80;
+// Don't mess with the ARM7's VRAM
+//	VRAM_D_CR = 0;
+	VRAM_E_CR = 0x80;
+	VRAM_F_CR = 0x80;
+	VRAM_G_CR = 0x80;
+	VRAM_H_CR = 0x80;
+	VRAM_I_CR = 0x80;
+	dmaFill9(0, BG_PALETTE, 2*1024);
+	dmaFill9(0, OAM, 2*1024);
 	for (vu16 *p = (vu16*)&REG_DISPCNT; p <= (vu16*)&REG_DISP_MMEM_FIFO; p++)
 	{
 		// Skip VCOUNT. Writing to it was setting it to 0 causing a frame to be
@@ -54,15 +72,17 @@ void __attribute__ ((long_call)) __attribute__((naked)) __attribute__((noreturn)
 	{
 		*p = 0;
 	}
+	dmaFill9(0, VRAM_A, 0x20000*3);		// Banks A, B, C
+	dmaFill9(0, VRAM_D, 272*1024);		// Banks D (excluded), E, F, G, H, I
 
 	REG_DISPSTAT = 0;
 	GFX_STATUS = 0;
 
 	VRAM_A_CR = 0;
 	VRAM_B_CR = 0;
+	VRAM_C_CR = 0;
 // Don't mess with the ARM7's VRAM
-//	VRAM_C_CR = 0;
-	VRAM_D_CR = 0;
+//	VRAM_D_CR = 0;
 	VRAM_E_CR = 0;
 	VRAM_F_CR = 0;
 	VRAM_G_CR = 0;

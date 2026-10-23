@@ -65,7 +65,7 @@ bool my_nand_ReadSectors(sec_t sector, sec_t numSectors,void* buffer) {
 	sharedAddr[1] = numSectors;
 	sharedAddr[2] = (vu32)buffer;
 	
-	sharedAddr[3] = 0x4452414E;
+	sharedAddr[3] = 0x4452414E; // 'NARD'
 	// if (my_sdio_isNoSGba) {
 		IPC_SendSync(6);
 	/* } else {
@@ -73,6 +73,17 @@ bool my_nand_ReadSectors(sec_t sector, sec_t numSectors,void* buffer) {
 	} */
 	while (sharedAddr[3] == 0x4452414E) {
 		swiDelay(100);
+	}
+	while (1) {
+		if (sharedAddr[3] == 0x474E4950) { // 'PING'
+			sharedAddr[3] = 0x5243414E; // 'NACR'
+			IPC_SendSync(6);
+			while (sharedAddr[3] == 0x5243414E) {
+				swiDelay(100);
+			}
+		} else {
+			break;
+		}
 	}
 
 	int result = sharedAddr[3];
