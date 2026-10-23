@@ -1256,6 +1256,7 @@ void getGameInfo(int fileOffset, bool isDir, const char* name, bool fromArgv)
 					fseek(fp, ndsHeader.arm7romOffset + 0xC8, SEEK_SET);
 					fread(&searchOffset, sizeof(u32), 1, fp);
 					if (searchOffset >= 0x037F0000 && searchOffset < 0x03810000) {
+						while ((searchOffset % 4) != 0) searchOffset++; // Word-align offset
 						searchOffset -= ndsHeader.arm7destination;
 						searchOffset += ndsHeader.arm7romOffset;
 						searchOffset += 0x200;
