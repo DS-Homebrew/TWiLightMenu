@@ -1069,13 +1069,13 @@ void perGameSettings (std::string filename) {
 						printSmall(false, 256-perGameOpXpos, perGameOpYpos, "Unlaunch", Alignment::right, highlighted);
 					}
 				} else {
-					if (perGameSettings_useBootstrap == -1) {
+					if (perGameSettings_fcGameLoader == -1) {
 						printSmall(false, 256-perGameOpXpos, perGameOpYpos, "Default", Alignment::right, highlighted);
-					} else if (perGameSettings_useBootstrap == TWLSettings::ENdsBootstrap) {
+					} else if (perGameSettings_fcGameLoader == TWLSettings::ENdsBootstrap) {
 						printSmall(false, 256-perGameOpXpos, perGameOpYpos, "nds-bootstrap", Alignment::right, highlighted);
-					} else if (perGameSettings_useBootstrap == TWLSettings::EKernel) {
+					} else if (perGameSettings_fcGameLoader == TWLSettings::EKernel) {
 						printSmall(false, 256-perGameOpXpos, perGameOpYpos, "Kernel", Alignment::right, highlighted);
-					} else if (perGameSettings_useBootstrap == TWLSettings::EPicoLoader) {
+					} else if (perGameSettings_fcGameLoader == TWLSettings::EPicoLoader) {
 						printSmall(false, 256-perGameOpXpos, perGameOpYpos, "pico", Alignment::right, highlighted);
 					}
 				}
