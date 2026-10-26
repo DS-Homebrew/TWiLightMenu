@@ -950,7 +950,11 @@ void lastRunROM()
 		fclose(f_nds_file);
 
 		loadPerGameSettings(filename);
-		if ((perGameSettings_dsiwareBooter == -1 ? ms().dsiWareBooter : perGameSettings_dsiwareBooter) || NDSHeader.twlRomSize >= 0x04000000 || (ms().previousUsedDevice && bs().b4dsMode) || sys().arm7SCFGLocked() || ms().consoleModel > 0) {
+		const bool dsiWareSlot1Mode = (perGameSettings_dsiWareSlot1Mode == -1 ? DEFAULT_DSIWARE_SLOT1_MODE : perGameSettings_dsiWareSlot1Mode);
+		const bool savFormat = (NDSHeader.twlRomSize >= 0x04000000) || (sys().scfgSdmmcEnabled() && dsiWareSlot1Mode) || (ms().previousUsedDevice && (!isDSiMode() || !sys().scfgSdmmcEnabled() || bs().b4dsMode));
+		if (!runTempDSiWare && !savFormat && ms().previousUsedDevice && isDSiMode() && !bs().b4dsMode && ms().saveLocation == TWLSettings::EGamesFolder && (perGameSettings_fcGameLoader == -1 ? (ms().fcGameLoader == TWLSettings::EPicoLoader) : (perGameSettings_fcGameLoader == TWLSettings::EPicoLoader))) {
+			err = picoLaunchRom(ms().romPath[ms().previousUsedDevice], "", true);
+		} else if ((perGameSettings_dsiwareBooter == -1 ? ms().dsiWareBooter : perGameSettings_dsiwareBooter) || NDSHeader.twlRomSize >= 0x04000000 || (ms().previousUsedDevice && bs().b4dsMode) || sys().arm7SCFGLocked() || ms().consoleModel > 0) {
 			if (ms().homebrewBootstrap) {
 				unlaunchRomBoot(ms().previousUsedDevice ? "sdmc:/_nds/TWiLightMenu/tempDSiWare.dsi" : ms().dsiWareSrlPath);
 			} else {
@@ -959,7 +963,6 @@ void lastRunROM()
 				bool dsPhatColors = (perGameSettings_dsPhatColors == -1 ? DEFAULT_PHAT_COLORS : perGameSettings_dsPhatColors);
 				bool cardReadDMA = (perGameSettings_cardReadDMA == -1 ? DEFAULT_CARD_READ_DMA : perGameSettings_cardReadDMA);
 				int asyncCardRead = (perGameSettings_asyncCardRead == -1 ? DEFAULT_ASYNC_CARD_READ : perGameSettings_asyncCardRead);
-				const bool dsiWareSlot1Mode = (perGameSettings_dsiWareSlot1Mode == -1 ? DEFAULT_DSIWARE_SLOT1_MODE : perGameSettings_dsiWareSlot1Mode);
 				if (runTempDSiWare) {
 					useWidescreen = *(bool*)(0x02000014);
 					useNightly = *(bool*)(0x02000010);
@@ -970,8 +973,6 @@ void lastRunROM()
 
 				std::string romFolderNoSlash = romfolder;
 				RemoveTrailingSlashes(romFolderNoSlash);
-
-				const bool savFormat = (NDSHeader.twlRomSize >= 0x04000000) || (sys().scfgSdmmcEnabled() && dsiWareSlot1Mode) || (ms().previousUsedDevice && (!isDSiMode() || !sys().scfgSdmmcEnabled() || bs().b4dsMode));
 
 				if (!runTempDSiWare) {
 					ms().dsiWareSrlPath = ms().romPath[ms().previousUsedDevice];

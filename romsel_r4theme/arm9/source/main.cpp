@@ -1551,6 +1551,7 @@ int r4Theme(void) {
 				loadPerGameSettings(filename);
 				const bool booterIsNdsBootstrap = (perGameSettings_dsiwareBooter == -1 ? ms().dsiWareBooter : perGameSettings_dsiwareBooter) || NDSHeader.twlRomSize >= 0x04000000 || (ms().secondaryDevice && bs().b4dsMode) || sys().arm7SCFGLocked() || ms().consoleModel > 0;
 				const bool dsiWareSlot1Mode = (perGameSettings_dsiWareSlot1Mode == -1 ? DEFAULT_DSIWARE_SLOT1_MODE : perGameSettings_dsiWareSlot1Mode);
+				const bool usePicoLoader = ms().secondaryDevice && isDSiMode() && !bs().b4dsMode && ms().saveLocation == TWLSettings::EGamesFolder && (perGameSettings_fcGameLoader == -1 ? (ms().fcGameLoader == TWLSettings::EPicoLoader) : (perGameSettings_fcGameLoader == TWLSettings::EPicoLoader));
 
 				std::string typeToReplace = filename.substr(filename.rfind('.'));
 
@@ -1591,6 +1592,34 @@ int r4Theme(void) {
 				ms().launchType[ms().secondaryDevice] = TWLSettings::EDSiWareLaunch;
 				ms().previousUsedDevice = ms().secondaryDevice;
 				ms().saveSettings();
+
+				// Pico Loader creates the DSiWare saves next to the ROM itself
+				if (usePicoLoader && !savFormat) {
+					int err = picoLaunchRom(ms().dsiWareSrlPath, "", true);
+					char text[32];
+					snprintf (text, sizeof(text), "Start failed. Error %i", err);
+					clearText(false);
+					dialogboxHeight = (err==1 ? 1 : 0);
+					showdialogbox = true;
+					printSmall(false, 0, 74, "Error!", Alignment::center, FontPalette::white);
+					printSmall(false, 0, 90, text, Alignment::center);
+					if (err == 1) {
+						printSmall(false, 0, 102, "Pico Loader not found.", Alignment::center);
+					}
+					printSmall(false, 0, (err==1 ? 124 : 108), " Back", Alignment::center);
+					updateText(false);
+					int pressed = 0;
+					do {
+						scanKeys();
+						pressed = keysDownRepeat();
+						checkSdEject();
+						swiWaitForVBlank();
+					} while (!(pressed & KEY_B));
+					vector<char *> argarray;
+					argarray.push_back((char*)(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/r4menu.srldr" : "fat:/_nds/TWiLightMenu/r4menu.srldr"));
+					runNdsFile(argarray[0], argarray.size(), (const char**)&argarray[0], sys().isRunFromSD(), true, false, false, true, true, false, -1, sys().commonCache());
+					stop();
+				}
 
 				if (savFormat) {
 					if ((getFileSize(ms().dsiWarePubPath.c_str()) == 0) && ((NDSHeader.pubSavSize > 0) || (NDSHeader.prvSavSize > 0))) {
