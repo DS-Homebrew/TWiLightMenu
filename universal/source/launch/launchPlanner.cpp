@@ -303,14 +303,6 @@ static void planBootstrapHb(LaunchPlan &plan, const LauncherBinary &emulator, co
 	plan.ok = true;
 }
 
-// NitroGrafx: directly
-static void planPce(LaunchPlan &plan, const CustomLauncher &launcher, const LaunchEnv &env, const LaunchRequest &request)
-{
-	bool onFat;
-	plan.ndsToBoot = resolveSdFirst(launcher.binary, env, onFat);
-	finishDirectPlan(plan, launcher, env, request, onFat);
-}
-
 // SNEmulDS, one of three ways:
 // - Settings' new SNES emulator: the TGDS build (LAUNCHER_PATH_TWL) from sd: in DSi mode,
 //   otherwise LAUNCHER_PATH from fat:, booted through TGDS multiboot as fat:/SNEmulDS.srl
@@ -482,9 +474,6 @@ LaunchPlan planLaunch(const CustomLauncher &launcher, const LaunchEnv &env, cons
 			break;
 		case LauncherHandler::DstwoPlugin:
 			planDstwoPlugin(plan, launcher, env, request);
-			break;
-		case LauncherHandler::Pce:
-			planPce(plan, launcher, env, request);
 			break;
 		case LauncherHandler::Snes:
 			planSnes(plan, launcher, env, request);
