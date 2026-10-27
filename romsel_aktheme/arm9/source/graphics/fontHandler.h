@@ -8,6 +8,7 @@ void esrbDescFontDeinit();
 
 void updateText(bool top);
 void updateTextImg(u16* img, bool top);
+void printTopBox(int x, int y, int w, int h, std::string_view left, std::string_view center, FontPalette palette);
 void clearText(bool top);
 void clearText();
 

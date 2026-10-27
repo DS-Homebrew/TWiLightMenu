@@ -2016,6 +2016,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							}
 							displayDiskIcon(false);
 						}
+						refreshFreeSpace();
 					} else if (pressed & KEY_Y) {
 						displayDiskIcon(ms().secondaryDevice);
 						// Remove leading . if it exists

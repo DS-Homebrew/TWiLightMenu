@@ -39,6 +39,8 @@ void drawMonth(void);
 void drawDayX(void);
 void drawDay(void);
 void drawWeekday(void);
+void drawFreeSpace(void);
+void refreshFreeSpace(void);
 void updateBoxArt(const char* filename, const char* tid);
 
 void graphicsInit();
