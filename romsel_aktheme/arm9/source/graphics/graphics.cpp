@@ -205,6 +205,11 @@ static int freeSpaceY = 0;
 static int freeSpaceW = 255;
 static int freeSpaceH = 14;
 static std::string freeSpaceLabel[2];
+static u16* batteryIcons[2] = {NULL};
+static int batteryIconsW = 0;
+static int batteryIconsH = 0;
+static int batteryX = 236;
+static int batteryY = 2;
 
 u16* colorTable = NULL;
 
@@ -1000,6 +1005,53 @@ void refreshFreeSpace(void) {
 	loadedFreeSpaceDevice = -1;
 }
 
+static int loadedBattery = -1;
+static int pendingBattery = -1;
+static u32 pendingBatterySince = 0;
+static volatile u32 vblankCount = 0; // Counted in vBlankHandler
+
+ITCM_CODE void drawBattery(void) {
+	if (!batteryIcons[0]) return;
+
+	// Frames 0-3 are 1-4 bars, 4-7 the same while charging (bit 7)
+	const int status = sys().batteryStatus();
+	const int level = status & 0xF;
+	const int frame = (level >= 0xF ? 3 : level >= 0xB ? 2 : level >= 0x7 ? 1 : 0) + ((status & BIT(7)) ? 4 : 0);
+
+	if (frame == loadedBattery) {
+		pendingBattery = -1;
+		return;
+	}
+
+	// A single odd reading would make the icon blink, so a new frame has to hold for 1 second (60 frames) first
+	if (loadedBattery >= 0) {
+		if (frame != pendingBattery) {
+			pendingBattery = frame;
+			pendingBatterySince = vblankCount;
+		}
+		if (vblankCount - pendingBatterySince < 60)
+			return;
+	}
+
+	pendingBattery = -1;
+	loadedBattery = frame;
+
+	int src = (batteryIconsW * batteryIconsH) * frame;
+
+	for (int y2 = batteryY; y2 < batteryY+batteryIconsH; y2++) {
+		for (int x2 = batteryX; x2 < batteryX+batteryIconsW; x2++) {
+			if (batteryIcons[0][src] == (0 | BIT(15))) {
+				topImageWithText[0][(y2*256)+x2] = topImage[0][(y2*256)+x2];
+				topImageWithText[1][(y2*256)+x2] = topImage[1][(y2*256)+x2];
+			} else {
+				topImageWithText[0][(y2*256)+x2] = batteryIcons[0][src];
+				topImageWithText[1][(y2*256)+x2] = batteryIcons[1][src];
+			}
+			src++;
+		}
+	}
+}
+
 enum class ImageType {
 	bottom,
 	top,
@@ -1018,7 +1070,8 @@ enum class ImageType {
 	weekdayText,
 	weekdayText2,
 	selectionBarBg,
-	boxArt
+	boxArt,
+	batteryIcons
 };
 
 static void loadBmp(const ImageType type, const char* filename) {
@@ -1035,6 +1088,15 @@ static void loadBmp(const ImageType type, const char* filename) {
 	if (width > 256 || (height > 192 && type < ImageType::clockNumbers) || (type == ImageType::boxArt && (width > 128 || height > 128))) {
 		fclose(file);
 		return;
+	}
+	if (type == ImageType::batteryIcons) {
+		// Frame sheet: a top-down BMP (negative height) or a bit depth drawn below would leave it unfilled
+		fseek(file, 0x1C, SEEK_SET);
+		const u8 bpp = fgetc(file);
+		if (height > 192*8 || (bpp != 1 && bpp != 8 && bpp != 16 && bpp != 24 && bpp != 32)) {
+			fclose(file);
+			return;
+		}
 	}
 
 	int xPos = 0;
@@ -1146,6 +1208,12 @@ static void loadBmp(const ImageType type, const char* filename) {
 	} else if (type == ImageType::boxArt) {
 		boxArtW = (int)width;
 		boxArtH = (int)height;
+	} else if (type == ImageType::batteryIcons) {
+		batteryIconsW = (int)width;
+		batteryIconsH = (int)height/8;
+
+		batteryIcons[0] = new u16[width*height];
+		batteryIcons[1] = new u16[width*height];
 	}
 
 	fseek(file, 0x1C, SEEK_SET);
@@ -1193,7 +1261,9 @@ static void loadBmp(const ImageType type, const char* filename) {
 				if (colorTable && ((type < ImageType::startButton) || (color != (0 | BIT(15))))) {
 					color = colorTable[color % 0x8000] | BIT(15);
 				}
-				if (type == ImageType::boxArt) {
+				if (type == ImageType::batteryIcons) {
+					batteryIcons[b][(y*width)+x] = color;
+				} else if (type == ImageType::boxArt) {
 					boxArt[b][(y*width)+x] = color;
 				} else if (type == ImageType::selectionBarBg) {
 					selectionBarBg[b][(y*width)+x] = color;
@@ -1314,6 +1384,10 @@ static void loadBmp(const ImageType type, const char* filename) {
 			renderWidth = (int)width;
 			dst = (boxArt[0] + (height-1) * width);
 			dst2 = (boxArt[1] + (height-1) * width);
+		} else if (type == ImageType::batteryIcons) {
+			renderWidth = (int)width;
+			dst = (batteryIcons[0] + (height-1) * width);
+			dst2 = (batteryIcons[1] + (height-1) * width);
 		}
 		u16 *src = bmpImageBuffer;
 		for (uint y = 0; y < height; y++, dst -= renderWidth, dst2 -= renderWidth) {
@@ -1358,7 +1432,10 @@ static void loadBmp(const ImageType type, const char* filename) {
 		int y = height-1;
 		for (u32 i = 0; i < width*height; i++) {
 			const u16 color = pixelBuffer[bmpImageBuffer[i]];
-			if (type == ImageType::boxArt) {
+			if (type == ImageType::batteryIcons) {
+				batteryIcons[0][(y*width)+x] = color;
+				batteryIcons[1][(y*width)+x] = color;
+			} else if (type == ImageType::boxArt) {
 				boxArt[0][(y*width)+x] = color;
 				boxArt[1][(y*width)+x] = color;
 			} else if (type == ImageType::selectionBarBg) {
@@ -1445,7 +1522,10 @@ static void loadBmp(const ImageType type, const char* filename) {
 		for (u32 i = 0; i < (width*height)/8; i++) {
 			for (int b = 7; b >= 0; b--) {
 				const u16 color = monoPixel[(bmpImageBuffer[i] & (BIT(b))) ? 1 : 0];
-				if (type == ImageType::boxArt) {
+				if (type == ImageType::batteryIcons) {
+					batteryIcons[0][(y*width)+x] = color;
+					batteryIcons[1][(y*width)+x] = color;
+				} else if (type == ImageType::boxArt) {
 					boxArt[0][(y*width)+x] = color;
 					boxArt[1][(y*width)+x] = color;
 				} else if (type == ImageType::selectionBarBg) {
@@ -1680,6 +1760,8 @@ void updateBoxArt(const char* filename, const char* tid) {
 
 void vBlankHandler()
 {
+	vblankCount++;
+
 	if (fadeType) {
 		screenBrightness--;
 		if (screenBrightness < 0) screenBrightness = 0;
@@ -2239,6 +2321,17 @@ void graphicsLoad()
 			freeSpaceLabel[0] = ini.GetString("free space", "sdLabel", "SD");
 			freeSpaceLabel[1] = ini.GetString("free space", "fatLabel", io_dldi_data->friendlyName);
 			showFreeSpace = (freeSpaceX >= 0 && freeSpaceY >= 0 && freeSpaceW > 0 && freeSpaceH > 0 && freeSpaceX+freeSpaceW < 256 && freeSpaceY+freeSpaceH < 192);
+		}
+
+		// Not "[battery icon]": the old akmenu used that name for a bottom-screen icon from other files
+		if (!ms().macroMode && ini.GetInt("battery", "show", 0)) {
+			batteryX = ini.GetInt("battery", "x", batteryX);
+			batteryY = ini.GetInt("battery", "y", batteryY);
+
+			loadBmp(ImageType::batteryIcons, (themePath + "/battery.bmp").c_str());
+			if (batteryX < 0 || batteryY < 0 || batteryX+batteryIconsW > 256 || batteryY+batteryIconsH > 192) {
+				batteryIconsW = 0; // Off screen, so draw nothing
+			}
 		}
 
 		if (!ms().macroMode && ms().showBoxArt && ini.GetInt("box art", "show", 0)) {
