@@ -716,6 +716,10 @@ void perGameSettings (std::string filename) {
 			perGameOps++;
 			perGameOp[perGameOps] = 13;	// DSiWare Booter
 		}
+		if (ms().secondaryDevice && isDSiMode() && !bs().b4dsMode && ms().saveLocation == TWLSettings::EGamesFolder) {
+			perGameOps++;
+			perGameOp[perGameOps] = 14;	// Game Loader
+		}
 		if (booterIsNdsBootstrap && (!ms().secondaryDevice || (dsiFeatures() && !bs().b4dsMode)) && sys().scfgSdmmcEnabled() && totalRomSize < 0x04000000) {
 			perGameOps++;
 			perGameOp[perGameOps] = 19;	// Slot-1 Mode
@@ -1225,7 +1229,7 @@ void perGameSettings (std::string filename) {
 							if (perGameSettings_useBootstrap < -1) perGameSettings_useBootstrap = 1;
 						} else {
 							perGameSettings_fcGameLoader--;
-							if (!ms().kernelUseable && perGameSettings_fcGameLoader == 1) perGameSettings_fcGameLoader--;
+							if ((!ms().kernelUseable || isDSiWare[cursorPosOnScreen]) && perGameSettings_fcGameLoader == 1) perGameSettings_fcGameLoader--;
 							if (perGameSettings_fcGameLoader < -1) perGameSettings_fcGameLoader = 2;
 						}
 						break;
@@ -1361,7 +1365,7 @@ void perGameSettings (std::string filename) {
 							if (perGameSettings_useBootstrap > 1) perGameSettings_useBootstrap = -1;
 						} else {
 							perGameSettings_fcGameLoader++;
-							if (!ms().kernelUseable && perGameSettings_fcGameLoader == 1) perGameSettings_fcGameLoader++;
+							if ((!ms().kernelUseable || isDSiWare[cursorPosOnScreen]) && perGameSettings_fcGameLoader == 1) perGameSettings_fcGameLoader++;
 							if (perGameSettings_fcGameLoader > 2) perGameSettings_fcGameLoader = -1;
 						}
 						break;

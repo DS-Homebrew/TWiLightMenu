@@ -1518,6 +1518,7 @@ int dsiMenuTheme(void) {
 				loadPerGameSettings(filename);
 				const bool booterIsNdsBootstrap = (perGameSettings_dsiwareBooter == -1 ? ms().dsiWareBooter : perGameSettings_dsiwareBooter) || NDSHeader.twlRomSize >= 0x04000000 || (ms().secondaryDevice && bs().b4dsMode) || sys().arm7SCFGLocked() || ms().consoleModel > 0;
 				const bool dsiWareSlot1Mode = (perGameSettings_dsiWareSlot1Mode == -1 ? DEFAULT_DSIWARE_SLOT1_MODE : perGameSettings_dsiWareSlot1Mode);
+				const bool usePicoLoader = ms().secondaryDevice && isDSiMode() && !bs().b4dsMode && ms().saveLocation == TWLSettings::EGamesFolder && (perGameSettings_fcGameLoader == -1 ? (ms().fcGameLoader == TWLSettings::EPicoLoader) : (perGameSettings_fcGameLoader == TWLSettings::EPicoLoader));
 
 				std::string typeToReplace = filename.substr(filename.rfind('.'));
 
@@ -1558,6 +1559,58 @@ int dsiMenuTheme(void) {
 				ms().launchType[ms().secondaryDevice] = Launch::EDSiWareLaunch;
 				ms().previousUsedDevice = ms().secondaryDevice;
 				ms().saveSettings();
+
+				// Pico Loader creates the DSiWare saves next to the ROM itself
+				if (usePicoLoader && !savFormat) {
+					if (ms().theme == TWLSettings::EThemeHBL) {
+						fadeType = false;		  // Fade to black
+					}
+
+					while (ms().theme != TWLSettings::EThemeSaturn && !screenFadedOut()) {
+						swiWaitForVBlank();
+					}
+
+					snd().unloadStream();
+
+					if (!dsiFeatures()) {
+						snd().unloadSfxData();
+					}
+
+					int err = picoLaunchRom(ms().dsiWareSrlPath, "", true);
+
+					char text[64];
+					snprintf(text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
+					clearText();
+					printLarge(false, 4, 4, text);
+					if (err == 1) {
+						printLarge(false, 4, 20, STR_PICO_LOADER_NOT_FOUND);
+						printSmall(false, 4, 20 + calcLargeFontHeight(STR_PICO_LOADER_NOT_FOUND), STR_PRESS_B_RETURN);
+					} else {
+						printSmall(false, 4, 20, STR_PRESS_B_RETURN);
+					}
+					updateText(false);
+					fadeSpeed = true; // Fast fading
+					if (ms().theme != TWLSettings::EThemeSaturn && ms().theme != TWLSettings::EThemeHBL) {
+						whiteScreen = true;
+						tex().clearTopScreen();
+					}
+					fadeType = true;
+					int pressed = 0;
+					do {
+						scanKeys();
+						pressed = keysDownRepeat();
+						checkSdEject();
+						swiWaitForVBlank();
+					} while (!(pressed & KEY_B));
+					fadeType = false;	// Fade to white
+					for (int i = 0; i < 25; i++) {
+						swiWaitForVBlank();
+					}
+					vector<char *> argarray;
+					argarray.push_back((char*)(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/dsimenu.srldr" : "fat:/_nds/TWiLightMenu/dsimenu.srldr"));
+					runNdsFile(argarray[0], argarray.size(), (const char**)&argarray[0], sys().isRunFromSD(), true, false, false, true, true, false, -1, sys().commonCache());
+					stop();
+				}
 
 				if (savFormat) {
 					if ((getFileSize(ms().dsiWarePubPath.c_str()) == 0) && ((NDSHeader.pubSavSize > 0) || (NDSHeader.prvSavSize > 0))) {

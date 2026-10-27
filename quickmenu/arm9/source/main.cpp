@@ -2306,6 +2306,7 @@ int dsClassicMenu(void) {
 				loadPerGameSettings(filename[ms().secondaryDevice]);
 				const bool booterIsNdsBootstrap = (perGameSettings_dsiwareBooter == -1 ? ms().dsiWareBooter : perGameSettings_dsiwareBooter) || NDSHeader.twlRomSize >= 0x04000000 || (ms().secondaryDevice && bs().b4dsMode) || sys().arm7SCFGLocked() || ms().consoleModel > 0;
 				const bool dsiWareSlot1Mode = (perGameSettings_dsiWareSlot1Mode == -1 ? DEFAULT_DSIWARE_SLOT1_MODE : perGameSettings_dsiWareSlot1Mode);
+				const bool usePicoLoader = ms().secondaryDevice && isDSiMode() && !bs().b4dsMode && ms().saveLocation == TWLSettings::EGamesFolder && (perGameSettings_fcGameLoader == -1 ? (ms().fcGameLoader == TWLSettings::EPicoLoader) : (perGameSettings_fcGameLoader == TWLSettings::EPicoLoader));
 
 				std::string typeToReplace = filename[ms().secondaryDevice].substr(filename[ms().secondaryDevice].rfind('.'));
 
@@ -2342,6 +2343,28 @@ int dsClassicMenu(void) {
 				ms().homebrewBootstrap = isHomebrew[ms().secondaryDevice];
 				ms().launchType[ms().secondaryDevice] = TWLSettings::EDSiWareLaunch;
 				ms().saveSettings();
+
+				// Pico Loader creates the DSiWare saves next to the ROM itself
+				if (usePicoLoader && !savFormat) {
+					while (!screenFadedOut()) {
+						swiWaitForVBlank();
+					}
+					s2RamAccessAlt(true);
+
+					int err = picoLaunchRom(ms().dsiWareSrlPath, "", true);
+
+					char text[64];
+					snprintf (text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
+					whiteScreen = true;
+					fadeSpeed = true; // Fast fading
+					clearText(false);
+					printSmall(false, 4, 4, text);
+					if (err == 1) {
+						printSmall(false, 4, 24, STR_PICO_LOADER_NOT_FOUND);
+					}
+					fadeType = true; // Fade in
+					stop();
+				}
 
 				if (savFormat) {
 					if ((getFileSize(ms().dsiWarePubPath.c_str()) == 0) && ((NDSHeader.pubSavSize > 0) || (NDSHeader.prvSavSize > 0))) {
