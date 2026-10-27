@@ -1579,12 +1579,23 @@ void updateBoxArt(const char* filename, const char* tid) {
 
 	boxArtShown = (boxArtW > 0);
 	if (!boxArtShown) {
+		// Bring back any calendar piece the cover was hiding
+		loadedTime.clear();
+		loadedYear.clear();
+		loadedMonth.clear();
+		loadedDayX.clear();
 		loadedDay.clear();
+		loadedWeekday = 0xFF;
+		drawTime();
+		drawYear();
+		drawMonth();
+		drawDayX();
 		drawDay();
+		drawWeekday();
 		return;
 	}
 
-	// Pure black is transparent, so trailing black columns (DSpico covers) don't count toward centering
+	// Trailing pure black columns (DSpico covers' padding) don't count toward centering and aren't drawn
 	int usedW = 0;
 	for (int i = 0; i < boxArtW*boxArtH; i++) {
 		if ((boxArt[0][i] & BIT(15)) && boxArt[0][i] != BIT(15) && (i % boxArtW) >= usedW) {
@@ -1599,7 +1610,7 @@ void updateBoxArt(const char* filename, const char* tid) {
 			if (x2 < boxArtX || x2 >= boxArtX+boxArtPanelW || y2 < boxArtY || y2 >= boxArtY+boxArtPanelH) continue;
 			for (int b = 0; b < 2; b++) {
 				const u16 color = boxArt[b][(y*boxArtW)+x];
-				if ((color & BIT(15)) && color != BIT(15)) {
+				if (color & BIT(15)) { // Black inside the art is drawn, so it shows on a light panel too
 					topImageWithText[b][(y2*256)+x2] = color;
 				}
 			}
