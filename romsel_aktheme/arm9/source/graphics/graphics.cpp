@@ -2157,7 +2157,7 @@ void graphicsLoad()
 			if (colorTable) {
 				boxArtColor = colorTable[boxArtColor % 0x8000] | BIT(15);
 			}
-			showBoxArt = (boxArtX >= 0 && boxArtY >= 0 && boxArtPanelW > 0 && boxArtPanelH > 0 && boxArtX+boxArtPanelW <= 256 && boxArtY+boxArtPanelH <= 192);
+			showBoxArt = (boxArtX >= 0 && boxArtY >= 0 && boxArtPanelW > 0 && boxArtPanelH > 0 && boxArtX+boxArtPanelW < 256 && boxArtY+boxArtPanelH < 192);
 			if (showBoxArt) {
 				boxArt[0] = new u16[128*128];
 				boxArt[1] = new u16[128*128];
