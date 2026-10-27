@@ -210,6 +210,12 @@ static int batteryIconsW = 0;
 static int batteryIconsH = 0;
 static int batteryX = 236;
 static int batteryY = 2;
+static u16* loaderBadges[2] = {NULL};
+static int loaderBadgesW = 0;
+static int loaderBadgesH = 0;
+static int loaderBadgeX = 137;
+static int loaderBadgeY = 123;
+static u16* loaderBadgeUnder[2] = {NULL};
 
 u16* colorTable = NULL;
 
@@ -1052,6 +1058,60 @@ ITCM_CODE void drawBattery(void) {
 	}
 }
 
+static int loadedLoaderBadge = -1;
+
+static bool loaderBadgePixelShown(const int i) {
+	return loadedLoaderBadge >= 0 && loaderBadges[0][(loaderBadgesW * loaderBadgesH) * loadedLoaderBadge + i] != (0 | BIT(15));
+}
+
+// Frames: 0 Pico Loader, 1 nds-bootstrap, 2 nds-bootstrap in widescreen, 3 kernel; -1 hides the badge.
+// loaderBadgeUnder keeps what the badge covers, so each pixel goes straight from the old frame to the new one.
+void updateLoaderBadge(const int frame) {
+	if (!loaderBadgeUnder[0] || frame == loadedLoaderBadge) return;
+
+	const bool wasShown = (loadedLoaderBadge >= 0);
+	loadedLoaderBadge = frame;
+
+	for (int i = 0; i < loaderBadgesW * loaderBadgesH; i++) {
+		const int j = ((loaderBadgeY + i / loaderBadgesW) * 256) + loaderBadgeX + (i % loaderBadgesW);
+		if (!wasShown) {
+			loaderBadgeUnder[0][i] = topImageWithText[0][j];
+			loaderBadgeUnder[1][i] = topImageWithText[1][j];
+		}
+		const bool shown = loaderBadgePixelShown(i);
+		topImageWithText[0][j] = shown ? loaderBadges[0][(loaderBadgesW * loaderBadgesH) * frame + i] : loaderBadgeUnder[0][i];
+		topImageWithText[1][j] = shown ? loaderBadges[1][(loaderBadgesW * loaderBadgesH) * frame + i] : loaderBadgeUnder[1][i];
+	}
+}
+
+// For the box art panel: a pixel under the badge is kept for later instead of drawn over it, so the badge never flickers
+static void setTopPixel(const int b, const int x, const int y, const u16 color) {
+	if (loadedLoaderBadge >= 0 && x >= loaderBadgeX && x < loaderBadgeX+loaderBadgesW && y >= loaderBadgeY && y < loaderBadgeY+loaderBadgesH) {
+		const int i = ((y - loaderBadgeY) * loaderBadgesW) + (x - loaderBadgeX);
+		loaderBadgeUnder[b][i] = color;
+		if (loaderBadgePixelShown(i)) return;
+	}
+	topImageWithText[b][(y*256)+x] = color;
+}
+
+// After the day grid was drawn: what it drew over the badge becomes the badge's background, and the badge goes back on top
+static void restampLoaderBadge(void) {
+	if (loadedLoaderBadge < 0) return;
+
+	for (int i = 0; i < loaderBadgesW * loaderBadgesH; i++) {
+		const int j = ((loaderBadgeY + i / loaderBadgesW) * 256) + loaderBadgeX + (i % loaderBadgesW);
+		for (int b = 0; b < 2; b++) {
+			const u16 badge = loaderBadges[b][(loaderBadgesW * loaderBadgesH) * loadedLoaderBadge + i];
+			if (!loaderBadgePixelShown(i)) {
+				loaderBadgeUnder[b][i] = topImageWithText[b][j];
+			} else if (topImageWithText[b][j] != badge) {
+				loaderBadgeUnder[b][i] = topImageWithText[b][j];
+				topImageWithText[b][j] = badge;
+			}
+		}
+	}
+}
+
 enum class ImageType {
 	bottom,
 	top,
@@ -1071,7 +1131,8 @@ enum class ImageType {
 	weekdayText2,
 	selectionBarBg,
 	boxArt,
-	batteryIcons
+	batteryIcons,
+	loaderBadges
 };
 
 static void loadBmp(const ImageType type, const char* filename) {
@@ -1089,11 +1150,11 @@ static void loadBmp(const ImageType type, const char* filename) {
 		fclose(file);
 		return;
 	}
-	if (type == ImageType::batteryIcons) {
+	if (type == ImageType::batteryIcons || type == ImageType::loaderBadges) {
 		// Frame sheet: a top-down BMP (negative height) or a bit depth drawn below would leave it unfilled
 		fseek(file, 0x1C, SEEK_SET);
 		const u8 bpp = fgetc(file);
-		if (height > 192*8 || (bpp != 1 && bpp != 8 && bpp != 16 && bpp != 24 && bpp != 32)) {
+		if (height > 192*(type == ImageType::batteryIcons ? 8 : 4) || (bpp != 1 && bpp != 8 && bpp != 16 && bpp != 24 && bpp != 32)) {
 			fclose(file);
 			return;
 		}
@@ -1214,6 +1275,12 @@ static void loadBmp(const ImageType type, const char* filename) {
 
 		batteryIcons[0] = new u16[width*height];
 		batteryIcons[1] = new u16[width*height];
+	} else if (type == ImageType::loaderBadges) {
+		loaderBadgesW = (int)width;
+		loaderBadgesH = (int)height/4;
+
+		loaderBadges[0] = new u16[width*height];
+		loaderBadges[1] = new u16[width*height];
 	}
 
 	fseek(file, 0x1C, SEEK_SET);
@@ -1263,6 +1330,8 @@ static void loadBmp(const ImageType type, const char* filename) {
 				}
 				if (type == ImageType::batteryIcons) {
 					batteryIcons[b][(y*width)+x] = color;
+				} else if (type == ImageType::loaderBadges) {
+					loaderBadges[b][(y*width)+x] = color;
 				} else if (type == ImageType::boxArt) {
 					boxArt[b][(y*width)+x] = color;
 				} else if (type == ImageType::selectionBarBg) {
@@ -1388,6 +1457,10 @@ static void loadBmp(const ImageType type, const char* filename) {
 			renderWidth = (int)width;
 			dst = (batteryIcons[0] + (height-1) * width);
 			dst2 = (batteryIcons[1] + (height-1) * width);
+		} else if (type == ImageType::loaderBadges) {
+			renderWidth = (int)width;
+			dst = (loaderBadges[0] + (height-1) * width);
+			dst2 = (loaderBadges[1] + (height-1) * width);
 		}
 		u16 *src = bmpImageBuffer;
 		for (uint y = 0; y < height; y++, dst -= renderWidth, dst2 -= renderWidth) {
@@ -1435,6 +1508,9 @@ static void loadBmp(const ImageType type, const char* filename) {
 			if (type == ImageType::batteryIcons) {
 				batteryIcons[0][(y*width)+x] = color;
 				batteryIcons[1][(y*width)+x] = color;
+			} else if (type == ImageType::loaderBadges) {
+				loaderBadges[0][(y*width)+x] = color;
+				loaderBadges[1][(y*width)+x] = color;
 			} else if (type == ImageType::boxArt) {
 				boxArt[0][(y*width)+x] = color;
 				boxArt[1][(y*width)+x] = color;
@@ -1525,6 +1601,9 @@ static void loadBmp(const ImageType type, const char* filename) {
 				if (type == ImageType::batteryIcons) {
 					batteryIcons[0][(y*width)+x] = color;
 					batteryIcons[1][(y*width)+x] = color;
+				} else if (type == ImageType::loaderBadges) {
+					loaderBadges[0][(y*width)+x] = color;
+					loaderBadges[1][(y*width)+x] = color;
 				} else if (type == ImageType::boxArt) {
 					boxArt[0][(y*width)+x] = color;
 					boxArt[1][(y*width)+x] = color;
@@ -1712,8 +1791,8 @@ void updateBoxArt(const char* filename, const char* tid) {
 
 	for (int y = boxArtY; y < boxArtY+boxArtPanelH; y++) {
 		for (int x = boxArtX; x < boxArtX+boxArtPanelW; x++) {
-			topImageWithText[0][(y*256)+x] = boxArtW ? boxArtColor : topImage[0][(y*256)+x];
-			topImageWithText[1][(y*256)+x] = boxArtW ? boxArtColor : topImage[1][(y*256)+x];
+			setTopPixel(0, x, y, boxArtW ? boxArtColor : topImage[0][(y*256)+x]);
+			setTopPixel(1, x, y, boxArtW ? boxArtColor : topImage[1][(y*256)+x]);
 		}
 	}
 
@@ -1732,6 +1811,7 @@ void updateBoxArt(const char* filename, const char* tid) {
 		drawDayX();
 		drawDay();
 		drawWeekday();
+		restampLoaderBadge();
 		return;
 	}
 
@@ -1751,7 +1831,7 @@ void updateBoxArt(const char* filename, const char* tid) {
 			for (int b = 0; b < 2; b++) {
 				const u16 color = boxArt[b][(y*boxArtW)+x];
 				if (color & BIT(15)) { // Black inside the art is drawn, so it shows on a light panel too
-					topImageWithText[b][(y2*256)+x2] = color;
+					setTopPixel(b, x2, y2, color);
 				}
 			}
 		}
@@ -2331,6 +2411,20 @@ void graphicsLoad()
 			loadBmp(ImageType::batteryIcons, (themePath + "/battery.bmp").c_str());
 			if (batteryX < 0 || batteryY < 0 || batteryX+batteryIconsW > 256 || batteryY+batteryIconsH > 192) {
 				batteryIconsW = 0; // Off screen, so draw nothing
+			}
+		}
+
+		if (!ms().macroMode && ini.GetInt("loader badge", "show", 0)) {
+			loaderBadgeX = ini.GetInt("loader badge", "x", loaderBadgeX);
+			loaderBadgeY = ini.GetInt("loader badge", "y", loaderBadgeY);
+
+			loadBmp(ImageType::loaderBadges, (themePath + "/loader_badges.bmp").c_str());
+			if (loaderBadgeX < 0 || loaderBadgeY < 0 || loaderBadgeX+loaderBadgesW > 256 || loaderBadgeY+loaderBadgesH > 192) {
+				loaderBadgesW = 0; // Off screen, so draw nothing
+			}
+			if (loaderBadges[0]) {
+				loaderBadgeUnder[0] = new u16[loaderBadgesW*loaderBadgesH];
+				loaderBadgeUnder[1] = new u16[loaderBadgesW*loaderBadgesH];
 			}
 		}
 
