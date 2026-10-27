@@ -933,6 +933,7 @@ void bgOperations(bool waitFrame) {
 	drawDay();
 	drawWeekday();
 	drawFreeSpace();
+	drawBattery();
 	if (waitFrame) {
 		swiWaitForVBlank();
 	}
