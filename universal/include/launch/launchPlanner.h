@@ -54,7 +54,6 @@ struct LaunchEnv {
 	int colEmulator = 0;
 	int sgEmulator = 0;
 	int mdEmulator = 0;
-	bool newSnesEmuVer = false;
 	bool gbar2DldiAccess = false;
 	bool macroMode = false;
 

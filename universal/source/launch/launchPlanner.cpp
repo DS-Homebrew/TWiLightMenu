@@ -139,9 +139,9 @@ bool launcherAvailable(const CustomLauncher &launcher, const LaunchEnv &env)
 		case LauncherHandler::Pce:
 			return launcher.binary.exists();
 		case LauncherHandler::Snes:
-			if (env.newSnesEmuVer)
-				return launcher.binary.exists() || variantExists(launcher, "TWL");
-			return variantExists(launcher, "LEGACY") || (env.secondaryDevice && variantExists(launcher, "LEGACY_TWLM"));
+			if (!env.dsiFeatures || !env.arm7SCFGLocked)
+				return launcher.binary.exists();
+			return variantExists(launcher, "LEGACY") || variantExists(launcher, "LEGACY_TWLM");
 		case LauncherHandler::Genesis:
 			// The ROM size isn't known here, so Hybrid needs either emulator
 			if (env.mdEmulator == 2)
