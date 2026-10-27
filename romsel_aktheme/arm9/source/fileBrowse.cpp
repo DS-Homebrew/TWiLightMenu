@@ -1287,6 +1287,10 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 	if (PAGENUM > 0) {
 		fileOffset += PAGENUM*40;
 	}
+	if (fileOffset > (int)dirContents.size() - 1) {
+		fileOffset = std::max((int)dirContents.size() - 1, 0);
+		cursorPosOnScreen = fileOffset;
+	}
 
 	// Scroll screen if needed
 	if (fileOffset > screenOffset + entriesPerScreen - 1) {
