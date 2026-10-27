@@ -182,6 +182,8 @@ static int weekdayX = 52;
 static int weekdayY = 28;
 static int weekday2X = 52;
 static int weekday2Y = 28;
+static bool weekdayTop = false;
+static bool weekday2Top = false;
 
 static u16* boxArt[2] = {NULL};
 static int boxArtW = 0;
@@ -907,32 +909,36 @@ ITCM_CODE void drawWeekday(void) {
 	loadedWeekday = currentWeekday;
 
 	if (weekdayText[0]) {
+		u16 (*dst)[256*192] = weekdayTop ? topImageWithText : bottomImageWithBar;
+		u16 (*base)[256*192] = weekdayTop ? topImage : bottomImage;
 		int src = (weekdayTextW * weekdayTextH) * currentWeekday;
 
 		for (int y2 = weekdayY; y2 < weekdayY+weekdayTextH; y2++) {
 			for (int x2 = weekdayX; x2 < weekdayX+weekdayTextW; x2++) {
 				if (weekdayText[0][src] == (0 | BIT(15))) {
-					bottomImageWithBar[0][(y2*256)+x2] = bottomImage[0][(y2*256)+x2];
-					bottomImageWithBar[1][(y2*256)+x2] = bottomImage[1][(y2*256)+x2];
+					dst[0][(y2*256)+x2] = base[0][(y2*256)+x2];
+					dst[1][(y2*256)+x2] = base[1][(y2*256)+x2];
 				} else {
-					bottomImageWithBar[0][(y2*256)+x2] = weekdayText[0][src];
-					bottomImageWithBar[1][(y2*256)+x2] = weekdayText[1][src];
+					dst[0][(y2*256)+x2] = weekdayText[0][src];
+					dst[1][(y2*256)+x2] = weekdayText[1][src];
 				}
 				src++;
 			}
 		}
 	}
 	if (weekdayText2[0]) {
+		u16 (*dst)[256*192] = weekday2Top ? topImageWithText : bottomImageWithBar;
+		u16 (*base)[256*192] = weekday2Top ? topImage : bottomImage;
 		int src = (weekdayText2W * weekdayText2H) * currentWeekday;
 
 		for (int y2 = weekday2Y; y2 < weekday2Y+weekdayText2H; y2++) {
 			for (int x2 = weekday2X; x2 < weekday2X+weekdayText2W; x2++) {
 				if (weekdayText2[0][src] == (0 | BIT(15))) {
-					bottomImageWithBar[0][(y2*256)+x2] = bottomImage[0][(y2*256)+x2];
-					bottomImageWithBar[1][(y2*256)+x2] = bottomImage[1][(y2*256)+x2];
+					dst[0][(y2*256)+x2] = base[0][(y2*256)+x2];
+					dst[1][(y2*256)+x2] = base[1][(y2*256)+x2];
 				} else {
-					bottomImageWithBar[0][(y2*256)+x2] = weekdayText2[0][src];
-					bottomImageWithBar[1][(y2*256)+x2] = weekdayText2[1][src];
+					dst[0][(y2*256)+x2] = weekdayText2[0][src];
+					dst[1][(y2*256)+x2] = weekdayText2[1][src];
 				}
 				src++;
 			}
@@ -2123,6 +2129,7 @@ void graphicsLoad()
 			if (ini.GetInt("calendar weekday", "show", 0)) {
 				weekdayX = ini.GetInt("calendar weekday", "x", weekdayX);
 				weekdayY = ini.GetInt("calendar weekday", "y", weekdayY);
+				weekdayTop = ini.GetInt("calendar weekday", "top", weekdayTop);
 
 				std::string pathWeekdayText;
 				if (access((themePath + "/calendar/weekday_text.bmp").c_str(), F_OK) == 0) {
@@ -2131,11 +2138,17 @@ void graphicsLoad()
 					pathWeekdayText = "nitro:/themes/zelda/calendar/weekday_text.bmp";
 				}
 
-				loadBmp(ImageType::weekdayText, pathWeekdayText.c_str());
+				if (!(weekdayTop && ms().macroMode)) { // The top screen isn't shown in macro mode
+					loadBmp(ImageType::weekdayText, pathWeekdayText.c_str());
+				}
+				if (weekdayX < 0 || weekdayY < 0 || weekdayX+weekdayTextW > 256 || weekdayY+weekdayTextH > 192) {
+					weekdayTextW = 0; // Off screen, so draw nothing
+				}
 			}
 			if (ini.GetInt("calendar weekday 2", "show", 0)) {
 				weekday2X = ini.GetInt("calendar weekday 2", "x", weekday2X);
 				weekday2Y = ini.GetInt("calendar weekday 2", "y", weekday2Y);
+				weekday2Top = ini.GetInt("calendar weekday 2", "top", weekday2Top);
 
 				std::string pathWeekdayText;
 				if (access((themePath + "/calendar/weekday_text_2.bmp").c_str(), F_OK) == 0) {
@@ -2144,7 +2157,12 @@ void graphicsLoad()
 					pathWeekdayText = "nitro:/themes/zelda/calendar/weekday_text_2.bmp";
 				}
 
-				loadBmp(ImageType::weekdayText2, pathWeekdayText.c_str());
+				if (!(weekday2Top && ms().macroMode)) {
+					loadBmp(ImageType::weekdayText2, pathWeekdayText.c_str());
+				}
+				if (weekday2X < 0 || weekday2Y < 0 || weekday2X+weekdayText2W > 256 || weekday2Y+weekdayText2H > 192) {
+					weekdayText2W = 0;
+				}
 			}
 		}
 
