@@ -19,7 +19,9 @@
 ------------------------------------------------------------------*/
 
 #include <nds.h>
+#include <nds/arm9/dldi.h>
 #include <gl2d.h>
+#include <sys/statvfs.h>
 #include "date.h"
 #include "fileCopy.h"
 #include "myDSiMode.h"
@@ -196,6 +198,13 @@ static int boxArtPanelH = 103;
 static u16 boxArtColor = 0;
 static bool boxArtShown = false;
 static std::string loadedBoxArt;
+
+static bool showFreeSpace = false;
+static int freeSpaceX = 0;
+static int freeSpaceY = 0;
+static int freeSpaceW = 255;
+static int freeSpaceH = 14;
+static std::string freeSpaceLabel[2];
 
 u16* colorTable = NULL;
 
@@ -944,6 +953,51 @@ ITCM_CODE void drawWeekday(void) {
 			}
 		}
 	}
+}
+
+static int loadedFreeSpaceDevice = -1;
+
+void drawFreeSpace(void) {
+	if (!showFreeSpace) return;
+
+	const int device = ms().secondaryDevice ? 1 : 0;
+
+	if (device == loadedFreeSpaceDevice)
+		return;
+
+	loadedFreeSpaceDevice = device;
+
+	// Read once at startup in main.cpp; GB here is 1024^3, as Windows shows it
+	extern struct statvfs st[2];
+	const u64 total = (u64)st[device].f_blocks * st[device].f_bsize;
+	const u64 avail = (u64)st[device].f_bfree * st[device].f_bsize;
+
+	char text[32] = {0};
+	if (total > 0) {
+		const int totalTenths = (int)((total * 10) >> 30);
+		const int availTenths = (int)((avail * 10) >> 30);
+		snprintf(text, sizeof(text), "%d.%d/%d.%dGB", availTenths / 10, availTenths % 10, totalTenths / 10, totalTenths % 10);
+	}
+
+	// A long label (such as a DLDI name) is cut so it stays clear of the figure on the left
+	std::string label = freeSpaceLabel[device];
+	const int maxLabelW = freeSpaceW - 2*(calcSmallFontWidth(text) + 6);
+	while (!label.empty() && calcSmallFontWidth(label) > maxLabelW) {
+		while (!label.empty() && (label.back() & 0xC0) == 0x80) label.pop_back(); // Whole UTF-8 characters
+		if (!label.empty()) label.pop_back();
+	}
+
+	printTopBox(freeSpaceX, freeSpaceY, freeSpaceW, freeSpaceH, text, label, FontPalette::freeSpaceText);
+}
+
+// After a file is deleted in the menu
+void refreshFreeSpace(void) {
+	if (!showFreeSpace) return;
+
+	extern struct statvfs st[2];
+	const int device = ms().secondaryDevice ? 1 : 0;
+	statvfs(device ? "fat:/" : "sd:/", &st[device]);
+	loadedFreeSpaceDevice = -1;
 }
 
 enum class ImageType {
@@ -2175,6 +2229,16 @@ void graphicsLoad()
 					weekdayText2W = 0;
 				}
 			}
+		}
+
+		if (!ms().macroMode && ini.GetInt("free space", "show", 0)) {
+			freeSpaceX = ini.GetInt("free space", "x", freeSpaceX);
+			freeSpaceY = ini.GetInt("free space", "y", freeSpaceY);
+			freeSpaceW = ini.GetInt("free space", "w", freeSpaceW);
+			freeSpaceH = ini.GetInt("free space", "h", freeSpaceH);
+			freeSpaceLabel[0] = ini.GetString("free space", "sdLabel", "SD");
+			freeSpaceLabel[1] = ini.GetString("free space", "fatLabel", io_dldi_data->friendlyName);
+			showFreeSpace = (freeSpaceX >= 0 && freeSpaceY >= 0 && freeSpaceW > 0 && freeSpaceH > 0 && freeSpaceX+freeSpaceW < 256 && freeSpaceY+freeSpaceH < 192);
 		}
 
 		if (!ms().macroMode && ms().showBoxArt && ini.GetInt("box art", "show", 0)) {
