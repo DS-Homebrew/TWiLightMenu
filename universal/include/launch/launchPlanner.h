@@ -38,6 +38,7 @@ struct LaunchEnv {
 	bool sdFound = false;
 	bool flashcardFound = false;
 	bool isRunFromSD = false;
+	bool dsDebugRam = false;
 	int consoleModel = 0;
 	unsigned dldiDriverSize = 0;
 	bool dldiIsDstwo = false;
