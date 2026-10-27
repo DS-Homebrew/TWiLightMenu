@@ -309,21 +309,10 @@ static void planBootstrapHb(LaunchPlan &plan, const LauncherBinary &emulator, co
 // - ROM on SD: the legacy build through nds-bootstrap-hb with the ROM in RAM
 static void planSnes(LaunchPlan &plan, const CustomLauncher &launcher, const LaunchEnv &env, const LaunchRequest &request)
 {
-	if (env.newSnesEmuVer) {
-		const LauncherBinary *twl = launcher.variant("TWL");
-		const bool onSd = (env.isDSiMode && twl && twl->onSd);
-		plan.ndsToBoot = onSd ? twl->on("sd:") : launcher.binary.on("fat:");
-		plan.tgdsMode = true;
-		plan.tscTgds = true;
-		plan.argv0 = "fat:/SNEmulDS.srl";
-		plan.boostCpu = true;
-		plan.boostVram = plan.dsModeSwitch = (!onSd && env.secondaryDevice);
-		for (const std::string &arg : request.prefixArgs)
-			plan.args.push_back(arg);
-		plan.args.push_back(plan.romPathFat);	// TGDS only reaches the ROM through fat:
-		plan.homebrewArg = plan.romPath;
-		plan.launchType = LAUNCH_TYPE_CUSTOM;
-		plan.ok = true;
+	if (!env.dsiFeatures || !env.arm7SCFGLocked) {
+		bool onFat;
+		plan.ndsToBoot = resolveSdFirst(launcher.binary, env, onFat);
+		finishDirectPlan(plan, launcher, env, request, onFat);
 	} else if (env.secondaryDevice) {
 		const LauncherBinary *legacy = launcher.variant((request.romFolder == "fat:/roms/snes") ? "LEGACY_TWLM" : "LEGACY");
 		if (!legacy)
