@@ -611,6 +611,15 @@ void refreshBanners(const int startRow, const int fileOffset, std::vector<DirEnt
 	updateText(false);
 }
 
+// List view only reads a game's header on launch, so covers show in the icon views
+static void updateBoxArtAtCursor(const int fileOffset, const std::vector<DirEntry>& dirContents) {
+	if (ms().ak_viewMode != TWLSettings::EViewList && file_count > 0 && !isDirectory[cursorPosOnScreen] && bnrRomType[cursorPosOnScreen] == 0) {
+		updateBoxArt(dirContents.at(fileOffset).name.c_str(), gameTid[cursorPosOnScreen]);
+	} else {
+		updateBoxArt(NULL, NULL);
+	}
+}
+
 void mdRomTooBig(void) {
 	char text[24];
 	snprintf(text, sizeof(text), "size limit of %sMB.", ms().secondaryDevice ? (sys().dsDebugRam() ? "4" : "3") : "7.5");
@@ -1320,6 +1329,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 		refreshBanners(screenOffset, fileOffset, dirContents);
 	}
 	updateSelectionBar();
+	updateBoxArtAtCursor(fileOffset, dirContents);
 
 	bool listModeSwitched = false;
 	bool refreshIcons = false;
@@ -1887,6 +1897,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			refreshBanners(screenOffset, fileOffset, dirContents);
 		}
 		updateSelectionBar();
+		updateBoxArtAtCursor(fileOffset, dirContents);
 		screenOffsetPrev = screenOffset;
 		listModeSwitched = false;
 		refreshIcons = false;

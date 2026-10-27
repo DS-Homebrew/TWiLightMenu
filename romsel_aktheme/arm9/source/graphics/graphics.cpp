@@ -183,6 +183,18 @@ static int weekdayY = 28;
 static int weekday2X = 52;
 static int weekday2Y = 28;
 
+static u16* boxArt[2] = {NULL};
+static int boxArtW = 0;
+static int boxArtH = 0;
+static bool showBoxArt = false;
+static int boxArtX = 134;
+static int boxArtY = 27;
+static int boxArtPanelW = 118;
+static int boxArtPanelH = 103;
+static u16 boxArtColor = 0;
+static bool boxArtShown = false;
+static std::string loadedBoxArt;
+
 u16* colorTable = NULL;
 
 bool displayIcons = false;
@@ -839,7 +851,7 @@ static void drawDayNumber2(u8 day)
 static std::string loadedDay;
 
 void drawDay(void) {
-	if (!dayNumbers[0] && !dayNumbers2[0]) return;
+	if ((!dayNumbers[0] && !dayNumbers2[0]) || boxArtShown) return;
 
 	// Load day
 	std::string currentDay = retDay();
@@ -945,7 +957,8 @@ enum class ImageType {
 	dayNumbers2,
 	weekdayText,
 	weekdayText2,
-	selectionBarBg
+	selectionBarBg,
+	boxArt
 };
 
 static void loadBmp(const ImageType type, const char* filename) {
@@ -959,7 +972,7 @@ static void loadBmp(const ImageType type, const char* filename) {
 	fread(&width, 1, sizeof(width), file);
 	fread(&height, 1, sizeof(height), file);
 
-	if (width > 256 || (height > 192 && type < ImageType::clockNumbers)) {
+	if (width > 256 || (height > 192 && type < ImageType::clockNumbers) || (type == ImageType::boxArt && (width > 128 || height > 128))) {
 		fclose(file);
 		return;
 	}
@@ -1070,6 +1083,9 @@ static void loadBmp(const ImageType type, const char* filename) {
 
 		selectionBarBg[0] = new u16[width*height];
 		selectionBarBg[1] = new u16[width*height];
+	} else if (type == ImageType::boxArt) {
+		boxArtW = (int)width;
+		boxArtH = (int)height;
 	}
 
 	fseek(file, 0x1C, SEEK_SET);
@@ -1117,7 +1133,9 @@ static void loadBmp(const ImageType type, const char* filename) {
 				if (colorTable && ((type < ImageType::startButton) || (color != (0 | BIT(15))))) {
 					color = colorTable[color % 0x8000] | BIT(15);
 				}
-				if (type == ImageType::selectionBarBg) {
+				if (type == ImageType::boxArt) {
+					boxArt[b][(y*width)+x] = color;
+				} else if (type == ImageType::selectionBarBg) {
 					selectionBarBg[b][(y*width)+x] = color;
 				} else if (type == ImageType::weekdayText2) {
 					weekdayText2[b][(y*width)+x] = color;
@@ -1232,6 +1250,10 @@ static void loadBmp(const ImageType type, const char* filename) {
 			renderWidth = (int)width;
 			dst = (selectionBarBg[0] + (height-1) * width);
 			dst2 = (selectionBarBg[1] + (height-1) * width);
+		} else if (type == ImageType::boxArt) {
+			renderWidth = (int)width;
+			dst = (boxArt[0] + (height-1) * width);
+			dst2 = (boxArt[1] + (height-1) * width);
 		}
 		u16 *src = bmpImageBuffer;
 		for (uint y = 0; y < height; y++, dst -= renderWidth, dst2 -= renderWidth) {
@@ -1276,7 +1298,10 @@ static void loadBmp(const ImageType type, const char* filename) {
 		int y = height-1;
 		for (u32 i = 0; i < width*height; i++) {
 			const u16 color = pixelBuffer[bmpImageBuffer[i]];
-			if (type == ImageType::selectionBarBg) {
+			if (type == ImageType::boxArt) {
+				boxArt[0][(y*width)+x] = color;
+				boxArt[1][(y*width)+x] = color;
+			} else if (type == ImageType::selectionBarBg) {
 				selectionBarBg[0][(y*width)+x] = color;
 				selectionBarBg[1][(y*width)+x] = color;
 			} else if (type == ImageType::weekdayText2) {
@@ -1360,7 +1385,10 @@ static void loadBmp(const ImageType type, const char* filename) {
 		for (u32 i = 0; i < (width*height)/8; i++) {
 			for (int b = 7; b >= 0; b--) {
 				const u16 color = monoPixel[(bmpImageBuffer[i] & (BIT(b))) ? 1 : 0];
-				if (type == ImageType::selectionBarBg) {
+				if (type == ImageType::boxArt) {
+					boxArt[0][(y*width)+x] = color;
+					boxArt[1][(y*width)+x] = color;
+				} else if (type == ImageType::selectionBarBg) {
 					selectionBarBg[0][(y*width)+x] = color;
 					selectionBarBg[1][(y*width)+x] = color;
 				} else if (type == ImageType::weekdayText2) {
@@ -1420,15 +1448,21 @@ static void loadBmp(const ImageType type, const char* filename) {
 			}
 		}
 		delete[] bmpImageBuffer;
+	} else if (type == ImageType::boxArt) {
+		boxArtW = 0; // Unsupported bit depth, so no cover
 	}
 	fclose(file);
 }
 
-static void loadPng(const bool top, const std::string filename) {
+static void loadPng(const ImageType type, const std::string filename) {
 	std::vector<unsigned char> image;
 	unsigned width, height;
 	lodepng::decode(image, width, height, filename);
-	if (width > 256 || height > 192) return;
+	if (image.empty() || width > 256 || height > 192 || (type == ImageType::boxArt && (width > 128 || height > 128))) return;
+	if (type == ImageType::boxArt) {
+		boxArtW = (int)width;
+		boxArtH = (int)height;
+	}
 
 	int xPos = 0;
 	if (width <= 254) {
@@ -1480,7 +1514,9 @@ static void loadPng(const bool top, const std::string filename) {
 				}
 				res = alphablend(color, colorTable ? colorTable[0] : 0, newAlpha);
 			}
-			if (top) {
+			if (type == ImageType::boxArt) {
+				boxArt[b][(y*width)+x] = res;
+			} else if (type == ImageType::top) {
 				topImage[b][(xPos+x+(y*256))+(yPos*256)] = res;
 			} else {
 				bottomImage[b][(xPos+x+(y*256))+(yPos*256)] = res;
@@ -1497,6 +1533,77 @@ static void loadPng(const bool top, const std::string filename) {
 		}
 		alternatePixel = !alternatePixel;
 		y=0;
+	}
+}
+
+void updateBoxArt(const char* filename, const char* tid) {
+	if (!showBoxArt) return;
+
+	const std::string name = filename ? filename : "";
+	const std::string tidName = tid ? tid : "";
+	const std::string key = name + "/" + tidName; // The same file name can be another game in another folder
+	if (key == loadedBoxArt) return;
+	loadedBoxArt = key;
+
+	boxArtW = 0;
+	if (filename) {
+		const std::string boxArtFolder = std::string(sys().isRunFromSD() ? "sd" : "fat") + ":/_nds/TWiLightMenu/boxart/";
+		const std::string paths[] = {
+			boxArtFolder + name + ".bmp",
+			boxArtFolder + name + ".png",
+			boxArtFolder + tidName + ".bmp",
+			boxArtFolder + tidName + ".png",
+			"fat:/_pico/covers/nds/" + tidName + ".bmp",
+		};
+		// A file that can't be shown here (e.g. DSi theme box art over 128x128) falls through to the next one
+		for (const std::string& path : paths) {
+			if (access(path.c_str(), F_OK) != 0) continue;
+			if (extension(path, {".png"})) {
+				loadPng(ImageType::boxArt, path);
+			} else {
+				loadBmp(ImageType::boxArt, path.c_str());
+			}
+			if (boxArtW) break;
+		}
+	}
+
+	// No cover before or now: the calendar is already showing, so leave it alone instead of redrawing it
+	if (!boxArtW && !boxArtShown) return;
+
+	for (int y = boxArtY; y < boxArtY+boxArtPanelH; y++) {
+		for (int x = boxArtX; x < boxArtX+boxArtPanelW; x++) {
+			topImageWithText[0][(y*256)+x] = boxArtW ? boxArtColor : topImage[0][(y*256)+x];
+			topImageWithText[1][(y*256)+x] = boxArtW ? boxArtColor : topImage[1][(y*256)+x];
+		}
+	}
+
+	boxArtShown = (boxArtW > 0);
+	if (!boxArtShown) {
+		loadedDay.clear();
+		drawDay();
+		return;
+	}
+
+	// Pure black is transparent, so trailing black columns (DSpico covers) don't count toward centering
+	int usedW = 0;
+	for (int i = 0; i < boxArtW*boxArtH; i++) {
+		if ((boxArt[0][i] & BIT(15)) && boxArt[0][i] != BIT(15) && (i % boxArtW) >= usedW) {
+			usedW = (i % boxArtW) + 1;
+		}
+	}
+	const int x0 = boxArtX + (boxArtPanelW - usedW) / 2;
+	const int y0 = boxArtY + (boxArtPanelH - boxArtH) / 2;
+	for (int y = 0; y < boxArtH; y++) {
+		for (int x = 0; x < usedW; x++) {
+			const int x2 = x0+x, y2 = y0+y;
+			if (x2 < boxArtX || x2 >= boxArtX+boxArtPanelW || y2 < boxArtY || y2 >= boxArtY+boxArtPanelH) continue;
+			for (int b = 0; b < 2; b++) {
+				const u16 color = boxArt[b][(y*boxArtW)+x];
+				if ((color & BIT(15)) && color != BIT(15)) {
+					topImageWithText[b][(y2*256)+x2] = color;
+				}
+			}
+		}
 	}
 }
 
@@ -1778,12 +1885,12 @@ void graphicsLoad()
 		}
 
 		if (extension(pathTop.c_str(), {".png"})) {
-			loadPng(true, pathTop);
+			loadPng(ImageType::top, pathTop);
 		} else {
 			loadBmp(ImageType::top, pathTop.c_str());
 		}
 		if (extension(pathBottom.c_str(), {".png"})) {
-			loadPng(false, pathBottom);
+			loadPng(ImageType::bottom, pathBottom);
 		} else {
 			loadBmp(ImageType::bottom, pathBottom.c_str());
 		}
@@ -2038,6 +2145,22 @@ void graphicsLoad()
 				}
 
 				loadBmp(ImageType::weekdayText2, pathWeekdayText.c_str());
+			}
+		}
+
+		if (!ms().macroMode && ms().showBoxArt && ini.GetInt("box art", "show", 0)) {
+			boxArtX = ini.GetInt("box art", "x", boxArtX);
+			boxArtY = ini.GetInt("box art", "y", boxArtY);
+			boxArtPanelW = ini.GetInt("box art", "w", boxArtPanelW);
+			boxArtPanelH = ini.GetInt("box art", "h", boxArtPanelH);
+			boxArtColor = ini.GetInt("box art", "color", boxArtColor) | BIT(15);
+			if (colorTable) {
+				boxArtColor = colorTable[boxArtColor % 0x8000] | BIT(15);
+			}
+			showBoxArt = (boxArtX >= 0 && boxArtY >= 0 && boxArtPanelW > 0 && boxArtPanelH > 0 && boxArtX+boxArtPanelW <= 256 && boxArtY+boxArtPanelH <= 192);
+			if (showBoxArt) {
+				boxArt[0] = new u16[128*128];
+				boxArt[1] = new u16[128*128];
 			}
 		}
 	}
