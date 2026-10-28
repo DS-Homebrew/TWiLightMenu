@@ -967,6 +967,7 @@ ITCM_CODE void drawWeekday(void) {
 }
 
 static int loadedFreeSpaceDevice = -1;
+static int loadedBattery = -1;
 
 void drawFreeSpace(void) {
 	if (!showFreeSpace) return;
@@ -999,6 +1000,7 @@ void drawFreeSpace(void) {
 	}
 
 	printTopBox(freeSpaceX, freeSpaceY, freeSpaceW, freeSpaceH, text, label, FontPalette::freeSpaceText);
+	loadedBattery = -1; // The box may have covered the battery, so draw it again
 }
 
 // After a file is deleted in the menu
@@ -1011,7 +1013,6 @@ void refreshFreeSpace(void) {
 	loadedFreeSpaceDevice = -1;
 }
 
-static int loadedBattery = -1;
 static int pendingBattery = -1;
 static u32 pendingBatterySince = 0;
 static volatile u32 vblankCount = 0; // Counted in vBlankHandler
@@ -2400,7 +2401,7 @@ void graphicsLoad()
 			freeSpaceH = ini.GetInt("free space", "h", freeSpaceH);
 			freeSpaceLabel[0] = ini.GetString("free space", "sdLabel", "SD");
 			freeSpaceLabel[1] = ini.GetString("free space", "fatLabel", io_dldi_data->friendlyName);
-			showFreeSpace = (freeSpaceX >= 0 && freeSpaceY >= 0 && freeSpaceW > 0 && freeSpaceH > 0 && freeSpaceX+freeSpaceW < 256 && freeSpaceY+freeSpaceH < 192);
+			showFreeSpace = (freeSpaceX >= 0 && freeSpaceY >= 0 && freeSpaceW > 0 && freeSpaceH > 0 && freeSpaceX+freeSpaceW <= 256 && freeSpaceY+freeSpaceH <= 192);
 		}
 
 		// Not "[battery icon]": the old akmenu used that name for a bottom-screen icon from other files
