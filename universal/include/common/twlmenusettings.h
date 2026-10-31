@@ -370,6 +370,7 @@ public:
 	TDSiWareBooter dsiWareBooter;
 	bool dsiWareToSD;
 	bool dlplayRsaPatch;
+	bool dlplayDsiMode;
 	bool esrbRatingScreen;
 
 	int ak_viewMode;

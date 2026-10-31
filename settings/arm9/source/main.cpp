@@ -1508,6 +1508,9 @@ int settingsMode(void)
 		}
 	}
 	gamesPage.option(STR_DLPLAY_RSA_PATCH, STR_DESCRIPTION_DLPLAY_RSA_PATCH, Option::Bool(&ms().dlplayRsaPatch), {STR_ON, STR_OFF}, {true, false});
+	if (dsiFeatures()) {
+		gamesPage.option(STR_DLPLAY_DSI_MODE, STR_DESCRIPTION_DLPLAY_DSI_MODE, Option::Bool(&ms().dlplayDsiMode), {STR_ON, STR_OFF}, {true, false});
+	}
 	if (ms().consoleModel == 0 && sdFound() && !sys().arm7SCFGLocked()) {
 		gamesPage.option(STR_DSIWAREBOOTER, STR_DESCRIPTION_DSIWAREBOOTER, Option::Bool((bool *)&ms().dsiWareBooter), {"nds-bootstrap", "Unlaunch"}, {true, false});
 	}
