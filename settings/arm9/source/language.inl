@@ -149,6 +149,7 @@ STRING(SG_EMULATOR, "Sega SG/SC emu.")
 STRING(SMS_EMULATOR, "Sega MS/GG emu.")
 STRING(MD_EMULATOR, "Sega MD/Gen emu.")
 STRING(DLPLAY_RSA_PATCH, "DS Download Play RSA patch")
+STRING(DLPLAY_DSI_MODE, "DS Download Play DSi mode")
 
 STRING(HYBRID, "Hybrid")
 STRING(NATIVE_GBARUNNER2, "Native > GBARunner2")
@@ -163,6 +164,7 @@ STRING(DESCRIPTION_SG_EMULATOR, "Select which emulator to use for SG-1000 and SC
 STRING(DESCRIPTION_SMS_EMULATOR, "Select which emulator to use for Sega Master System and Game Gear ROMs.")
 STRING(DESCRIPTION_MD_EMULATOR, "Select which emulator to use for Sega Genesis/Mega Drive ROMs.")
 STRING(DESCRIPTION_DLPLAY_RSA_PATCH, "Remove signature checks from DS Download Play, so it can receive unsigned apps such as homebrew and ROM hacks.")
+STRING(DESCRIPTION_DLPLAY_DSI_MODE, "Run DS Download Play in DSi mode, so received homebrew can use the DSi CPU speed and RAM. Turn this off if a downloaded app fails to start.")
 
 // GBARunner2 settings
 STRING(SLOT_1_DLDI_ACCESS, "Slot-1 SD: DLDI access")
