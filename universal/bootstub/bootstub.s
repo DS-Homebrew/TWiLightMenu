@@ -119,12 +119,12 @@ hook7from9:
 	add	r3, r12, #0x180		@ r3 = 4000180
 
 	mov	r0,#0x80
-	strb	r0,[r3,#0x242-0x180]
+	strb	r0,[r3,#0x243-0x180]
 
 	ldr	r0, _loader_addr
 	ldr	r2, _loader_size
 	mov	r1, #0x06800000
-	add	r1, r1, #0x48000
+	add	r1, r1, #0x68000
 	add	r2, r0, r2
 _copyloader:
 	ldr	r4, [r0], #4
@@ -132,8 +132,8 @@ _copyloader:
 	cmp	r0, r2
 	blt	_copyloader
 
-	mov	r0,#0x82
-	strb	r0,[r3,#0x242-0x180]
+	mov	r0,#0x8A
+	strb	r0,[r3,#0x243-0x180]
 
 	ldrh	r0,[r3,#0x204-0x180]
 	orr	r0,r0,#(1<<11) | (1<<7)
