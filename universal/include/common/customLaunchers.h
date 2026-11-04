@@ -76,8 +76,7 @@ enum : unsigned {
 	LAUNCHER_LIST_IF_APRIL_FOOLS     = 1 << 0,	// april-fools: the date is 04/01
 	LAUNCHER_LIST_IF_DSI_FEATURES    = 1 << 1,	// dsi-features
 	LAUNCHER_LIST_IF_DSI_CONSOLE     = 1 << 2,	// dsi-console: not a 3DS
-	LAUNCHER_LIST_IF_DSTWO           = 1 << 3,	// dstwo: a DSTWO is the Slot-1 flashcard
-	LAUNCHER_LIST_IF_PICODRIVE       = 1 << 4	// picodrive: PicoDrive TWL selected
+	LAUNCHER_LIST_IF_DSTWO           = 1 << 3	// dstwo: a DSTWO is the Slot-1 flashcard
 };
 
 // File type numbers, as stored in bnrRomType by every menu (quickmenu's eROMType matches)

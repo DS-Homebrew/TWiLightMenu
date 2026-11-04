@@ -236,8 +236,6 @@ static bool parseListIf(const std::string &value, unsigned &listIf)
 			listIf |= LAUNCHER_LIST_IF_DSI_CONSOLE;
 		else if (token == "dstwo")
 			listIf |= LAUNCHER_LIST_IF_DSTWO;
-		else if (token == "picodrive")
-			listIf |= LAUNCHER_LIST_IF_PICODRIVE;
 		else
 			return false;
 	}

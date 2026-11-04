@@ -60,8 +60,6 @@ bool launcherListIfHolds(const CustomLauncher &launcher, const LaunchEnv &env)
 		return false;
 	if ((listIf & LAUNCHER_LIST_IF_DSTWO) && !env.dldiIsDstwo)
 		return false;
-	if ((listIf & LAUNCHER_LIST_IF_PICODRIVE) && env.mdEmulator != 2)
-		return false;
 	return true;
 }
 
