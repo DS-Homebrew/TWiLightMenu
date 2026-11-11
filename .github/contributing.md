@@ -18,6 +18,10 @@ Before you submit a pull request from your forked repo, check that it meets thes
 2. Test your code beforehand.
 3. All code must be clear and readable. Indentation is a must and code must follow C variable and name convention.
 
+## AI Usage Guidelines
+
+If your PR contains AI usage, please read [these guidelines](https://github.com/DS-Homebrew/TWiLightMenu/blob/master/AI-GUIDELINES.md).
+
 ## Setting up your environment
 
 If you want to collaborate with us, you will need to install DEVKITPRO and DEVKITARM. You will also need EasyGl2D. You also need makerom on your devkitpro environment.
