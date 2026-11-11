@@ -17,10 +17,12 @@
 **TW**i**L**ight Menu++ is an open-source DSi Menu upgrade/replacement for the Nintendo DSi, the Nintendo 3DS, and Nintendo DS flashcards.
 It can launch games for the Nintendo DS, Nintendo DSi, and GameBoy Advance, as well as DSTWO plugins (if you use a DSTWO).
 
-# AI Disclosure
+## AI Disclosure
 
 As of October 26th, 2026, some contibutors have implemented new improvements and bug fixes with AI assistance.     
 Code has been reviewed and tested by the contributors before merging the PRs into this project.
+
+A majority of **TW**i**L**ight Menu++ will remain human-made, as we have [AI usage guidelines](https://github.com/DS-Homebrew/TWiLightMenu/blob/master/AI-GUIDELINES.md) in place to make sure of this.
 
 # Add-ons
 
