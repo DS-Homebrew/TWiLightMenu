@@ -19,7 +19,7 @@ It can launch games for the Nintendo DS, Nintendo DSi, and GameBoy Advance, as w
 
 # AI Disclosure
 
-A majority of **TW**i**L**ight Menu++ is human-made, as some contibutors have implemented improvements and bug fixes with AI assistance.     
+A majority of **TW**i**L**ight Menu++ is human-made. As of October 26th, 2026, some contibutors have implemented improvements and bug fixes with AI assistance.     
 Code has been reviewed and tested by the contributors before merging the PRs into this project.
 
 # Add-ons
