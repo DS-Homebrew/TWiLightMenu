@@ -1510,6 +1510,7 @@ void switchDevice(void) {
 			clearBoxArt(); // Clear box art
 		if (ms().theme != TWLSettings::EThemeSaturn && ms().theme != TWLSettings::EThemeHBL) whiteScreen = true;
 		boxArtLoaded = false;
+		bannerTextShown = false;
 		resumeRotatingCubesVideo();
 		shouldersRendered = false;
 		currentBg = 0;
