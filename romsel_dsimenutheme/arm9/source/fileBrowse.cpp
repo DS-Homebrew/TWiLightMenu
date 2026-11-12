@@ -2671,7 +2671,7 @@ bool selectMenu(void) {
 	int assignedOp[5] = {-1};
 	int selIconYpos = 96;
 	if (ms().kioskMode) {
-		if (dsiFeatures() && (bothSDandFlashcard() || !flashcardFound())) {
+		if (sdFound()) {
 			for (int i = 0; i < 3; i++) {
 				selIconYpos -= 14;
 			}
@@ -2700,7 +2700,7 @@ bool selectMenu(void) {
 			}
 		}
 	} else {
-		if (dsiFeatures() && (bothSDandFlashcard() || !flashcardFound())) {
+		if (sdFound()) {
 			for (int i = 0; i < 4; i++) {
 				selIconYpos -= 14;
 			}
