@@ -165,10 +165,14 @@ jobs:
           curl -LO https://github.com/DS-Homebrew/jEnesisDSPlus/releases/latest/download/jEnesisDSPlus.nds
           curl -LO https://github.com/DS-Homebrew/jEnesisDSPlus/releases/latest/download/jEnesisDSPlus_macro.nds
           curl -LO https://github.com/Sanrax/snemulds-shim/releases/latest/download/snemulds-shim.nds
-          curl -LO https://sanrax.github.io/flashcart-guides/assets/SNEmulDS%200.6d%200.6a%20TWL-NTR.zip
-          7z x "SNEmulDS 0.6d 0.6a TWL-NTR.zip" SNEmulDS.nds
-          7z x "SNEmulDS 0.6d 0.6a TWL-NTR.zip" SNEmulDS.srl
-          rm "SNEmulDS 0.6d 0.6a TWL-NTR.zip"
+          curl -LO https://sanrax.github.io/flashcart-guides/assets/SNEmulDS_0.6a_0.6d_Stable_DSP1_SDD1.zip
+          7z x SNEmulDS_0.6a_0.6d_Stable_DSP1_SDD1.zip SNEmulDS.nds
+          7z x SNEmulDS_0.6a_0.6d_Stable_DSP1_SDD1.zip SNEmulDS.srl
+          7z x SNEmulDS_0.6a_0.6d_Stable_DSP1_SDD1.zip SNEmulDS_dsp.nds
+          7z x SNEmulDS_0.6a_0.6d_Stable_DSP1_SDD1.zip SNEmulDS_dsp.srl
+          7z x SNEmulDS_0.6a_0.6d_Stable_DSP1_SDD1.zip SNEmulDS_sdd1.nds
+          7z x SNEmulDS_0.6a_0.6d_Stable_DSP1_SDD1.zip SNEmulDS_sdd1.srl
+          rm SNEmulDS_0.6a_0.6d_Stable_DSP1_SDD1.zip
           curl -LO https://github.com/DS-Homebrew/NesDS/releases/latest/download/nesDS.nds
           curl -LO https://github.com/FluBBaOfWard/S8DS/releases/latest/download/S8DS.zip
           7z x S8DS.zip S8DS.nds
@@ -234,10 +238,14 @@ jobs:
           curl -LO https://github.com/DS-Homebrew/jEnesisDSPlus/releases/latest/download/jEnesisDSPlus.nds
           curl -LO https://github.com/DS-Homebrew/jEnesisDSPlus/releases/latest/download/jEnesisDSPlus_macro.nds
           curl -LO https://github.com/Sanrax/snemulds-shim/releases/latest/download/snemulds-shim.nds
-          curl -LO https://sanrax.github.io/flashcart-guides/assets/SNEmulDS%200.6d%200.6a%20TWL-NTR.zip
-          7z x "SNEmulDS 0.6d 0.6a TWL-NTR.zip" SNEmulDS.nds
-          7z x "SNEmulDS 0.6d 0.6a TWL-NTR.zip" SNEmulDS.srl
-          rm "SNEmulDS 0.6d 0.6a TWL-NTR.zip"
+          curl -LO https://sanrax.github.io/flashcart-guides/assets/SNEmulDS_0.6a_0.6d_Stable_DSP1_SDD1.zip
+          7z x SNEmulDS_0.6a_0.6d_Stable_DSP1_SDD1.zip SNEmulDS.nds
+          7z x SNEmulDS_0.6a_0.6d_Stable_DSP1_SDD1.zip SNEmulDS.srl
+          7z x SNEmulDS_0.6a_0.6d_Stable_DSP1_SDD1.zip SNEmulDS_dsp.nds
+          7z x SNEmulDS_0.6a_0.6d_Stable_DSP1_SDD1.zip SNEmulDS_dsp.srl
+          7z x SNEmulDS_0.6a_0.6d_Stable_DSP1_SDD1.zip SNEmulDS_sdd1.nds
+          7z x SNEmulDS_0.6a_0.6d_Stable_DSP1_SDD1.zip SNEmulDS_sdd1.srl
+          rm SNEmulDS_0.6a_0.6d_Stable_DSP1_SDD1.zip
           curl -LO https://github.com/DS-Homebrew/NesDS/releases/latest/download/nesDS.nds
           curl -LO https://github.com/FluBBaOfWard/S8DS/releases/latest/download/S8DS.zip
           7z x S8DS.zip S8DS.nds
