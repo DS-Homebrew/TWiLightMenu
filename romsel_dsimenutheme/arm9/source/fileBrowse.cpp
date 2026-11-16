@@ -32,6 +32,7 @@
 #include "gbaswitch.h"
 
 #include "common/twlmenusettings.h"
+#include "common/parentDirectorySelection.h"
 #include "common/bootstrapsettings.h"
 #include "common/customLaunchers.h"
 #include "common/dlplayPatch.h"
@@ -471,6 +472,8 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 	}
 }
 
+static twlm::ParentDirectorySelection parentSelection;
+
 bool nowLoadingDisplaying = false;
 
 void displayNowLoading(void) {
@@ -487,7 +490,7 @@ void displayNowLoading(void) {
 	}
 	updateText(false);
 	nowLoadingDisplaying = true;
-	while (!screenFadedIn()) 
+	while (!screenFadedIn())
 	{
 		bgOperations(true);
 	}
@@ -1095,16 +1098,20 @@ void launchDownloadPlay(const vector<DirEntry>& dirContents) {
 
 		const char *bootstrapinipath = (sys().isRunFromSD() ? BOOTSTRAP_INI : BOOTSTRAP_INI_FC);
 		CIniFile bootstrapini(bootstrapinipath);
+		const bool dlplayDsiMode = ms().dlplayDsiMode && dsiFeatures() && !bs().b4dsMode;
 		bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", bootPath);
+		bootstrapini.SetString("NDS-BOOTSTRAP", "APP_PATH", "");
 		bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", "");
+		bootstrapini.SetString("NDS-BOOTSTRAP", "PRV_PATH", "");
 		bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "");
 		bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "");
 		bootstrapini.SetString("NDS-BOOTSTRAP", "QUIT_PATH", mainSrldrPath(sys().isRunFromSD() && (!ms().secondaryDevice || !bs().b4dsMode)));
 		bootstrapini.SetString("NDS-BOOTSTRAP", "GUI_LANGUAGE", ms().getGuiLanguageString());
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", ms().gameLanguage);
-		bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
-		bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
-		bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
+		// Download Play has a DS header (unit code 0), so nds-bootstrap only accepts forced DSi mode
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", dlplayDsiMode ? 2 : 0);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", dlplayDsiMode);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", dlplayDsiMode);
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_A", 0);
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_B", 1);
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_SELECT", 2);
@@ -1473,7 +1480,7 @@ void exitToSystemMenu(void) {
 	for (int i = 0; i < 60; i++) {
 		bgOperations(true);
 	}
-	
+
 	snd().stopStream();
 
 	if (settingsChanged) {
@@ -1506,6 +1513,7 @@ void switchDevice(void) {
 			clearBoxArt(); // Clear box art
 		if (ms().theme != TWLSettings::EThemeSaturn && ms().theme != TWLSettings::EThemeHBL) whiteScreen = true;
 		boxArtLoaded = false;
+		bannerTextShown = false;
 		resumeRotatingCubesVideo();
 		shouldersRendered = false;
 		currentBg = 0;
@@ -1582,7 +1590,7 @@ void launchGba(void) {
 	for (int i = 0; i < 60; i++) {
 		bgOperations(true);
 	}
-	
+
 	snd().stopStream();
 
 	ms().slot1Launched = false;
@@ -1687,7 +1695,7 @@ void mdRomTooBig(void) {
 		} else if (pressed & KEY_DOWN) {
 			bottomBright++;
 		}
-		
+
 
 
 		if (bottomBright < 0) bottomBright = 0;
@@ -1996,7 +2004,7 @@ bool donorRomMsg(const char *filename) {
 		}
 	}
 	clearText();
-	
+
 	showdialogbox = false;
 	if (ms().theme == TWLSettings::EThemeSaturn) {
 		snd().playLaunch();
@@ -2666,7 +2674,7 @@ bool selectMenu(void) {
 	int assignedOp[5] = {-1};
 	int selIconYpos = 96;
 	if (ms().kioskMode) {
-		if (dsiFeatures() && (bothSDandFlashcard() || !flashcardFound())) {
+		if (sdFound()) {
 			for (int i = 0; i < 3; i++) {
 				selIconYpos -= 14;
 			}
@@ -2695,7 +2703,7 @@ bool selectMenu(void) {
 			}
 		}
 	} else {
-		if (dsiFeatures() && (bothSDandFlashcard() || !flashcardFound())) {
+		if (sdFound()) {
 			for (int i = 0; i < 4; i++) {
 				selIconYpos -= 14;
 			}
@@ -3354,7 +3362,16 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 	vector<vector<DirEntry>> dirContents(scrn.SIZE);
 
 	getDirectoryContents(dirContents[scrn], extensionList);
-	
+	const int parentPosition = parentSelection.restore(dirContents[scrn]);
+	if (parentPosition >= 0) {
+		PAGENUM = parentPosition / 40;
+		CURPOS = parentPosition % 40;
+		recalculateBoxesCount();
+		settingsChanged = true;
+		titleboxXpos[ms().secondaryDevice] = titleboxXdest[ms().secondaryDevice] = CURPOS * titleboxXspacing;
+		titlewindowXpos[ms().secondaryDevice] = titlewindowXdest[ms().secondaryDevice] = CURPOS * 5;
+	}
+
 	if (CURPOS > last_used_box)
 	{
 		CURPOS = last_used_box;
@@ -3980,6 +3997,11 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				DirEntry *entry = &dirContents[scrn].at(CURPOS + PAGENUM * 40);
 				if (entry->isDirectory) {
 					// Enter selected directory
+					if (chdir(entry->name.c_str()) != 0) {
+						snd().playWrong();
+						continue;
+					}
+					if (entry->name == "..") parentSelection.remember(ms().romfolder[ms().secondaryDevice]);
 					(ms().theme == TWLSettings::EThemeSaturn) ? snd().playLaunch() : snd().playSelect();
 					if (ms().theme != TWLSettings::EThemeSaturn && ms().theme != TWLSettings::EThemeHBL) {
 						fadeType = false; // Fade to white
@@ -4003,7 +4025,6 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					stopSoundPlayed = false;
 					clearText();
 					updateText(false);
-					chdir(entry->name.c_str());
 					char buf[256];
 					ms().romfolder[ms().secondaryDevice] = std::string(getcwd(buf, 256));
 					ms().saveSettings();
@@ -4473,6 +4494,11 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 
 			if ((pressed & KEY_B) && ms().showDirectories) {
 				// Go up a directory
+				if (chdir("..") != 0) {
+					snd().playWrong();
+					continue;
+				}
+				parentSelection.remember(ms().romfolder[ms().secondaryDevice]);
 				snd().playBack();
 				if (ms().theme != TWLSettings::EThemeSaturn && ms().theme != TWLSettings::EThemeHBL) {
 					fadeType = false; // Fade to white
@@ -4498,7 +4524,6 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				stopSoundPlayed = false;
 				clearText();
 				updateText(false);
-				chdir("..");
 				char buf[256];
 
 				ms().romfolder[ms().secondaryDevice] = std::string(getcwd(buf, 256));
@@ -4742,7 +4767,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					if (ms().theme == TWLSettings::EThemeDSi || ms().theme == TWLSettings::EThemeSaturn || ms().theme == TWLSettings::EThemeHBL) {
 						if (bothSDandFlashcard() && ((pressed & KEY_UP) || (pressed & KEY_DOWN))) {
 							switchDevice();
-							
+
 							return "null";
 						}
 					}

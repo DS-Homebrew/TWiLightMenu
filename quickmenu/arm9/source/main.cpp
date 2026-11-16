@@ -2060,16 +2060,20 @@ int dsClassicMenu(void) {
 
 								const char *bootstrapinipath = (sys().isRunFromSD() ? BOOTSTRAP_INI : BOOTSTRAP_INI_FC);
 								CIniFile bootstrapini(bootstrapinipath);
+								const bool dlplayDsiMode = ms().dlplayDsiMode && dsiFeatures() && !bs().b4dsMode;
 								bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", bootPath);
+								bootstrapini.SetString("NDS-BOOTSTRAP", "APP_PATH", "");
 								bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", "");
+								bootstrapini.SetString("NDS-BOOTSTRAP", "PRV_PATH", "");
 								bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "");
 								bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "");
 								bootstrapini.SetString("NDS-BOOTSTRAP", "QUIT_PATH", mainSrldrPath(sys().isRunFromSD() && (!ms().secondaryDevice || !bs().b4dsMode)));
 								bootstrapini.SetString("NDS-BOOTSTRAP", "GUI_LANGUAGE", ms().getGuiLanguageString());
 								bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", ms().gameLanguage);
-								bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
-								bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
-								bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
+								// Download Play has a DS header (unit code 0), so nds-bootstrap only accepts forced DSi mode
+								bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", dlplayDsiMode ? 2 : 0);
+								bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", dlplayDsiMode);
+								bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", dlplayDsiMode);
 								bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_A", 0);
 								bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_B", 1);
 								bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_SELECT", 2);
@@ -2304,8 +2308,9 @@ int dsClassicMenu(void) {
 				fclose(f_nds_file);
 
 				loadPerGameSettings(filename[ms().secondaryDevice]);
-				const bool booterIsNdsBootstrap = (perGameSettings_dsiwareBooter == -1 ? ms().dsiWareBooter : perGameSettings_dsiwareBooter) || NDSHeader.twlRomSize >= 0x04000000 || (ms().secondaryDevice && bs().b4dsMode) || sys().arm7SCFGLocked() || ms().consoleModel > 0;
+				const bool booterIsNdsBootstrap = (perGameSettings_dsiwareBooter == -1 ? ms().dsiWareBooter : perGameSettings_dsiwareBooter) || NDSHeader.twlRomSize > 0x04000000 || (ms().secondaryDevice && bs().b4dsMode) || sys().arm7SCFGLocked() || ms().consoleModel > 0;
 				const bool dsiWareSlot1Mode = (perGameSettings_dsiWareSlot1Mode == -1 ? DEFAULT_DSIWARE_SLOT1_MODE : perGameSettings_dsiWareSlot1Mode);
+				const bool usePicoLoader = ms().secondaryDevice && isDSiMode() && !bs().b4dsMode && ms().saveLocation == TWLSettings::EGamesFolder && (perGameSettings_fcGameLoader == -1 ? (ms().fcGameLoader == TWLSettings::EPicoLoader) : (perGameSettings_fcGameLoader == TWLSettings::EPicoLoader));
 
 				std::string typeToReplace = filename[ms().secondaryDevice].substr(filename[ms().secondaryDevice].rfind('.'));
 
@@ -2330,7 +2335,7 @@ int dsClassicMenu(void) {
 				}
 				ms().dsiWarePrvPath = ms().dsiWarePubPath;
 				ms().dsiWareBnrPath = ms().dsiWarePubPath;
-				const bool savFormat = booterIsNdsBootstrap && ((NDSHeader.twlRomSize >= 0x04000000) || (sys().scfgSdmmcEnabled() && dsiWareSlot1Mode) || (ms().secondaryDevice && (!isDSiMode() || !sys().scfgSdmmcEnabled() || bs().b4dsMode)));
+				const bool savFormat = booterIsNdsBootstrap && ((NDSHeader.twlRomSize > 0x04000000) || (sys().scfgSdmmcEnabled() && dsiWareSlot1Mode) || (ms().secondaryDevice && (!isDSiMode() || !sys().scfgSdmmcEnabled() || bs().b4dsMode)));
 				if (savFormat) {
 					ms().dsiWarePubPath = replaceAll(ms().dsiWarePubPath, typeToReplace, getSavExtension());
 					ms().dsiWarePrvPath = ms().dsiWarePubPath;
@@ -2342,6 +2347,28 @@ int dsClassicMenu(void) {
 				ms().homebrewBootstrap = isHomebrew[ms().secondaryDevice];
 				ms().launchType[ms().secondaryDevice] = TWLSettings::EDSiWareLaunch;
 				ms().saveSettings();
+
+				// Pico Loader creates the DSiWare saves next to the ROM itself
+				if (usePicoLoader && !savFormat) {
+					while (!screenFadedOut()) {
+						swiWaitForVBlank();
+					}
+					s2RamAccessAlt(true);
+
+					int err = picoLaunchRom(ms().dsiWareSrlPath, "", true);
+
+					char text[64];
+					snprintf (text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
+					whiteScreen = true;
+					fadeSpeed = true; // Fast fading
+					clearText(false);
+					printSmall(false, 4, 4, text);
+					if (err == 1) {
+						printSmall(false, 4, 24, STR_PICO_LOADER_NOT_FOUND);
+					}
+					fadeType = true; // Fade in
+					stop();
+				}
 
 				if (savFormat) {
 					if ((getFileSize(ms().dsiWarePubPath.c_str()) == 0) && ((NDSHeader.pubSavSize > 0) || (NDSHeader.prvSavSize > 0))) {

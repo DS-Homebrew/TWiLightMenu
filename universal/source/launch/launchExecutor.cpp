@@ -74,6 +74,7 @@ LaunchEnv captureLaunchEnv(bool secondaryDevice)
 	env.sdFound = sdFound();
 	env.flashcardFound = flashcardFound();
 	env.isRunFromSD = sys().isRunFromSD();
+	env.dsDebugRam = sys().dsDebugRam();
 	env.consoleModel = ms().consoleModel;
 	env.dldiDriverSize = io_dldi_data->driverSize;
 	env.dldiIsDstwo = (memcmp(io_dldi_data->friendlyName, "DSTWO(Slot-1)", 0xD) == 0);
@@ -92,7 +93,6 @@ LaunchEnv captureLaunchEnv(bool secondaryDevice)
 	env.colEmulator = ms().colEmulator;
 	env.sgEmulator = ms().sgEmulator;
 	env.mdEmulator = ms().mdEmulator;
-	env.newSnesEmuVer = ms().newSnesEmuVer;
 	env.gbar2DldiAccess = ms().gbar2DldiAccess;
 	env.macroMode = ms().macroMode;
 

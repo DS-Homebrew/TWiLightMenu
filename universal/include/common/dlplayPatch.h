@@ -1,7 +1,7 @@
 #ifndef DLPLAY_PATCH_H
 #define DLPLAY_PATCH_H
 
-// RSA signature check patch for DSi DS Download Play (HNDA v256), ported from FlashMe
+// RSA signature check patch for DSi/3DS DS Download Play (HNDA/HNDC/HNDK), ported from FlashMe
 // https://gbatemp.net/threads/rsa-patch-for-dsi-download-play.538078/
 
 // Returns the path to boot: a patched copy when the patch applies, otherwise srcPath

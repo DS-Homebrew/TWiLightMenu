@@ -1,6 +1,7 @@
 #include "fontHandler.h"
 
 #include <nds/arm9/dldi.h>
+#include <algorithm>
 #include <list>
 
 #include "common/twlmenusettings.h"
@@ -112,7 +113,11 @@ void fontInit() {
 		0x0000,
 		0x0000,
 		0x0000,
-		customIni.GetInt("custom text", "color", 0)
+		customIni.GetInt("custom text", "color", 0),
+		0x0000,
+		0x0000,
+		0x0000,
+		ini.GetInt("free space", "color", 0)
 	};
 
 	// Load font graphics
@@ -136,6 +141,7 @@ void fontInit() {
 		palette[63] = colorTable[palette[63] % 0x8000]; // folder text: color
 		palette[67] = colorTable[palette[67] % 0x8000]; // user name: color
 		palette[71] = colorTable[palette[71] % 0x8000]; // custom text: color
+		palette[75] = colorTable[palette[75] % 0x8000]; // free space: color
 	}
 	// Load palettes
 	tonccpy(BG_PALETTE, palette, sizeof(palette));
@@ -228,6 +234,35 @@ void updateTextImg(u16* img, bool top) {
 		if (FontGraphic::textBuf[top][i] != 0) {
 			//img[i] = top ? BG_PALETTE[FontGraphic::textBuf[true][i]] : BG_PALETTE_SUB[FontGraphic::textBuf[false][i]];
 			img[i] = palette[FontGraphic::textBuf[top][i]];
+		}
+	}
+}
+
+// Redraws one box of the top screen's text, so the clock, date and box art around it are kept
+void printTopBox(int x, int y, int w, int h, std::string_view left, std::string_view center, FontPalette palette) {
+	// Glyphs can reach past the box, so keep the text buffer's rows as they were outside it
+	const int rows = std::min(std::max(h, 1 + smallFont->height()), 192 - y);
+	std::vector<u8> saved(FontGraphic::textBuf[1] + (y*256), FontGraphic::textBuf[1] + ((y+rows)*256));
+
+	for (int y2 = y; y2 < y+h; y2++) {
+		toncset(FontGraphic::textBuf[1] + (y2*256) + x, 0, w);
+	}
+
+	smallFont->print(x+2, y+1, true, left, Alignment::left, palette);
+	smallFont->print(x+(w/2)-128, y+1, true, center, Alignment::center, palette);
+
+	for (int y2 = y; y2 < y+h; y2++) {
+		for (int x2 = x; x2 < x+w; x2++) {
+			const int i = (y2*256)+x2;
+			topImageWithText[0][i] = (FontGraphic::textBuf[1][i]) ? (BG_PALETTE_SUB[FontGraphic::textBuf[1][i]] | BIT(15)) : topImage[0][i];
+			topImageWithText[1][i] = (FontGraphic::textBuf[1][i]) ? (BG_PALETTE_SUB[FontGraphic::textBuf[1][i]] | BIT(15)) : topImage[1][i];
+		}
+	}
+
+	for (int y2 = y; y2 < y+rows; y2++) {
+		for (int x2 = 0; x2 < 256; x2++) {
+			if (y2 < y+h && x2 >= x && x2 < x+w) continue;
+			FontGraphic::textBuf[1][(y2*256)+x2] = saved[((y2-y)*256)+x2];
 		}
 	}
 }

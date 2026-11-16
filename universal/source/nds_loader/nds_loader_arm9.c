@@ -44,7 +44,6 @@ struct __my_bootstub {
 #endif
 
 #include "common/nds_loader_arm9.h"
-#define LCDC_BANK_C (u16*)0x06840000
 #define LCDC_BANK_D (u16*)0x06868000
 #define STORED_FILE_CLUSTER (*(((u32*)LCDC_BANK_D) + 1))
 #define INIT_DISC (*(((u32*)LCDC_BANK_D) + 2))
@@ -214,7 +213,7 @@ int runNds (
 	VRAM_D_CR = VRAM_ENABLE | VRAM_D_LCD;
 	// Load the loader/patcher into the correct address
 	tonccpy (LCDC_BANK_D, loader, loaderSize);
-	toncset (LCDC_BANK_C+loaderSize, 0, 0x18000-loaderSize);
+	toncset (LCDC_BANK_D+loaderSize, 0, 0x18000-loaderSize);
 
 	// Set the parameters for the loader
 	// STORED_FILE_CLUSTER = cluster;

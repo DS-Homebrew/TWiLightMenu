@@ -38,6 +38,7 @@ struct LaunchEnv {
 	bool sdFound = false;
 	bool flashcardFound = false;
 	bool isRunFromSD = false;
+	bool dsDebugRam = false;
 	int consoleModel = 0;
 	unsigned dldiDriverSize = 0;
 	bool dldiIsDstwo = false;
@@ -53,7 +54,6 @@ struct LaunchEnv {
 	int colEmulator = 0;
 	int sgEmulator = 0;
 	int mdEmulator = 0;
-	bool newSnesEmuVer = false;
 	bool gbar2DldiAccess = false;
 	bool macroMode = false;
 

@@ -369,8 +369,8 @@ public:
 	bool dontShowDSiWareInDSModeWarning;
 	TDSiWareBooter dsiWareBooter;
 	bool dsiWareToSD;
-	bool newSnesEmuVer;
 	bool dlplayRsaPatch;
+	bool dlplayDsiMode;
 	bool esrbRatingScreen;
 
 	int ak_viewMode;

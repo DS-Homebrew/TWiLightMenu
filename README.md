@@ -94,6 +94,13 @@ TWiLight Menu++ is composed of multiple "sub-projects" which all work together t
 
 You can help translate TWiLight Menu++ on the [Crowdin project](https://crowdin.com/project/TwilightMenu). If you'd like to request a new language be added then please ask on the [Discord server](https://ds-homebrew.com/discord).
 
+# AI Disclosure
+
+As of October 26th, 2026, some contibutors have implemented new improvements and bug fixes with AI assistance.     
+Code has been reviewed and tested by the contributors before merging the PRs into this project.
+
+A majority of **TW**i**L**ight Menu++ will remain human-made, as we have [AI usage guidelines](https://github.com/DS-Homebrew/TWiLightMenu/blob/master/AI-GUIDELINES.md) in place to make sure of this.
+
 # Credits
 ## Main Developers
 - [Rocket Robz](https://github.com/RocketRobz): Lead Developer
@@ -110,6 +117,7 @@ You can help translate TWiLight Menu++ on the [Crowdin project](https://crowdin.
 - [Alekmaul](https://github.com/alekmaul) & [wavemotion](https://github.com/wavemotion-dave): [StellaDS](https://github.com/wavemotion-dave/StellaDS), [A5200DS](https://github.com/wavemotion-dave/A5200DS), [A7800DS](https://github.com/wavemotion-dave/A7800DS), [A8DS](https://github.com/wavemotion-dave/A8DS) (used for launching Atari 2600/5200/7800/XEGS ROMs), and [ColecoDS](https://github.com/wavemotion-dave/ColecoDS) (used for launching ColecoVision, MSX, Sord M5, and Sega SG-1000/SC-3000 ROMs)
 - archiede: [SNEmulDS](https://www.gamebrew.org/wiki/SNEmulDS) (used for launching SNES ROMs)
      - [Coto](https://github.com/cotodevel/): [SNEmulDS Revival](https://github.com/cotodevel/snemulds)
+     - [Sanrax](https://github.com/Sanrax/): [SNEmulDS-Shim](https://github.com/Sanrax/snemulds-shim) used for booting the revival build
 - [chishm](https://github.com/chishm): [tuna-viDS](https://github.com/chishm/tuna-vids) (used for playing Xvid videos)
 - [Stewmath](https://github.com/Stewmath): [GameYob](https://github.com/Stewmath/GameYob) (used for launching Gameboy ROMs)
 - [FluBBaOfWard](https://github.com/FluBBaOfWard): [S8DS](https://github.com/FluBBaOfWard/S8DS) (used for launching Sega Master System, Game Gear, SG-1000/SG-3000, and ColecoVision ROMs), [NitroGrafx](https://github.com/FluBBaOfWard/NitroGrafx) (used for launching PC Engine/TurboGrafx-16 ROMs), [NitroSwan](https://github.com/FluBBaOfWard/NitroSwan) (used for launching WonderSwan ROMs), and [NGPDS](https://github.com/FluBBaOfWard/NGPDS) (used for launching Neo Geo Pocket ROMs)
@@ -164,6 +172,7 @@ You can help translate TWiLight Menu++ on the [Crowdin project](https://crowdin.
 - [profi200](https://github.com/profi200): Improved SD code from fastboot3DS
 - [PW5190](https://github.com/PW5190): ESRB info contributions
 - RadDude McCoolguy, fintogive, KazoWAR, Vague Rant, [gamemasterplc](https://github.com/gamemasterplc), [Rocket Robz](https://github.com/RocketRobz), [ChampionLeake](https://github.com/ChampionLeake), [DeadSkullzJr](https://github.com/DeadSkullzJr), [spellboundtriangle](https://github.com/spellboundtriangle), [LedyBacer](https://github.com/LedyBacer): Widescreen cheats
+- [Sanrax](https://github.com/Sanrax/): A feature to remember which folder was opened so that it's selected when exiting a folder
 - [SNBeast](https://github.com/SNBeast): Unlaunch patches
 - Taiju Yamada: Code used to bypass R4i-SDHC boot file protection
 ## Translators

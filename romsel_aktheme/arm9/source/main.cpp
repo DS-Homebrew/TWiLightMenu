@@ -932,6 +932,8 @@ void bgOperations(bool waitFrame) {
 	drawDayX();
 	drawDay();
 	drawWeekday();
+	drawFreeSpace();
+	drawBattery();
 	if (waitFrame) {
 		swiWaitForVBlank();
 	}
@@ -1365,8 +1367,9 @@ int akTheme(void) {
 				displayDiskIcon(false);
 
 				loadPerGameSettings(filename);
-				const bool booterIsNdsBootstrap = (perGameSettings_dsiwareBooter == -1 ? ms().dsiWareBooter : perGameSettings_dsiwareBooter) || (ms().secondaryDevice && bs().b4dsMode) || sys().arm7SCFGLocked() || ms().consoleModel > 0;
+				const bool booterIsNdsBootstrap = (perGameSettings_dsiwareBooter == -1 ? ms().dsiWareBooter : perGameSettings_dsiwareBooter) || NDSHeader.twlRomSize > 0x04000000 || (ms().secondaryDevice && bs().b4dsMode) || sys().arm7SCFGLocked() || ms().consoleModel > 0;
 				const bool dsiWareSlot1Mode = (perGameSettings_dsiWareSlot1Mode == -1 ? DEFAULT_DSIWARE_SLOT1_MODE : perGameSettings_dsiWareSlot1Mode);
+				const bool usePicoLoader = ms().secondaryDevice && isDSiMode() && !bs().b4dsMode && ms().saveLocation == TWLSettings::EGamesFolder && (perGameSettings_fcGameLoader == -1 ? (ms().fcGameLoader == TWLSettings::EPicoLoader) : (perGameSettings_fcGameLoader == TWLSettings::EPicoLoader));
 
 				std::string typeToReplace = filename.substr(filename.rfind('.'));
 
@@ -1391,7 +1394,7 @@ int akTheme(void) {
 				}
 				ms().dsiWarePrvPath = ms().dsiWarePubPath;
 				ms().dsiWareBnrPath = ms().dsiWarePubPath;
-				const bool savFormat = booterIsNdsBootstrap && ((NDSHeader.twlRomSize >= 0x04000000) || (sys().scfgSdmmcEnabled() && dsiWareSlot1Mode) || (ms().secondaryDevice && (!isDSiMode() || !sys().scfgSdmmcEnabled() || bs().b4dsMode)));
+				const bool savFormat = booterIsNdsBootstrap && ((NDSHeader.twlRomSize > 0x04000000) || (sys().scfgSdmmcEnabled() && dsiWareSlot1Mode) || (ms().secondaryDevice && (!isDSiMode() || !sys().scfgSdmmcEnabled() || bs().b4dsMode)));
 				if (savFormat) {
 					ms().dsiWarePubPath = replaceAll(ms().dsiWarePubPath, typeToReplace, getSavExtension());
 					ms().dsiWarePrvPath = ms().dsiWarePubPath;
@@ -1409,6 +1412,36 @@ int akTheme(void) {
 				displayDiskIcon(!sys().isRunFromSD());
 				ms().saveSettings();
 				displayDiskIcon(false);
+
+				// Pico Loader creates the DSiWare saves next to the ROM itself
+				if (usePicoLoader && !savFormat) {
+					displayDiskIcon(!sys().isRunFromSD());
+					int err = picoLaunchRom(ms().dsiWareSrlPath, "", true);
+					displayDiskIcon(false);
+					char text[32];
+					snprintf (text, sizeof(text), "Start failed. Error %i", err);
+					clearText(false);
+					dialogboxHeight = (err==1 ? 1 : 0);
+					showdialogbox = true;
+					printSmall(false, 0, 74, "Error!", Alignment::center, FontPalette::formTitleText);
+					printSmall(false, 0, 90, text, Alignment::center, FontPalette::formText);
+					if (err == 1) {
+						printSmall(false, 0, 102, "Pico Loader not found.", Alignment::center, FontPalette::formText);
+					}
+					printSmall(false, 0, (err==1 ? 124 : 108), " Back", Alignment::center, FontPalette::formText);
+					updateText(false);
+					int pressed = 0;
+					do {
+						scanKeys();
+						pressed = keysDownRepeat();
+						checkSdEject();
+						swiWaitForVBlank();
+					} while (!(pressed & KEY_B));
+					vector<char *> argarray;
+					argarray.push_back((char*)(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/akmenu.srldr" : "fat:/_nds/TWiLightMenu/akmenu.srldr"));
+					runNdsFile(argarray[0], argarray.size(), (const char**)&argarray[0], sys().isRunFromSD(), true, false, false, true, true, false, -1, sys().commonCache());
+					stop();
+				}
 
 				if (savFormat) {
 					if ((getFileSize(ms().dsiWarePubPath.c_str()) == 0) && ((NDSHeader.pubSavSize > 0) || (NDSHeader.prvSavSize > 0))) {

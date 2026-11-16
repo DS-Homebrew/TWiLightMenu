@@ -39,6 +39,7 @@
 
 #include "ndsheaderbanner.h"
 #include "common/twlmenusettings.h"
+#include "common/parentDirectorySelection.h"
 #include "common/bootstrapsettings.h"
 #include "common/customLaunchers.h"
 #include "launch/launchExecutor.h"
@@ -609,6 +610,107 @@ void refreshBanners(const int startRow, const int fileOffset, std::vector<DirEnt
 	}
 
 	updateText(false);
+}
+
+// widescreen.pck's index (16 bytes per game: TID, CRC, offset, size), read once
+static std::vector<u8> widescreenIndex;
+static bool widescreenIndexRead = false;
+
+// As the .pck search in SetWidescreen(): a game matches on its TID with its header CRC, or CRC 0xFFFF for any
+static bool widescreenPckHas(const char* tid, const u16 crc) {
+	if (!widescreenIndexRead) {
+		widescreenIndexRead = true;
+		FILE* file = fopen(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/extras/widescreen.pck" : "fat:/_nds/TWiLightMenu/extras/widescreen.pck", "rb");
+		if (file) {
+			char magic[4];
+			u32 count = 0;
+			if (fread(magic, 1, 4, file) == 4 && memcmp(magic, ".PCK", 4) == 0 && fread(&count, sizeof(count), 1, file) == 1 && count <= 0x2000) {
+				widescreenIndex.resize(count * 16);
+				fseek(file, 16, SEEK_SET);
+				if (fread(widescreenIndex.data(), 16, count, file) != count) {
+					std::vector<u8>().swap(widescreenIndex);
+				}
+			}
+			fclose(file);
+		}
+	}
+
+	for (size_t i = 0; i + 16 <= widescreenIndex.size(); i += 16) {
+		if (memcmp(&widescreenIndex[i], tid, 4) == 0) {
+			const u16 entryCrc = widescreenIndex[i+4] | (widescreenIndex[i+5] << 8);
+			if (entryCrc == 0xFFFF || entryCrc == crc) return true;
+		}
+	}
+	return false;
+}
+
+// Badge frames: 0 Pico Loader, 1 nds-bootstrap, 2 nds-bootstrap in widescreen, 3 kernel, -1 none.
+// Follows the loader choice in main.cpp for retail games and DSiWare, and whether SetWidescreen() would find a patch.
+static int loaderBadgeFrame(const int fileOffset, const std::string& filename) {
+	const int i = cursorPosOnScreen;
+	if (!isValid[i] || isHomebrew[i] || isTwlm[i]) return -1;
+	if (isNdz[i]) return 0; // .ndz files always run in Pico Loader
+
+	char path[256];
+	snprintf(path, sizeof(path), "%s/_nds/TWiLightMenu/gamesettings/%s.ini", (ms().secondaryDevice ? "fat:" : "sd:"), filename.c_str());
+	CIniFile pergameini(path);
+	const int perGameLoader = pergameini.GetInt("GAMESETTINGS", "FC_GAME_LOADER", -1);
+	const int loader = (perGameLoader == -1) ? ms().fcGameLoader : perGameLoader;
+
+	if (isDSiWare[i]) {
+		// Pico Loader unless its save is kept as a .sav, else the DSiWare booter: nds-bootstrap, or Unlaunch (no badge)
+		const bool bigRom = preloadedHeaderFound(fileOffset) && getPreloadedHeader(fileOffset)->twlRomSize > 0x04000000;
+		const int perGameBooter = pergameini.GetInt("GAMESETTINGS", "DSIWARE_BOOTER", -1);
+		const int perGameSlot1Mode = pergameini.GetInt("GAMESETTINGS", "DSIWARE_SLOT1_MODE", -1);
+		const bool booterIsNdsBootstrap = (perGameBooter == -1 ? ms().dsiWareBooter : perGameBooter) || bigRom || (ms().secondaryDevice && bs().b4dsMode) || sys().arm7SCFGLocked() || ms().consoleModel > 0;
+		const bool savFormat = booterIsNdsBootstrap && (bigRom || (sys().scfgSdmmcEnabled() && (perGameSlot1Mode == -1 ? DEFAULT_DSIWARE_SLOT1_MODE : perGameSlot1Mode))
+		 || (ms().secondaryDevice && (!isDSiMode() || !sys().scfgSdmmcEnabled() || bs().b4dsMode)));
+		const bool usePicoLoader = ms().secondaryDevice && isDSiMode() && !bs().b4dsMode && ms().saveLocation == TWLSettings::EGamesFolder && loader == TWLSettings::EPicoLoader;
+		if (usePicoLoader && !savFormat) return 0;
+		if (!booterIsNdsBootstrap) return -1;
+		if (ms().secondaryDevice && !isDSiMode()) return 1; // SetWidescreen() isn't called
+	} else if (ms().secondaryDevice) {
+		const int perGameDsiMode = pergameini.GetInt("GAMESETTINGS", "DSI_MODE", -1);
+		const bool dsiMode = (perGameDsiMode == -1 ? DEFAULT_DSI_MODE : perGameDsiMode);
+		// DSi-only games need DSi mode for Pico Loader; the kernel hands DSi games to nds-bootstrap
+		if (loader == TWLSettings::EPicoLoader && (isDSiMode() || romUnitCode[i] < 3)) return 0;
+		if (loader == TWLSettings::EKernel && ms().kernelUseable && romUnitCode[i] < 3 && !(dsiFeatures() && romUnitCode[i] > 0 && dsiMode)) return 3;
+		if (!dsiFeatures()) return 1; // SetWidescreen() isn't called
+	}
+
+	extern bool widescreenFound;
+	const int perGameWide = pergameini.GetInt("GAMESETTINGS", "WIDESCREEN", -1);
+	if (!(perGameWide == -1 ? ms().wideScreen : perGameWide) || !widescreenFound || ms().macroMode || ms().consoleModel < 2
+	 || (isDSiMode() && sys().arm7SCFGLocked())) return 1;
+
+	// As SetWidescreen(): a patch named after the file, then TID + header CRC, then widescreen.pck
+	snprintf(path, sizeof(path), "sd:/_nds/TWiLightMenu/extras/widescreen/%s.bin", filename.c_str());
+	if (access(path, F_OK) == 0) return 2;
+	if (!preloadedHeaderFound(fileOffset)) return 1;
+
+	const u16 crc = getPreloadedHeader(fileOffset)->headerCRC16;
+	snprintf(path, sizeof(path), "sd:/_nds/TWiLightMenu/extras/widescreen/%s-%X.bin", gameTid[i], crc);
+	return (access(path, F_OK) == 0 || widescreenPckHas(gameTid[i], crc)) ? 2 : 1;
+}
+
+static std::string loaderBadgeGame;
+
+// List view only reads a game's header on launch, so covers and badges show in the icon views
+static void updateBoxArtAtCursor(const int fileOffset, const std::vector<DirEntry>& dirContents) {
+	if (ms().ak_viewMode != TWLSettings::EViewList && file_count > 0 && !isDirectory[cursorPosOnScreen] && bnrRomType[cursorPosOnScreen] == 0) {
+		const std::string& name = dirContents.at(fileOffset).name;
+		char cwd[256];
+		const std::string game = std::string(getcwd(cwd, sizeof(cwd)) ? cwd : "") + "/" + name; // Same name, other folder or device
+		if (game != loaderBadgeGame) {
+			loaderBadgeGame = game;
+			updateLoaderBadge(loaderBadgeFrame(fileOffset, name));
+		}
+		updateBoxArt(name.c_str(), gameTid[cursorPosOnScreen]);
+	} else {
+		loaderBadgeGame.clear();
+		updateLoaderBadge(-1);
+		updateBoxArt(NULL, NULL);
+	}
 }
 
 void mdRomTooBig(void) {
@@ -1259,6 +1361,8 @@ bool dsiWareCompatibleB4DS(void) {
 	return res;
 }
 
+static twlm::ParentDirectorySelection parentSelection;
+
 std::string browseForFile(const std::vector<std::string_view> extensionList) {
 	gameOrderIniPath = std::string(sys().isRunFromSD() ? "sd" : "fat") + ":/_nds/TWiLightMenu/extras/gameorder.ini";
 	recentlyPlayedIniPath = std::string(sys().isRunFromSD() ? "sd" : "fat") + ":/_nds/TWiLightMenu/extras/recentlyplayed.ini";
@@ -1276,6 +1380,11 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 	displayDiskIcon(ms().secondaryDevice);
 	getDirectoryContents (dirContents, extensionList);
 	displayDiskIcon(false);
+	const int parentPosition = parentSelection.restore(dirContents);
+	if (parentPosition >= 0) {
+		PAGENUM = parentPosition / 40;
+		CURPOS = parentPosition % 40;
+	}
 
 	int entriesPerScreen = (ms().ak_viewMode == TWLSettings::EViewList) ? ENTRIES_PER_SCREEN_LIST : ENTRIES_PER_SCREEN;
 	if (ms().ak_viewMode == TWLSettings::EViewSmallIcon) {
@@ -1286,6 +1395,10 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 	cursorPosOnScreen = fileOffset;
 	if (PAGENUM > 0) {
 		fileOffset += PAGENUM*40;
+	}
+	if (fileOffset > (int)dirContents.size() - 1) {
+		fileOffset = std::max((int)dirContents.size() - 1, 0);
+		cursorPosOnScreen = fileOffset;
 	}
 
 	// Scroll screen if needed
@@ -1316,6 +1429,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 		refreshBanners(screenOffset, fileOffset, dirContents);
 	}
 	updateSelectionBar();
+	updateBoxArtAtCursor(fileOffset, dirContents);
 
 	bool listModeSwitched = false;
 	bool refreshIcons = false;
@@ -1555,7 +1669,8 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			DirEntry* entry = &dirContents.at(fileOffset);
 			if (entry->isDirectory) {
 				// Enter selected directory
-				chdir (entry->name.c_str());
+				if (chdir(entry->name.c_str()) != 0) continue;
+				if (entry->name == "..") parentSelection.remember(ms().romfolder[ms().secondaryDevice]);
 				char buf[256];
 				ms().romfolder[ms().secondaryDevice] = getcwd(buf, 256);
 				CURPOS = 0;
@@ -1883,6 +1998,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			refreshBanners(screenOffset, fileOffset, dirContents);
 		}
 		updateSelectionBar();
+		updateBoxArtAtCursor(fileOffset, dirContents);
 		screenOffsetPrev = screenOffset;
 		listModeSwitched = false;
 		refreshIcons = false;
@@ -1919,7 +2035,8 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 		|| ((pressed & KEY_TOUCH) && touch.px >= folderUpX && touch.px < folderUpX+folderUpW && touch.py >= folderUpY && touch.py < folderUpY+folderUpH)) && ms().showDirectories) {
 			resetIconScale();
 			// Go up a directory
-			chdir ("..");
+			if (chdir("..") != 0) continue;
+			parentSelection.remember(ms().romfolder[ms().secondaryDevice]);
 			char buf[256];
 			ms().romfolder[ms().secondaryDevice] = getcwd(buf, 256);
 			CURPOS = 0;
@@ -2001,6 +2118,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							}
 							displayDiskIcon(false);
 						}
+						refreshFreeSpace();
 					} else if (pressed & KEY_Y) {
 						displayDiskIcon(ms().secondaryDevice);
 						// Remove leading . if it exists
@@ -2082,6 +2200,8 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				perGameSettings(dirContents.at(fileOffset).name);
 				cursorPosOnScreen = cursorPosOnScreenBak;
 				refreshBanners(screenOffset, fileOffset, dirContents);
+				loaderBadgeGame.clear(); // The game loader or widescreen may have changed
+				updateBoxArtAtCursor(fileOffset, dirContents);
 				for (int i = 0; i < 25; i++) bgOperations(true);
 			} else {
 				logPrint("perGameSettings not opened!\n");

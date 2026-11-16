@@ -30,7 +30,8 @@ enum class FontPalette {
 	mainTextHilight,
 	folderText,
 	usernameText,
-	customText
+	customText,
+	freeSpaceText
 };
 
 class FontGraphic {
