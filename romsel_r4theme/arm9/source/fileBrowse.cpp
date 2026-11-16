@@ -39,6 +39,7 @@
 
 #include "ndsheaderbanner.h"
 #include "common/twlmenusettings.h"
+#include "common/parentDirectorySelection.h"
 #include "common/bootstrapsettings.h"
 #include "common/customLaunchers.h"
 #include "launch/launchExecutor.h"
@@ -1107,6 +1108,8 @@ bool dsiWareCompatibleB4DS(void) {
 	return res;
 }
 
+static twlm::ParentDirectorySelection parentSelection;
+
 std::string browseForFile(const std::vector<std::string_view> extensionList) {
 	if (ms().macroMode) {
 		lcdMainOnTop();
@@ -1122,6 +1125,11 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 	int fileOffset = 0;
 	std::vector<DirEntry> dirContents;
 	getDirectoryContents (dirContents, extensionList);
+	const int parentPosition = parentSelection.restore(dirContents);
+	if (parentPosition >= 0) {
+		ms().pagenum[ms().secondaryDevice] = parentPosition / 40;
+		ms().cursorPosition[ms().secondaryDevice] = parentPosition % 40;
+	}
 
 	const int entriesPerScreen = (ms().theme==6 ? ENTRIES_PER_SCREEN_GBNP : ENTRIES_PER_SCREEN);
 
@@ -1231,7 +1239,8 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					snd().playSelect();
 				}
 				// Enter selected directory
-				chdir (entry->name.c_str());
+				if (chdir(entry->name.c_str()) != 0) continue;
+				if (entry->name == "..") parentSelection.remember(ms().romfolder[ms().secondaryDevice]);
 				char buf[256];
 				ms().romfolder[ms().secondaryDevice] = getcwd(buf, 256);
 				ms().cursorPosition[ms().secondaryDevice] = 0;
@@ -1546,7 +1555,8 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 
 		if ((pressed & KEY_B) && ms().showDirectories) {
 			// Go up a directory
-			chdir ("..");
+			if (chdir("..") != 0) continue;
+			parentSelection.remember(ms().romfolder[ms().secondaryDevice]);
 			char buf[256];
 			ms().romfolder[ms().secondaryDevice] = getcwd(buf, 256);
 			ms().cursorPosition[ms().secondaryDevice] = 0;

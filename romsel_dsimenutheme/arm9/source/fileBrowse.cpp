@@ -32,6 +32,7 @@
 #include "gbaswitch.h"
 
 #include "common/twlmenusettings.h"
+#include "common/parentDirectorySelection.h"
 #include "common/bootstrapsettings.h"
 #include "common/customLaunchers.h"
 #include "common/dlplayPatch.h"
@@ -471,6 +472,8 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 	}
 }
 
+static twlm::ParentDirectorySelection parentSelection;
+
 bool nowLoadingDisplaying = false;
 
 void displayNowLoading(void) {
@@ -487,7 +490,7 @@ void displayNowLoading(void) {
 	}
 	updateText(false);
 	nowLoadingDisplaying = true;
-	while (!screenFadedIn()) 
+	while (!screenFadedIn())
 	{
 		bgOperations(true);
 	}
@@ -1477,7 +1480,7 @@ void exitToSystemMenu(void) {
 	for (int i = 0; i < 60; i++) {
 		bgOperations(true);
 	}
-	
+
 	snd().stopStream();
 
 	if (settingsChanged) {
@@ -1587,7 +1590,7 @@ void launchGba(void) {
 	for (int i = 0; i < 60; i++) {
 		bgOperations(true);
 	}
-	
+
 	snd().stopStream();
 
 	ms().slot1Launched = false;
@@ -1692,7 +1695,7 @@ void mdRomTooBig(void) {
 		} else if (pressed & KEY_DOWN) {
 			bottomBright++;
 		}
-		
+
 
 
 		if (bottomBright < 0) bottomBright = 0;
@@ -2001,7 +2004,7 @@ bool donorRomMsg(const char *filename) {
 		}
 	}
 	clearText();
-	
+
 	showdialogbox = false;
 	if (ms().theme == TWLSettings::EThemeSaturn) {
 		snd().playLaunch();
@@ -3359,7 +3362,16 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 	vector<vector<DirEntry>> dirContents(scrn.SIZE);
 
 	getDirectoryContents(dirContents[scrn], extensionList);
-	
+	const int parentPosition = parentSelection.restore(dirContents[scrn]);
+	if (parentPosition >= 0) {
+		PAGENUM = parentPosition / 40;
+		CURPOS = parentPosition % 40;
+		recalculateBoxesCount();
+		settingsChanged = true;
+		titleboxXpos[ms().secondaryDevice] = titleboxXdest[ms().secondaryDevice] = CURPOS * titleboxXspacing;
+		titlewindowXpos[ms().secondaryDevice] = titlewindowXdest[ms().secondaryDevice] = CURPOS * 5;
+	}
+
 	if (CURPOS > last_used_box)
 	{
 		CURPOS = last_used_box;
@@ -3985,6 +3997,11 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				DirEntry *entry = &dirContents[scrn].at(CURPOS + PAGENUM * 40);
 				if (entry->isDirectory) {
 					// Enter selected directory
+					if (chdir(entry->name.c_str()) != 0) {
+						snd().playWrong();
+						continue;
+					}
+					if (entry->name == "..") parentSelection.remember(ms().romfolder[ms().secondaryDevice]);
 					(ms().theme == TWLSettings::EThemeSaturn) ? snd().playLaunch() : snd().playSelect();
 					if (ms().theme != TWLSettings::EThemeSaturn && ms().theme != TWLSettings::EThemeHBL) {
 						fadeType = false; // Fade to white
@@ -4008,7 +4025,6 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					stopSoundPlayed = false;
 					clearText();
 					updateText(false);
-					chdir(entry->name.c_str());
 					char buf[256];
 					ms().romfolder[ms().secondaryDevice] = std::string(getcwd(buf, 256));
 					ms().saveSettings();
@@ -4478,6 +4494,11 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 
 			if ((pressed & KEY_B) && ms().showDirectories) {
 				// Go up a directory
+				if (chdir("..") != 0) {
+					snd().playWrong();
+					continue;
+				}
+				parentSelection.remember(ms().romfolder[ms().secondaryDevice]);
 				snd().playBack();
 				if (ms().theme != TWLSettings::EThemeSaturn && ms().theme != TWLSettings::EThemeHBL) {
 					fadeType = false; // Fade to white
@@ -4503,7 +4524,6 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				stopSoundPlayed = false;
 				clearText();
 				updateText(false);
-				chdir("..");
 				char buf[256];
 
 				ms().romfolder[ms().secondaryDevice] = std::string(getcwd(buf, 256));
@@ -4747,7 +4767,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					if (ms().theme == TWLSettings::EThemeDSi || ms().theme == TWLSettings::EThemeSaturn || ms().theme == TWLSettings::EThemeHBL) {
 						if (bothSDandFlashcard() && ((pressed & KEY_UP) || (pressed & KEY_DOWN))) {
 							switchDevice();
-							
+
 							return "null";
 						}
 					}

@@ -172,6 +172,7 @@ A majority of **TW**i**L**ight Menu++ will remain human-made, as we have [AI usa
 - [profi200](https://github.com/profi200): Improved SD code from fastboot3DS
 - [PW5190](https://github.com/PW5190): ESRB info contributions
 - RadDude McCoolguy, fintogive, KazoWAR, Vague Rant, [gamemasterplc](https://github.com/gamemasterplc), [Rocket Robz](https://github.com/RocketRobz), [ChampionLeake](https://github.com/ChampionLeake), [DeadSkullzJr](https://github.com/DeadSkullzJr), [spellboundtriangle](https://github.com/spellboundtriangle), [LedyBacer](https://github.com/LedyBacer): Widescreen cheats
+- [Sanrax](https://github.com/Sanrax/): A feature to remember which folder was opened so that it's selected when exiting a folder
 - [SNBeast](https://github.com/SNBeast): Unlaunch patches
 - Taiju Yamada: Code used to bypass R4i-SDHC boot file protection
 ## Translators
