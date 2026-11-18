@@ -96,7 +96,7 @@ You can help translate TWiLight Menu++ on the [Crowdin project](https://crowdin.
 
 # AI Disclosure
 
-As of October 26th, 2026, some contibutors have implemented new improvements and bug fixes with AI assistance.     
+As of October 26th, 2026, some contributors have implemented new improvements and bug fixes with AI assistance.     
 Code has been reviewed and tested by the contributors before merging the PRs into this project.
 
 A majority of **TW**i**L**ight Menu++ will remain human-made, as we have [AI usage guidelines](https://github.com/DS-Homebrew/TWiLightMenu/blob/master/AI-GUIDELINES.md) in place to make sure of this.
