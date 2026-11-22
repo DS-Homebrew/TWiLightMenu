@@ -26,6 +26,7 @@
 #include <nds/arm9/dldi.h>
 
 #include "../errorScreen.h"
+#include "../gift.h"
 #include "../iconTitle.h"
 #include "../language.h"
 #include "../ndsheaderbanner.h"
@@ -1325,6 +1326,11 @@ void vBlankHandler() {
 							drawIcon(iconXpos - titleboxXpos[ms().secondaryDevice],
 									 (titleboxYpos + iconYposOnTitleBox) + titleboxYposDropDown[i % 5],
 									 i);
+					} else if (ms().theme == TWLSettings::ETheme3DS && giftActive(i)) {
+						// New software: a wrapped gift stands in for the box and its icon
+						glSprite((spawnedboxXpos - titleboxXpos[ms().secondaryDevice]) + giftShakeX(i),
+								 titleboxYpos, GL_FLIP_NONE,
+								 &tex().giftImage()[giftSpriteFrame(i)]);
 					} else if (!applaunchprep || CURPOS != i) { // Only draw the icon if we're not launching the selcted app
 						if (!bnrSysSettings[i]) {
 							if (ms().theme == TWLSettings::ETheme3DS) {

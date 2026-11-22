@@ -98,7 +98,7 @@ uint boxArtWidth = 0, boxArtHeight = 0;
 ThemeTextures::ThemeTextures()
     : bubbleTexID(0), bipsTexID(0), scrollwindowTexID(0), buttonarrowTexID(0),
       movingarrowTexID(0), launchdotTexID(0), startTexID(0), startbrdTexID(0), settingsTexID(0), manualTexID(0), braceTexID(0),
-      boxfullTexID(0), boxemptyTexID(0), folderTexID(0), cornerButtonTexID(0), smallCartTexID(0), smallCartFallbackTexID(0), progressTexID(0),
+      boxfullTexID(0), boxemptyTexID(0), folderTexID(0), giftTexID(0), cornerButtonTexID(0), smallCartTexID(0), smallCartFallbackTexID(0), progressTexID(0),
       dialogboxTexID(0), wirelessiconTexID(0), _cachedVolumeLevel(-1), _cachedBatteryLevel(-1), _profileNameLoaded(false) {
 	// Overallocation, but thats fine,
 	// 0: Top, 1: Bottom, 2: Bottom Bubble, 3: Moving, 4: MovingLeft, 5: MovingRight
@@ -171,6 +171,11 @@ void ThemeTextures::loadBoxemptyImage(const Texture &tex) {
 
 void ThemeTextures::loadFolderImage(const Texture &tex) {
 	_folderImage = std::move(loadTexture(&folderTexID, tex, (64 / 16) * (64 / 16), 64, 64, GL_RGB16));
+}
+
+// Gift sprite sheet for new software (3DS theme): 4 frames of 64x64
+void ThemeTextures::loadGiftImage(const Texture &tex) {
+	_giftImage = std::move(loadTexture(&giftTexID, tex, (64 / 16) * (256 / 64), 64, 64, GL_RGB16));
 }
 
 void ThemeTextures::loadCornerButtonImage(const Texture &tex, int arraysize, int sprW, int sprH) {
@@ -439,6 +444,7 @@ void ThemeTextures::load3DSTheme() {
 	_boxFullTexture = std::make_unique<Texture>(TFN_GRF_BOX_FULL, TFN_FALLBACK_GRF_BOX_FULL);
 	_boxEmptyTexture = std::make_unique<Texture>(TFN_GRF_BOX_EMPTY, TFN_FALLBACK_GRF_BOX_EMPTY);
 	_folderTexture = std::make_unique<Texture>(TFN_GRF_FOLDER, TFN_FALLBACK_GRF_FOLDER);
+	_giftTexture = std::make_unique<Texture>(TFN_GRF_GIFT, TFN_GRF_GIFT);
 	_progressTexture = std::make_unique<Texture>(TFN_GRF_PROGRESS, TFN_FALLBACK_GRF_PROGRESS);
 
 	_smallCartTexture = std::make_unique<Texture>(TFN_GRF_SMALL_CART, TFN_FALLBACK_GRF_SMALL_CART);
@@ -454,6 +460,7 @@ void ThemeTextures::load3DSTheme() {
 	loadBoxfullImage(*_boxFullTexture);
 	loadBoxemptyImage(*_boxEmptyTexture);
 	loadFolderImage(*_folderTexture);
+	loadGiftImage(*_giftTexture);
 
 	loadSmallCartImage(*_smallCartTexture);
 	loadStartbrdImage(*_startBorderTexture, tc().startBorderSpriteH());
