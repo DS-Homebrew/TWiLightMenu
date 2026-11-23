@@ -700,6 +700,12 @@ void moveCursor(bool right, const std::vector<DirEntry> dirContents, int maxEntr
 }
 
 void updateBoxArt(void) {
+	// 3DS theme: a gift that is still wrapped spins on the top screen instead of box art
+	if (giftSpinUpdate(boxArtFound && ms().theme == TWLSettings::ETheme3DS && ms().showBoxArt && !ms().macroMode &&
+	                   !isDirectory[CURPOS] && giftActive(CURPOS))) {
+		showSTARTborder = true;
+		return;
+	}
 	if (!boxArtFound) return;
 	showSTARTborder = true;
 	if (ms().theme == TWLSettings::EThemeHBL || ms().macroMode || !ms().showBoxArt || boxArtLoaded) return;
@@ -4002,6 +4008,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					snd().playSelect();
 					for (int f = 1; f <= GIFT_ANIM_LENGTH; f++) {
 						giftAnimFrame[CURPOS] = f;
+						giftSpinUpdate(true); // Keep the gift spinning on the top screen
 						bgOperations(true);
 					}
 					giftFinishUnwrap(CURPOS, dirContents[scrn].at(CURPOS + PAGENUM * 40).name);

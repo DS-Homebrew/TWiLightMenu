@@ -10,10 +10,17 @@
 
 #include "common/systemdetails.h"
 #include "common/twlmenusettings.h"
+#include "graphics/color.h"
+#include "graphics/graphics.h"
+#include "graphics/ThemeTextures.h"
 
 // Defined in ndsheaderbanner.cpp
 extern bool isDirectory[40];
 extern bool bnrSysSettings[41];
+
+// Defined in fileBrowse.cpp and ThemeTextures.cpp
+extern bool boxArtLoaded;
+extern unsigned int boxArtWidth, boxArtHeight;
 
 bool giftWrapped[40] = {false};
 int giftAnimFrame[40] = {0};
@@ -116,4 +123,85 @@ void giftFinishUnwrap(int slot, const std::string &name) {
 	}
 	giftWrapped[slot] = false;
 	giftAnimFrame[slot] = 0;
+}
+
+// ---------------------------------------------------------------------------
+// Spinning gift on the top screen
+// ---------------------------------------------------------------------------
+
+void giftComposite(unsigned short *dst, const unsigned short *bg, const unsigned char *frame,
+		int w, int h, const unsigned short *colorTable) {
+	const unsigned short *colors = (const unsigned short *)frame;
+	const unsigned char *alphas = frame + (w * h * 2);
+	for (int y = 0; y < h; y++) {
+		for (int x = 0; x < w; x++) {
+			const int i = (y * w) + x;
+			const int o = (y * 256) + x;
+			const unsigned char a = alphas[i];
+			if (a == 0) {
+				dst[o] = bg[o];
+				continue;
+			}
+			unsigned short color = colors[i] | BIT(15);
+			if (colorTable) {
+				color = colorTable[color % 0x8000] | BIT(15);
+			}
+			dst[o] = (a == 255) ? color : alphablend(color, bg[o], a);
+		}
+	}
+}
+
+static FILE *spinFile = NULL;
+static int spinFrame = 0;
+static int spinTick = 0;
+static unsigned char spinBuffer[GIFT_SPIN_FRAME_BYTES] __attribute__((aligned(4)));
+
+static void spinClose(void) {
+	if (spinFile) {
+		fclose(spinFile);
+		spinFile = NULL;
+	}
+}
+
+bool giftSpinUpdate(bool wanted) {
+	if (!wanted) {
+		if (spinFile) {
+			spinClose();
+			// If nothing else has cleared the top screen yet, put the background back
+			if (boxArtWidth == GIFT_SPIN_W && boxArtHeight == GIFT_SPIN_H) {
+				clearBoxArt();
+				resumeRotatingCubesVideo();
+			}
+			boxArtLoaded = false;
+		}
+		return false;
+	}
+
+	// (Re)start when we have no file open, or the top screen was cleared under us
+	// (for example the cursor moved away and back)
+	const bool restart = (spinFile == NULL) || !boxArtLoaded || (boxArtWidth != GIFT_SPIN_W);
+	if (restart) {
+		spinClose();
+		spinFile = fopen(GIFT_SPIN_PATH, "rb");
+		if (!spinFile) {
+			return false; // No animation data: fall back to normal box art
+		}
+		spinFrame = 0;
+		spinTick = 0;
+	} else {
+		if (++spinTick < GIFT_SPIN_TICKS) {
+			return true;
+		}
+		spinTick = 0;
+		spinFrame = (spinFrame + 1) % GIFT_SPIN_FRAMES;
+	}
+
+	if (fseek(spinFile, (long)spinFrame * GIFT_SPIN_FRAME_BYTES, SEEK_SET) != 0 ||
+	    fread(spinBuffer, 1, GIFT_SPIN_FRAME_BYTES, spinFile) != (size_t)GIFT_SPIN_FRAME_BYTES) {
+		spinClose();
+		return false;
+	}
+	tex().drawGiftSpinFrame(spinBuffer, restart);
+	boxArtLoaded = true;
+	return true;
 }

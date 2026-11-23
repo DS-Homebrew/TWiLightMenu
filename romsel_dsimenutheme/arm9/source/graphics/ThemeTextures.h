@@ -86,6 +86,8 @@ private:
 	bool drawBoxArtPng(const char* filename, bool inMem);
 public:
 	void drawOverBoxArt(uint photoWidth, uint photoHeight);
+	// One frame of the spinning gift on the top screen; first = (re)start, clearing what was there
+	void drawGiftSpinFrame(const unsigned char *frame, bool first);
 	void drawOverRotatingCubes();
 	void drawOverRotatingCubesBottom();
 

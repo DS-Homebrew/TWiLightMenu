@@ -16,6 +16,7 @@
 #include "../include/startborderpal.h"
 
 // #include "common/ColorLut.h"
+#include "../gift.h"
 #include "color.h"
 #include "errorScreen.h"
 #include "fileBrowse.h"
@@ -1596,6 +1597,37 @@ bool ThemeTextures::drawBoxArtPng(const char *filename, bool inMem) {
 	}
 
 	return true;
+}
+
+// Draws one frame of the spinning gift where box art goes (centered on the top screen)
+void ThemeTextures::drawGiftSpinFrame(const unsigned char *frame, bool first) {
+	extern uint photoWidth, photoHeight;
+	if (first) {
+		if (ms().theme == TWLSettings::ETheme3DS && rocketVideo_topVisible) {
+			rocketVideo_topVisible = false;
+			while (dmaBusy(1)); // Wait for frame to finish rendering
+			drawOverRotatingCubes(); // Clear top screen cubes for 3DS theme
+		}
+		drawOverBoxArt(photoWidth, photoHeight); // Clear any box art that was there
+		boxArtWidth = GIFT_SPIN_W;
+		boxArtHeight = GIFT_SPIN_H;
+	}
+
+	const uint xPos = (SCREEN_WIDTH - GIFT_SPIN_W) / 2;
+	const uint yPos = (SCREEN_HEIGHT - GIFT_SPIN_H) / 2;
+
+	beginBgSubModify();
+
+	// Frames are blended over the clean background, so nothing of the last frame is left behind
+	const uint offset = xPos + (yPos * SCREEN_WIDTH);
+	giftComposite(_bgSubBuffer + offset, _topBorderBuffer + offset, frame, GIFT_SPIN_W, GIFT_SPIN_H, colorTable);
+	if (boxArtColorDeband) {
+		for (uint y = 0; y < GIFT_SPIN_H; y++) {
+			tonccpy(_bgSubBuffer2 + offset + (y * SCREEN_WIDTH), _bgSubBuffer + offset + (y * SCREEN_WIDTH), sizeof(u16) * GIFT_SPIN_W);
+		}
+	}
+
+	commitBgSubModify();
 }
 
 // Redraw background over the boxart bounds
