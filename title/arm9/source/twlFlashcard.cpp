@@ -11,6 +11,7 @@
 #include "common/systemdetails.h"
 #include "common/tonccpy.h"
 #include "read_card.h"
+#include "dstwo.h"
 
 TWL_CODE bool UpdateCardInfo(char* gameid, char* gamename) {
 	cardReadHeader((uint8*)&ndsCardHeader);
@@ -293,9 +294,15 @@ TWL_CODE void twl_flashcardInit(void) {
 		myDldiLoadFromFile("nitro:/dldi/ttio.dldi");
 	} else if (!memcmp(gameid, "DSGB", 4)) {
 		myDldiLoadFromFile("nitro:/dldi/nrio.lz77");
-	} /*else if (!memcmp(gameid, "ALXX", 4)) { // SuperCard DSTWO
+	} else if (!memcmp(gameid, "ALXX", 4)) { // SuperCard DSTWO
+		// Load the DLDI only once the card answers the handshake (its startup() would loop forever)
+		if (!dstwoUnlock()) {
+			disableSlot1();
+			sysSetCardOwner(BUS_OWNER_ARM7);
+			return;
+		}
 		myDldiLoadFromFile("nitro:/dldi/dstwo.dldi");
-	}*/
+	}
 
 	if (doCardInit) { // Certain flashcarts require card init before DLDI will work.
 		int result = cardInitWithoutSlotReset();
