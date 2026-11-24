@@ -86,6 +86,8 @@ private:
 	bool drawBoxArtPng(const char* filename, bool inMem);
 public:
 	void drawOverBoxArt(uint photoWidth, uint photoHeight);
+	// One frame of the spinning gift on the top screen; first = (re)start, clearing what was there
+	void drawGiftSpinFrame(const unsigned char *frame, bool first);
 	void drawOverRotatingCubes();
 	void drawOverRotatingCubesBottom();
 
@@ -125,6 +127,7 @@ private:
 	void loadBoxfullImage(const Texture& tex);
 	void loadBoxemptyImage(const Texture& tex);
 	void loadFolderImage(const Texture& tex);
+	void loadGiftImage(const Texture& tex);
 	void loadCornerButtonImage(const Texture& tex, int arraysize,
 											int sprW, int sprH);
 	void loadSmallCartImage(const Texture& tex);
@@ -166,6 +169,7 @@ public:
 	const glImage *boxfullImage() { return _boxfullImage.get(); }
 	const glImage *boxemptyImage() { return _boxemptyImage.get(); }
 	const glImage *folderImage() { return _folderImage.get(); }
+	const glImage *giftImage() { return _giftImage.get(); }
 	const glImage *cornerButtonImage() { return _cornerButtonImage.get(); }
 	const glImage *smallCartImage() { return _smallCartImage.get(); }
 	const glImage *wirelessIcons() { return _wirelessIcons.get(); }
@@ -283,6 +287,7 @@ private:
 	unique_ptr<glImage[]> _boxfullImage;
 	unique_ptr<glImage[]> _boxemptyImage;
 	unique_ptr<glImage[]> _folderImage;
+	unique_ptr<glImage[]> _giftImage;
 	unique_ptr<glImage[]> _cornerButtonImage;
 	unique_ptr<glImage[]> _smallCartImage;
 	unique_ptr<glImage[]> _wirelessIcons;
@@ -296,6 +301,7 @@ private:
 	unique_ptr<Texture> _cornerButtonTexture;
 	unique_ptr<Texture> _dialogBoxTexture;
 	unique_ptr<Texture> _folderTexture;
+	unique_ptr<Texture> _giftTexture;
 	unique_ptr<Texture> _launchDotTexture;
 	unique_ptr<Texture> _movingArrowTexture;
 	unique_ptr<Texture> _progressTexture;
@@ -375,6 +381,7 @@ private:
 	int boxfullTexID;
 	int boxemptyTexID;
 	int folderTexID;
+	int giftTexID;
 	int cornerButtonTexID;
 	int smallCartTexID;
 	int smallCartFallbackTexID;

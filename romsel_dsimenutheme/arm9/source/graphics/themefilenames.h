@@ -101,6 +101,8 @@
 #define TFN_GRF_CORNERBUTTON        TFN_UI_DIRECTORY"/grf/cornerbutton"
 #define TFN_GRF_DIALOGBOX           TFN_UI_DIRECTORY"/grf/dialogbox"
 #define TFN_GRF_FOLDER              TFN_UI_DIRECTORY"/grf/folder"
+// Gift for new software (3DS theme). Shipped inside the app, not part of the theme folders.
+#define TFN_GRF_GIFT                "nitro:/graphics/gift"
 #define TFN_GRF_ICON_GB             TFN_UI_DIRECTORY"/grf/icon_gb"
 #define TFN_GRF_ICON_GBA            TFN_UI_DIRECTORY"/grf/icon_gba"
 #define TFN_GRF_ICON_GBAMODE        TFN_UI_DIRECTORY"/grf/icon_gbamode"
