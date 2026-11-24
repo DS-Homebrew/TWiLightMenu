@@ -27,8 +27,14 @@ void giftUpdateSlot(int slot, bool isDirectory, const std::string &name);
 // Clears the gift state of every slot (call before refilling a page)
 void giftClearSlots();
 
-// True if the slot should currently be drawn as a gift
+// True if the slot should currently be drawn as a gift. This does not depend on the
+// platform: NDS, GBA, GB, GBC, NES, SNES and every other launchable file are all
+// wrapped until opened. Only folders and the system Settings entry are skipped.
 bool giftActive(int slot);
+
+// True while the app being carried in move mode is still wrapped. Remembered when the
+// app is picked up, because the slot it came from can be refilled by a page flip.
+extern bool giftMovingApp;
 
 // Sprite sheet frame (0 = closed .. 3 = burst) and horizontal shake for a slot
 int giftSpriteFrame(int slot);
@@ -43,7 +49,7 @@ void giftFinishUnwrap(int slot, const std::string &name);
 // the other: per frame W*H RGB555 pixels (little endian) followed by W*H alpha bytes.
 #define GIFT_SPIN_W 112
 #define GIFT_SPIN_H 112
-#define GIFT_SPIN_FRAMES 12			// 15 degrees apart, covering a half turn (the gift looks the same after that)
+#define GIFT_SPIN_FRAMES 24			// 7.5 degrees apart, covering a half turn (the gift looks the same after that)
 #define GIFT_SPIN_TICKS 4			// Screen frames per animation frame
 #define GIFT_SPIN_FRAME_BYTES (GIFT_SPIN_W * GIFT_SPIN_H * 3)
 #ifndef GIFT_SPIN_PATH

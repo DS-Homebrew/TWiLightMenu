@@ -24,6 +24,7 @@ extern unsigned int boxArtWidth, boxArtHeight;
 
 bool giftWrapped[40] = {false};
 int giftAnimFrame[40] = {0};
+bool giftMovingApp = false;
 
 // Full paths of every app that has been unwrapped
 static std::set<std::string> seenApps;

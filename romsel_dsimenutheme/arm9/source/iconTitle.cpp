@@ -31,6 +31,7 @@
 #include "common/dsiBanner.h"
 #include "common/tonccpy.h"
 #include "fileBrowse.h"
+#include "grid.h"
 #include "graphics/fontHandler.h"
 #include "graphics/iconHandler.h"
 #include "common/lodepng.h"
@@ -1135,6 +1136,10 @@ static inline std::u16string splitLongDialogTitle(std::string_view text) {
 
 void titleUpdate(bool isDir, std::string_view name, int num) {
 	const bool theme_showdialogbox = (showdialogbox || (ms().theme == TWLSettings::EThemeSaturn && currentBg == 1) || (ms().theme == TWLSettings::EThemeHBL && dbox_showIcon));
+	if (gridEnabled() && !theme_showdialogbox) {
+		gridWriteTitle(isDir, name); // Multiple rows: the name goes under the grid, there is no title bubble
+		return;
+	}
 	if (isDir) {
 		if (theme_showdialogbox) {
 			writeDialogTitleFolder(splitLongDialogTitle(name == ".." ? STR_BACK : name));
