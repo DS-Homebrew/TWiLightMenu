@@ -24,6 +24,7 @@
 #include "graphics/fontHandler.h"
 #include "graphics/graphics.h"
 #include "graphics/iconHandler.h"
+#include "gift.h"
 #include "iconTitle.h"
 #include "ndsheaderbanner.h"
 #include "perGameSettings.h"
@@ -699,6 +700,12 @@ void moveCursor(bool right, const std::vector<DirEntry> dirContents, int maxEntr
 }
 
 void updateBoxArt(void) {
+	// 3DS theme: a gift that is still wrapped spins on the top screen instead of box art
+	if (giftSpinUpdate(boxArtFound && movingApp == -1 && ms().theme == TWLSettings::ETheme3DS && ms().showBoxArt && !ms().macroMode &&
+	                   !isDirectory[CURPOS] && giftActive(CURPOS))) {
+		showSTARTborder = true;
+		return;
+	}
 	if (!boxArtFound) return;
 	showSTARTborder = true;
 	if (ms().theme == TWLSettings::EThemeHBL || ms().macroMode || !ms().showBoxArt || boxArtLoaded) return;
@@ -2859,11 +2866,13 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 	}
 	if (reSpawnBoxes)
 		spawnedtitleboxes = 0;
+	giftClearSlots();
 	for (int i = 0; i < 40; i++) {
 		if (i + PAGENUM * 40 < file_count) {
 			isDirectory[i] = dirContents[scrn][i + PAGENUM * 40].isDirectory;
 			const std::string &std_romsel_filename = dirContents[scrn][i + PAGENUM * 40].name;
 			getGameInfo(isDirectory[i], std_romsel_filename.c_str(), i);
+			giftUpdateSlot(i, isDirectory[i], std_romsel_filename);
 
 			if (isDirectory[i]) {
 				bnrWirelessIcon[i] = 0;
@@ -2979,6 +2988,7 @@ static MoveModeState beginMoveMode(SwitchState scrn, const std::vector<std::vect
 	clearText();
 	updateText(false);
 	mkdir(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/extras" : "fat:/_nds/TWiLightMenu/extras", 0777);
+	giftMovingApp = giftActive(CURPOS); // Keep the gift wrap on the lifted app
 	movingApp = (PAGENUM * 40) + (CURPOS);
 	titleboxXspacing = MOVE_SPACING;
 	titleboxXdest[ms().secondaryDevice] = titleboxXpos[ms().secondaryDevice] = CURPOS * titleboxXspacing;
@@ -3120,6 +3130,7 @@ static void endMoveMode(SwitchState scrn, std::vector<std::vector<DirEntry>> &di
 	}
 
 	movingApp = -1;
+	giftMovingApp = false;
 	titleboxXspacing = 58;
 	titleboxXdest[ms().secondaryDevice] = titleboxXpos[ms().secondaryDevice] = CURPOS * titleboxXspacing;
 }
@@ -3993,6 +4004,19 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 
 			// Startup...
 			if ((((pressed & KEY_A) || (pressed & KEY_START) || (ms().theme == TWLSettings::ETheme3DS && (pressed & KEY_TOUCH) && touch.py > 171)) && bannerTextShown && showSTARTborder) || gameTapped) {
+				if (CURPOS + PAGENUM * 40 < ((int)dirContents[scrn].size()) && giftActive(CURPOS)) {
+					// New software still in its gift wrap: unwrap it first.
+					// The next press launches it as usual.
+					snd().playSelect();
+					for (int f = 1; f <= GIFT_ANIM_LENGTH; f++) {
+						giftAnimFrame[CURPOS] = f;
+						giftSpinUpdate(true); // Keep the gift spinning on the top screen
+						bgOperations(true);
+					}
+					giftFinishUnwrap(CURPOS, dirContents[scrn].at(CURPOS + PAGENUM * 40).name);
+					gameTapped = false;
+					continue;
+				}
 				bannerTextShown = false; // Redraw title when done
 				DirEntry *entry = &dirContents[scrn].at(CURPOS + PAGENUM * 40);
 				if (entry->isDirectory) {
