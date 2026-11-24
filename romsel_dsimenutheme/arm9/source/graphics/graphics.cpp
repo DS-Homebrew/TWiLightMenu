@@ -27,7 +27,6 @@
 
 #include "../errorScreen.h"
 #include "../gift.h"
-#include "../grid.h"
 #include "../iconTitle.h"
 #include "../language.h"
 #include "../ndsheaderbanner.h"
@@ -284,9 +283,6 @@ void SetBrightness(u8 screen, s8 bright) {
 // }
 
 void bottomBgLoad(int drawBubble, bool init = false) {
-	if (gridEnabled() && drawBubble == 1) {
-		drawBubble = 0; // The grid view has no title bubble
-	}
 	const int bottomBgStateBefore = bottomBgState;
 	if (init || drawBubble == 0 || (drawBubble == 2 && ms().theme == TWLSettings::ETheme3DS)) {
 		if (bottomBgState != 1) {
@@ -1100,7 +1096,7 @@ void vBlankHandler() {
 		// Playback animated icons
 		for (int i = 0; i < ((movingApp != -1) ? 41 : 40); i++) {
 			if (bnriconisDSi[i] && playBannerSequence(i) && !updateFrame) {
-				updateFrame = gridEnabled() ? (i >= gridFirstSlot() && i < gridFirstSlot() + GRID_VISIBLE) : (displayGameIcons && (ms().theme != TWLSettings::EThemeSaturn)) ? ((i >= CURPOS-ICON_GRID_MAX_OFFSET && i <= CURPOS+ICON_GRID_MAX_OFFSET) || i == 40) : (i == CURPOS);
+				updateFrame = (displayGameIcons && (ms().theme != TWLSettings::EThemeSaturn)) ? ((i >= CURPOS-ICON_GRID_MAX_OFFSET && i <= CURPOS+ICON_GRID_MAX_OFFSET) || i == 40) : (i == CURPOS);
 			}
 		}
 	}
@@ -1257,10 +1253,8 @@ void vBlankHandler() {
 			// alias onto one bank (see ICON_GRID_BANKS in iconHandler.h).
 			static_assert(2 * ICON_GRID_MAX_OFFSET + 1 <= ICON_GRID_BANKS,
 					  "icon grid draws more boxes than it has texture banks");
-			static_assert(GRID_VISIBLE <= ICON_GRID_BANKS, "the multiple rows view shows more boxes than there are icon banks");
-			const bool gridMode = gridEnabled();
 			int maxIconNumber = (ms().theme == TWLSettings::EThemeSaturn ? 0 : ICON_GRID_MAX_OFFSET);
-			for (int pos = std::max(CURPOS - maxIconNumber, 0); pos <= (gridMode ? -1 : std::min(CURPOS + maxIconNumber, 39)); pos++) {
+			for (int pos = std::max(CURPOS - maxIconNumber, 0); pos <= std::min(CURPOS + maxIconNumber, 39); pos++) {
 				int i = pos;
 
 				// Stop drawing if the rest of the boxes are empty (with hide empty boxes enabled)
@@ -1372,39 +1366,6 @@ void vBlankHandler() {
 				}
 			}
 
-			if (gridMode) {
-				// Multiple rows: GRID_COLS x GRID_ROWS boxes, starting at gridFirstSlot()
-				for (int slot = gridFirstSlot(); slot < gridFirstSlot() + GRID_VISIBLE && slot <= 39; slot++) {
-					int bx, by;
-					if (!gridCellPos(slot, &bx, &by)) {
-						continue;
-					}
-					if (ms().hideEmptyBoxes && slot != 0 && slot >= spawnedtitleboxes) {
-						continue;
-					}
-					const int ix = bx + 16;			// Icon inset inside the 64px box
-					const int iy = by + iconYposOnTitleBox;
-					if (slot < spawnedtitleboxes) {
-						if (isDirectory[slot]) {
-							glSprite(bx, by, GL_FLIP_NONE, tex().folderImage());
-							if (customIcon[slot])
-								drawIcon(ix, iy, slot);
-						} else if (giftActive(slot)) {
-							glSprite(bx + giftShakeX(slot), by, GL_FLIP_NONE, &tex().giftImage()[giftSpriteFrame(slot)]);
-						} else if (!applaunchprep || CURPOS != slot) {
-							if (bnrSysSettings[slot]) {
-								glSprite(bx, by - 1, GL_FLIP_NONE, &tex().settingsImage()[1]);
-							} else {
-								glSprite(bx, by, GL_FLIP_NONE, tex().boxfullImage());
-								drawIcon(ix, iy, slot);
-							}
-						}
-					} else {
-						glSprite(bx, by, GL_FLIP_NONE, tex().boxemptyImage());
-					}
-				}
-			}
-
 			if (movingApp != -1) {
 				// movingAppXpos is the carried box'''s screen x: 96 when it sits on the
 				// gap (the keypad move mode never changes it), or wherever the stylus
@@ -1504,49 +1465,31 @@ void vBlankHandler() {
 		}
 
 		if (applaunchprep) {
-			// The box lifts away from where it sits (the middle of the screen, or its place in the grid)
-			int launchDX = 0, launchDY = 0;
-			if (gridEnabled()) {
-				int cx, cy;
-				if (gridCellPos(CURPOS, &cx, &cy)) {
-					launchDX = cx - 96;
-					launchDY = cy - 96;
-				}
-			}
 			if (isDirectory[CURPOS]) {
-				glSprite(96 + launchDX, 87 + launchDY - titleboxYmovepos, GL_FLIP_NONE, tex().folderImage());
+				glSprite(96, 87 - titleboxYmovepos, GL_FLIP_NONE, tex().folderImage());
 				if (customIcon[CURPOS])
-					drawIcon(112 + launchDX, 96 + launchDY - titleboxYmovepos, CURPOS);
+					drawIcon(112, 96 - titleboxYmovepos, CURPOS);
 			} else {
 				if (!bnrSysSettings[CURPOS]) {
-					glSprite(96 + launchDX, 84 + launchDY - titleboxYmovepos, GL_FLIP_NONE, tex().boxfullImage());
+					glSprite(96, 84 - titleboxYmovepos, GL_FLIP_NONE, tex().boxfullImage());
 				}
 				if (bnrSysSettings[CURPOS])
-					glSprite(96 + launchDX, 83 + launchDY - titleboxYmovepos, GL_FLIP_NONE, &tex().settingsImage()[1]);
+					glSprite(96, 83 - titleboxYmovepos, GL_FLIP_NONE, &tex().settingsImage()[1]);
 				else
-					drawIcon(112 + launchDX, 96 + launchDY - titleboxYmovepos, CURPOS);
+					drawIcon(112, 96 - titleboxYmovepos, CURPOS);
 			}
 			// Draw dots after selecting a game/app
 			dots().drawAuto();
 		}
 		if (showSTARTborder && displayGameIcons && (ms().theme < 4)) {
-			// In the multiple rows view the border sits on the selected box
-			int borderX = 96, borderY = tc().startBorderRenderY();
-			if (gridEnabled()) {
-				int cx, cy;
-				if (gridCellPos(CURPOS, &cx, &cy)) {
-					borderX = cx;
-					borderY = cy + (tc().startBorderRenderY() - tc().titleboxRenderY());
-				}
-			}
-			glSprite(borderX, borderY, GL_FLIP_NONE,
+			glSprite(96, tc().startBorderRenderY(), GL_FLIP_NONE,
 				 &tex().startbrdImage()[startBorderZoomAnimSeq[startBorderZoomAnimNum] &
 							(tc().startBorderSpriteH() - 1)]);
-			glSprite(borderX + tc().startBorderSpriteW(), borderY, GL_FLIP_H,
+			glSprite(96 + tc().startBorderSpriteW(), tc().startBorderRenderY(), GL_FLIP_H,
 				 &tex().startbrdImage()[startBorderZoomAnimSeq[startBorderZoomAnimNum] &
 							(tc().startBorderSpriteH() - 1)]);
 			if (bnrWirelessIcon[CURPOS] > 0)
-				glSprite(borderX, borderY, GL_FLIP_NONE,
+				glSprite(96, tc().startBorderRenderY(), GL_FLIP_NONE,
 					 &tex().wirelessIcons()[(bnrWirelessIcon[CURPOS] - 1) & 31]);
 
 			if (currentBg == 1 && tc().playStopSound() && needToPlayStopSound &&
@@ -1568,7 +1511,7 @@ void vBlankHandler() {
 		}
 
 		// Refresh the background layer.
-		if (currentBg == 1 && ms().theme != TWLSettings::EThemeSaturn && ms().theme != TWLSettings::EThemeHBL && !gridEnabled())
+		if (currentBg == 1 && ms().theme != TWLSettings::EThemeSaturn && ms().theme != TWLSettings::EThemeHBL)
 			drawBubble(tex().bubbleImage());
 		if (showSTARTborder && displayGameIcons && ms().theme == TWLSettings::EThemeDSi) {
 			glSprite(96, tc().startTextRenderY(), GL_FLIP_NONE, &tex().startImage()[ms().getGameLanguage()]);

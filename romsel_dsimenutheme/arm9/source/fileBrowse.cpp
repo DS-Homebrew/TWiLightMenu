@@ -25,7 +25,6 @@
 #include "graphics/graphics.h"
 #include "graphics/iconHandler.h"
 #include "gift.h"
-#include "grid.h"
 #include "iconTitle.h"
 #include "ndsheaderbanner.h"
 #include "perGameSettings.h"
@@ -517,14 +516,8 @@ void displayNowLoading(void) {
 // the progress bar animates. The touch and drag paths must pass false, or they
 // stall the scroll by a vblank per icon.
 static void refreshGridIcons(const std::vector<DirEntry> &entries, int centre, bool waitVBlank) {
-	int first = std::max(centre - ICON_GRID_MAX_OFFSET, 0);
-	int last = std::min(centre + ICON_GRID_MAX_OFFSET, 39);
-	if (gridEnabled()) {
-		// Multiple rows: load the boxes that are on screen, with the cursor's row in view
-		gridEnsureVisible(centre);
-		first = gridFirstSlot();
-		last = std::min(first + GRID_VISIBLE - 1, 39);
-	}
+	const int first = std::max(centre - ICON_GRID_MAX_OFFSET, 0);
+	const int last = std::min(centre + ICON_GRID_MAX_OFFSET, 39);
 
 	for (int pos = first; pos <= last; pos++) {
 		const int idx = pos + PAGENUM * 40;
@@ -3142,91 +3135,6 @@ static void endMoveMode(SwitchState scrn, std::vector<std::vector<DirEntry>> &di
 	titleboxXdest[ms().secondaryDevice] = titleboxXpos[ms().secondaryDevice] = CURPOS * titleboxXspacing;
 }
 
-// ---- Multiple rows view (3DS theme), see grid.h ----
-
-// Puts the cursor on newPos, scrolling the grid by a row if needed, and loads the icons of
-// the boxes that scroll into view. Returns true if the cursor moved.
-static bool gridMoveTo(int newPos, const std::vector<DirEntry> &entries) {
-	newPos = std::clamp(newPos, 0, last_used_box);
-	if (newPos == CURPOS) {
-		return false;
-	}
-
-	const int oldTop = gridTopRow;
-	CURPOS = newPos;
-	waitForNeedToPlayStopSound = 1;
-	settingsChanged = true;
-	bannerTextShown = false; // The loop writes the new name
-
-	gridEnsureVisible(CURPOS);
-	if (gridTopRow != oldTop) {
-		// Only the boxes that were not on screen before need their icon read
-		const int oldFirst = oldTop * GRID_COLS;
-		const int newFirst = gridFirstSlot();
-		for (int pos = newFirst; pos < newFirst + GRID_VISIBLE && pos <= 39; pos++) {
-			if (pos >= oldFirst && pos < oldFirst + GRID_VISIBLE) {
-				continue;
-			}
-			const int idx = pos + PAGENUM * 40;
-			if (idx >= file_count || idx >= (int)entries.size()) {
-				break;
-			}
-			iconUpdate(entries[idx].isDirectory, entries[idx].name.c_str(), pos);
-		}
-	}
-
-	// Same top screen handling as moveCursor(): drop the old box art, the new one loads in the loop
-	if (boxArtLoaded) {
-		if (!rocketVideo_topVisible) {
-			clearBoxArt();
-		}
-		resumeRotatingCubesVideo();
-		boxArtLoaded = false;
-	}
-
-	snd().playSelect();
-	return true;
-}
-
-// Keys and stylus for the grid. Returns true if the selection changed.
-static bool gridInput(const std::vector<DirEntry> &entries, u32 pressed, u32 held, const touchPosition &touch, bool &gameTapped) {
-	int target = CURPOS;
-	if (held & KEY_LEFT) {
-		target = CURPOS - 1;
-	} else if (held & KEY_RIGHT) {
-		target = CURPOS + 1;
-	} else if (held & KEY_UP) {
-		target = CURPOS - GRID_COLS;
-	} else if (held & KEY_DOWN) {
-		target = CURPOS + GRID_COLS;
-		// Going down into a row that is not full lands on its last box
-		if (target > last_used_box && (CURPOS / GRID_COLS) < (last_used_box / GRID_COLS)) {
-			target = last_used_box;
-		}
-	} else if (pressed & KEY_TOUCH) {
-		const int slot = gridSlotAt(touch.px, touch.py);
-		if (slot >= 0 && slot <= last_used_box) {
-			if (slot == CURPOS) {
-				gameTapped = bannerTextShown && showSTARTborder; // Tapping the selected box opens it
-				return false;
-			}
-			target = slot;
-		}
-	} else {
-		return false;
-	}
-
-	if (target < 0 || target > last_used_box) {
-		if (!edgeBumpSoundPlayed) {
-			snd().playWrong();
-			edgeBumpSoundPlayed = true;
-		}
-		return false;
-	}
-	edgeBumpSoundPlayed = false;
-	return gridMoveTo(target, entries);
-}
-
 static bool previousPage(SwitchState scrn, vector<vector<DirEntry>> dirContents) {
 	if (CURPOS == 0 && !showLshoulder) {
 		snd().playWrong();
@@ -3661,16 +3569,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			buttonArrowTouched[0] = ((keysHeld() & KEY_TOUCH) && touch.py > 171 && touch.px < 19);
 			buttonArrowTouched[1] = ((keysHeld() & KEY_TOUCH) && touch.py > 171 && touch.px > 236);
 
-			if (gridEnabled()) {
-				// Multiple rows view (3DS theme)
-				if (gridInput(dirContents[scrn], pressed, held, touch, gameTapped)) {
-					dsiBinariesChecked = false;
-					apChecked = false;
-					checkedDSiWareCompatibleB4DS = false;
-					dsiWareRAMLimitMsgPrepped = false;
-					infoCheckTimer = 0;
-				}
-			} else if ((held & KEY_LEFT) || ((held & KEY_TOUCH) && touch.py > 171 && touch.px < 19 && ms().theme == TWLSettings::EThemeDSi)) { // Left or button arrow (DSi theme)
+			if ((held & KEY_LEFT) || ((held & KEY_TOUCH) && touch.py > 171 && touch.px < 19 && ms().theme == TWLSettings::EThemeDSi)) { // Left or button arrow (DSi theme)
 				moveCursor(false, dirContents[scrn]);
 				dsiBinariesChecked = false;
 				apChecked = false;
@@ -4104,7 +4003,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				ms().cursorPosition[ms().secondaryDevice] = last_used_box;
 
 			// Startup...
-			if ((((pressed & KEY_A) || (pressed & KEY_START) || (ms().theme == TWLSettings::ETheme3DS && !gridEnabled() && (pressed & KEY_TOUCH) && touch.py > 171)) && bannerTextShown && showSTARTborder) || gameTapped) {
+			if ((((pressed & KEY_A) || (pressed & KEY_START) || (ms().theme == TWLSettings::ETheme3DS && (pressed & KEY_TOUCH) && touch.py > 171)) && bannerTextShown && showSTARTborder) || gameTapped) {
 				if (CURPOS + PAGENUM * 40 < ((int)dirContents[scrn].size()) && giftActive(CURPOS)) {
 					// New software still in its gift wrap: unwrap it first.
 					// The next press launches it as usual.
