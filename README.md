@@ -101,6 +101,8 @@ Code has been reviewed and tested by the contributors before merging the PRs int
 
 A majority of **TW**i**L**ight Menu++ will remain human-made, as we have [AI usage guidelines](https://github.com/DS-Homebrew/TWiLightMenu/blob/master/AI-GUIDELINES.md) in place to make sure of this.
 
+The last known AI-free version is [v27.25.1](https://github.com/DS-Homebrew/TWiLightMenu/releases/tag/v27.25.1)
+
 # Credits
 ## Main Developers
 - [Rocket Robz](https://github.com/RocketRobz): Lead Developer
